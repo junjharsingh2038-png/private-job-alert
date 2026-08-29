@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Private Job Alert Rajasthan</title>
+<meta name="description" content="Free private job alerts for Rajasthan and India.">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#123b6d;color:white;padding:18px 6%;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.logo{font-size:22px;font-weight:700}.nav a{color:#fff;text-decoration:none;margin-left:18px}
+.hero{padding:55px 6%;background:linear-gradient(135deg,#e8f1ff,#fff)}
+.hero h1{font-size:42px;margin:0 0 12px}.hero p{font-size:18px}
+.search{display:flex;max-width:850px;margin-top:25px}.search input{flex:1;padding:15px;border:1px solid #ccd5e2;border-radius:8px 0 0 8px;font-size:16px}.search button{padding:15px 24px;border:0;background:#ff8a00;color:#fff;font-weight:bold;border-radius:0 8px 8px 0}
+.container{padding:35px 6%;max-width:1200px;margin:auto}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.card{background:#fff;border:1px solid #e1e6ef;border-radius:12px;padding:20px;box-shadow:0 3px 12px #00000008}.card h3{margin-top:0}.tag{display:inline-block;background:#edf4ff;color:#1755a0;padding:5px 9px;border-radius:20px;font-size:13px;margin:3px}
+.job{display:flex;justify-content:space-between;gap:15px;align-items:center}.apply{background:#123b6d;color:#fff;padding:10px 15px;border-radius:7px;text-decoration:none;white-space:nowrap}
+.alert{background:#fff3df;border-left:5px solid #ff8a00;padding:20px;border-radius:8px;margin:25px 0}
+footer{background:#122033;color:#cbd5e1;padding:30px 6%;margin-top:30px}
+@media(max-width:650px){.hero h1{font-size:31px}header{flex-direction:column;align-items:flex-start}.nav a{margin:0 12px 0 0}.search{display:block}.search input,.search button{width:100%;border-radius:8px;margin-bottom:8px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">Private Job Alert Rajasthan</div>
+<nav class="nav"><a href="#jobs">Latest Jobs</a><a href="#categories">Categories</a><a href="#alert">Job Alert</a></nav>
+</header>
+
+<section class="hero">
+<h1>Private Jobs की जानकारी Free में</h1>
+<p>Rajasthan और India की private jobs एक जगह — qualification, location, salary और apply information के साथ.</p>
+<div class="search"><input id="search" placeholder="Job, company या location खोजें..."><button onclick="filterJobs()">Search Jobs</button></div>
+</section>
+
+<main class="container">
+<h2 id="categories">Job Categories</h2>
+<div class="grid">
+<div class="card"><h3>10th Pass Jobs</h3><p>10वीं पास candidates के लिए opportunities.</p></div>
+<div class="card"><h3>12th Pass Jobs</h3><p>12वीं पास private vacancies.</p></div>
+<div class="card"><h3>Graduate Jobs</h3><p>Graduate candidates के लिए jobs.</p></div>
+<div class="card"><h3>ITI Jobs</h3><p>ITI और technical candidates के लिए jobs.</p></div>
+</div>
+
+<div class="alert" id="alert"><h2>🔔 Free Job Alert</h2><p>New jobs की जानकारी पाने के लिए अपना WhatsApp/Telegram channel बाद में यहाँ जोड़ा जा सकता है.</p></div>
+
+<h2 id="jobs">Latest Jobs</h2>
+<div id="jobList" class="grid"></div>
+</main>
+
+<footer>
+<strong>Private Job Alert Rajasthan</strong>
+<p>यह website job information के लिए है. Apply करने से पहले official company/source पर vacancy की जानकारी verify करें.</p>
+</footer>
+
+<script>
+const jobs=[
+{name:"Customer Support Executive",company:"Private Company",loc:"Jaipur",qual:"12th / Graduate",salary:"₹15,000–₹25,000",type:"Full Time"},
+{name:"Sales Executive",company:"Private Company",loc:"Jodhpur",qual:"12th / Graduate",salary:"₹18,000–₹30,000",type:"Full Time"},
+{name:"ITI Technician",company:"Private Company",loc:"Rajasthan",qual:"ITI",salary:"₹16,000–₹28,000",type:"Full Time"},
+{name:"Data Entry Operator",company:"Private Company",loc:"Jaipur",qual:"12th Pass",salary:"₹14,000–₹22,000",type:"Full Time"}
+];
+function render(list=jobs){
+document.getElementById("jobList").innerHTML=list.map(j=>`<div class="card job"><div><h3>${j.name}</h3><p><b>${j.company}</b> · ${j.loc}</p><span class="tag">${j.qual}</span><span class="tag">${j.salary}</span><span class="tag">${j.type}</span></div><a class="apply" href="#" onclick="alert('Official Apply link यहाँ जोड़ा जाएगा.');return false">Apply Now</a></div>`).join("");
+}
+function filterJobs(){
+const q=document.getElementById("search").value.toLowerCase();
+render(jobs.filter(j=>(j.name+" "+j.company+" "+j.loc+" "+j.qual).toLowerCase().includes(q)));
+}
+render();
+</script>
+</body>
+</html>
