@@ -2,16 +2,23 @@
   SUPABASE CONFIGURATION:
   Replace SUPABASE_URL and SUPABASE_ANON_KEY with your project values.
 */
-const SUPABASE_URL = "PASTE_YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://rlidcatrwonemshwzafp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_ocJhWyfPg9rVhYROn_Vj0Q_DSSgxeuE";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+window.addEventListener("error", (event) => {
+  const box = document.getElementById("modalContent");
+  if (box && /supabase|auth|createClient/i.test(event.message || "")) {
+    box.innerHTML = "<p class='danger'>Supabase connection error. Please refresh the page and try again.</p>";
+  }
+});
 
 const $ = id => document.getElementById(id);
 let currentJob = null;
 
-function closeModal(){ $("modal").classList.add("hidden"); }
+window.closeModal = function(){ $("modal").classList.add("hidden"); };
 
-function openModal(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); }
+window.openModal = function(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); };
 
 async function loadJobs(){
   const q = ($("search").value||"").trim();
@@ -30,7 +37,7 @@ async function loadJobs(){
 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 
-function openApply(job){
+window.openApply = function(job){
   currentJob=job;
   openModal(`<h2>Apply for ${esc(job.title)}</h2>
   <p><b>${esc(job.company)}</b> · ${esc(job.location||"Rajasthan")}</p>
@@ -70,7 +77,7 @@ async function submitApplication(e){
   form.reset();
 }
 
-function authForm(mode){
+window.authForm = function(mode){
   openModal(`<h2>${mode==="login"?"HR Login":"Create HR Account"}</h2>
   <form id="authForm" class="form"><label>Email<input type="email" name="email" required></label>
   <label>Password<input type="password" name="password" minlength="6" required></label>
@@ -85,7 +92,7 @@ function authForm(mode){
   });
 }
 
-async function showHrPanel(){
+window.showHrPanel = async function(){
   const {data:{user}}=await sb.auth.getUser();
   if(!user){authForm("login");return;}
   const {data:jobs}=await sb.from("jobs").select("*").eq("hr_user_id",user.id).order("created_at",{ascending:false});
@@ -94,7 +101,7 @@ async function showHrPanel(){
   <h3>Your Jobs</h3>${(jobs||[]).map(j=>`<div class="job"><b>${esc(j.title)}</b><br>${esc(j.company)}<br><button onclick="deleteJob('${j.id}')">Delete</button></div>`).join("")||"<p>No jobs yet.</p>"}`);
 }
 
-function showPostJob(){
+window.showPostJob = function(){
   openModal(`<h2>Post a Job</h2><form id="jobForm" class="form">
   <label>Job Title<input name="title" required></label><label>Company<input name="company" required></label>
   <label>Location<input name="location" required></label><label>Qualification<input name="qualification"></label>
@@ -109,8 +116,14 @@ function showPostJob(){
     msg.className="success";msg.textContent="Job published successfully.";setTimeout(showHrPanel,700);
   });
 }
-async function deleteJob(id){const r=await sb.from("jobs").delete().eq("id",id); if(r.error)alert(r.error.message); else showHrPanel();}
+window.deleteJob = async function(id){const r=await sb.from("jobs").delete().eq("id",id); if(r.error)alert(r.error.message); else showHrPanel();}
 
 $("hrLoginBtn").onclick=()=>authForm("login");
 $("createHrBtn").onclick=()=>authForm("signup");
 loadJobs();
+document.addEventListener("DOMContentLoaded", () => {
+  const login = document.getElementById("hrLoginBtn");
+  const create = document.getElementById("createHrBtn");
+  if (login) login.addEventListener("click", () => window.authForm("login"));
+  if (create) create.addEventListener("click", () => window.authForm("signup"));
+});
