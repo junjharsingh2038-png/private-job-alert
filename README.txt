@@ -1,34 +1,22 @@
-PRIVATE JOB ALERT RAJASTHAN — ONE-SHOT APPLY SYSTEM
+PRIVATE JOB ALERT RAJASTHAN — SUPABASE VERSION
 
-ROOT FILES
-index.html
-style.css
-app.js
-robots.txt
-sitemap.xml
-404.html
-favicon.svg
-README.txt
+This version removes FormSubmit dependency for job applications.
 
-APPLY FLOW
-1. Job seeker clicks Apply Now.
-2. Candidate details form opens immediately.
-3. Candidate enters name, mobile, email, qualification and other details.
-4. Candidate uploads PDF/DOC/DOCX resume (maximum 5 MB).
-5. Submit sends the multipart form through FormSubmit to the HR email stored on that job.
+FLOW:
+HR creates account -> HR posts job -> job stores HR email.
+Candidate clicks Apply Now -> candidate details + resume -> application stored.
+Supabase Edge Function -> email notification sent to the HR email stored on that job.
 
-HR FLOW
-1. HR creates an account using the email address that should receive applications.
-2. HR logs in.
-3. HR posts a vacancy.
-4. The job automatically stores the logged-in HR email.
-5. Apply Now uses that exact stored HR email as the FormSubmit destination.
+IMPORTANT:
+1. Put all website files in the GitHub Pages root.
+2. Open app.js and replace:
+   PASTE_YOUR_SUPABASE_URL
+   PASTE_YOUR_SUPABASE_ANON_KEY
+3. Run supabase-schema.sql in Supabase SQL Editor.
+4. Deploy the Edge Function from supabase-functions-notify-hr-index.ts as notify-hr.
+5. Set Edge Function secrets:
+   RESEND_API_KEY
+   FROM_EMAIL
+6. Configure Supabase Auth email settings as desired.
 
-IMPORTANT
-This is a static GitHub Pages implementation. HR accounts and posted jobs are stored in browser localStorage, so they are not shared between different devices/browsers. For a production multi-HR system, use a real backend/database (for example Supabase) and server-side email delivery. Do not put a Supabase service-role key in GitHub.
-
-SEO
-index.html includes title, description, keywords, robots, canonical, Open Graph and WebSite structured data. robots.txt and sitemap.xml point to the GitHub Pages URL.
-
-DEPLOYMENT
-Keep all 8 files in the repository root. GitHub Pages: main branch, /(root).
+Do NOT put the Supabase service-role key in app.js or GitHub.
