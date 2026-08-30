@@ -1,8 +1,8 @@
-PRIVATE JOB ALERT RAJASTHAN — APPLY + RESUME SYSTEM
+PRIVATE JOB ALERT RAJASTHAN — FIXED SITE
 
-FILES
+Upload these 8 files directly into the GitHub repository root:
 - index.html
-- style.css (use your existing style.css from the working site)
+- style.css
 - app.js
 - robots.txt
 - sitemap.xml
@@ -10,38 +10,21 @@ FILES
 - favicon.svg
 - README.txt
 
-IMPORTANT FOLDER STRUCTURE
-Put index.html, style.css and app.js in the SAME ROOT folder.
-Put robots.txt, sitemap.xml, 404.html and favicon.svg in the SAME ROOT folder.
-Do not put app.js or style.css in an assets folder unless you also change the paths in index.html.
+IMPORTANT:
+1. index.html, style.css and app.js MUST be in the same root folder.
+2. Do not put style.css or app.js in an assets folder.
+3. GitHub Pages should use the main branch and /(root).
+4. Open the project URL with /private-job-alert/ at the end.
 
-APPLY NOW
-Each job must have an hrEmail field in app.js for the application form to know which HR receives the email.
-Example:
-hrEmail:"hr@company.com"
+APPLY NOW:
+- Candidate details form opens from Apply Now.
+- PDF/DOC/DOCX resume up to 5 MB can be selected.
+- Each job must contain a valid hrEmail in app.js for email delivery.
+- FormSubmit is used only as the email transport.
 
-When a job seeker clicks Apply Now:
-1. Candidate details form opens.
-2. Candidate can upload PDF/DOC/DOCX resume (max 5 MB).
-3. On Submit, the form is sent to the configured HR email through FormSubmit.
-4. FormSubmit may send a one-time activation/confirmation email to the HR address before first delivery.
+SEO:
+- Title, description, keywords, robots, canonical, Open Graph, Twitter and WebSite structured data are included.
+- robots.txt and sitemap.xml point to the project URL.
 
-IMPORTANT SECURITY / RELIABILITY
-This GitHub Pages version cannot securely send email by itself. FormSubmit is used as a simple email transport. For a production job portal with many HRs, use Supabase/EmailJS/server-side email delivery instead.
-Do not put a Supabase service-role key in GitHub.
-
-SEO
-The supplied index.html contains:
-- SEO title and description
-- keywords
-- robots meta
-- canonical URL
-- Open Graph
-- Twitter card
-- WebSite structured data
-
-SITEMAP
-https://junjharsingh2038-png.github.io/private-job-alert/sitemap.xml
-
-GOOGLE SEARCH CONSOLE
-Submit: sitemap.xml
+IMPORTANT:
+GitHub Pages is static hosting. HR login/job storage in this demo uses browser localStorage. For a production multi-HR portal with secure accounts, database and reliable email, a server-side backend is required.
