@@ -12,7 +12,9 @@
 <meta property="og:url" content="https://junjharsingh2038-png.github.io/private-job-alert/"><meta property="og:site_name" content="Private Job Alert Rajasthan">
 <meta name="twitter:card" content="summary"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="style.css"><script defer src="app.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Private Job Alert Rajasthan","url":"https://junjharsingh2038-png.github.io/private-job-alert/","potentialAction":{"@type":"SearchAction","target":"https://junjharsingh2038-png.github.io/private-job-alert/?q={search_term_string}","query-input":"required name=search_term_string"}}</script>
-</head>
+<style>
+.apply-card{max-height:92vh;overflow:auto}.apply-card label{display:block;font-weight:750;font-size:13px;margin-top:13px}.apply-card input,.apply-card textarea{display:block;width:100%;margin-top:6px;padding:12px;border:1px solid #d6dfeb;border-radius:10px;font-size:14px;background:#fff}.apply-card textarea{resize:vertical}.apply-card input[type=file]{padding:9px}.apply-card .modal-actions{display:flex;gap:10px;margin-top:18px}.apply-card .small{line-height:1.5}
+</style></head>
 <body>
 <header class="site-header"><div class="topbar">🇮🇳 Rajasthan & India Private Jobs <span>Free job information • HR posting available</span></div>
 <nav class="nav container"><a class="brand" href="./"><span class="brand-mark">💼</span><span><strong>PRIVATE JOB ALERT <b>RAJASTHAN</b></strong><small>DAILY PRIVATE JOB UPDATES</small></span></a>
@@ -32,4 +34,53 @@
 </main>
 <footer class="footer"><div class="container footer-grid"><div><a class="brand footer-brand" href="./"><span class="brand-mark">💼</span><span><strong>PRIVATE JOB ALERT <b>RAJASTHAN</b></strong><small>DAILY PRIVATE JOB UPDATES</small></span></a><p>Daily private job updates for Rajasthan.</p></div><div><h4>Job Seekers</h4><a href="#jobs">Latest Jobs</a><a href="#categories">Categories</a></div><div><h4>Employers</h4><a href="#employers">Post a Job</a><button class="link-btn" id="footerHrBtn">HR Login</button></div></div><div class="copyright">© <span id="year"></span> Private Job Alert Rajasthan • Always verify vacancy details from the official employer.</div></footer>
 <div class="modal" id="hrModal" aria-hidden="true"><div class="modal-card"><button class="modal-close" id="closeHr">×</button><span class="kicker">FOR HR / EMPLOYERS</span><h2>HR / Employer Portal</h2><p>Create your company profile or log in.</p><div class="notice" id="hrNotice"></div><label>Email<input id="hrEmail" type="email" placeholder="HR email"></label><label>Password<input id="hrPassword" type="password" placeholder="Minimum 6 characters"></label><div class="modal-actions"><button class="btn btn-primary" id="loginBtn">Login</button><button class="btn btn-soft" id="registerBtn">Create HR Account</button></div><p class="small">Demo front-end mode: employer data is stored in this browser. For production, connect a secure backend/Supabase before accepting real employer accounts.</p></div></div>
+
+<div class="modal" id="applyModal" aria-hidden="true">
+  <div class="modal-card apply-card">
+    <button class="modal-close" id="closeApply" type="button">×</button>
+    <span class="kicker">JOB APPLICATION</span>
+    <h2 id="applyJobTitle">Apply for Job</h2>
+    <p id="applyJobCompany" class="company"></p>
+    <div class="notice" id="applyNotice"></div>
+    <form id="applyForm" enctype="multipart/form-data" method="POST" target="applyFrame">
+      <input type="hidden" name="_subject" id="applySubject">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_honey" value="">
+      <input type="hidden" name="Job Title" id="applyHiddenTitle">
+      <input type="hidden" name="Company" id="applyHiddenCompany">
+      <label>Full Name *
+        <input name="Candidate Name" id="candidateName" required maxlength="100" autocomplete="name">
+      </label>
+      <label>Mobile Number *
+        <input name="Mobile Number" id="candidatePhone" required pattern="[0-9+ ()-]{10,18}" autocomplete="tel">
+      </label>
+      <label>Email *
+        <input name="Candidate Email" id="candidateEmail" type="email" required maxlength="150" autocomplete="email">
+      </label>
+      <label>City / Location
+        <input name="Candidate Location" id="candidateLocation" maxlength="100">
+      </label>
+      <label>Qualification *
+        <input name="Qualification" id="candidateQualification" required maxlength="120" placeholder="10th / 12th / Graduate / ITI">
+      </label>
+      <label>Experience
+        <input name="Experience" id="candidateExperience" maxlength="80" placeholder="Fresher / 2 years">
+      </label>
+      <label>Resume * (PDF, DOC or DOCX, max 5 MB)
+        <input name="attachment" id="candidateResume" type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>
+      </label>
+      <label>Message
+        <textarea name="Message" id="candidateMessage" rows="4" maxlength="1000" placeholder="Short message to the employer"></textarea>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="submitApplication" type="submit">Submit Application</button>
+        <button class="btn btn-soft" id="cancelApplication" type="button">Cancel</button>
+      </div>
+      <p class="small">Your application will be sent to the HR email configured for this vacancy. Never pay money to apply for a job.</p>
+    </form>
+    <iframe name="applyFrame" id="applyFrame" hidden></iframe>
+  </div>
+</div>
+
 </body></html>
