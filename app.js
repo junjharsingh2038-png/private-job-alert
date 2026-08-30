@@ -1,9 +1,9 @@
 /*
-  SUPABASE CONFIGURATION:
-  Replace SUPABASE_URL and SUPABASE_ANON_KEY with your project values.
+  SUPABASE CONFIGURATION
 */
 const SUPABASE_URL = "https://rlidcatrwonemshwzafp.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_ocJhWyfPg9rVhYROn_Vj0Q_DSSgxeuE";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPKApblqhFj_qAAbDLMaa3k0vzkl9wkDmtKmk5SMTsbBIFuwNZzGLLAqhMRbMg3oa0/exec";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 window.addEventListener("error", (event) => {
@@ -17,7 +17,6 @@ const $ = id => document.getElementById(id);
 let currentJob = null;
 
 window.closeModal = function(){ $("modal").classList.add("hidden"); };
-
 window.openModal = function(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); };
 
 async function loadJobs(){
@@ -54,27 +53,70 @@ window.openApply = function(job){
   $("applyForm").addEventListener("submit",submitApplication);
 }
 
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(String(reader.result).split(",")[1]||"");
+    reader.onerror=()=>reject(new Error("Could not read resume"));
+    reader.readAsDataURL(file);
+  });
+}
+
 async function submitApplication(e){
   e.preventDefault();
   const msg=$("applyMsg"), form=e.target, fd=new FormData(form), file=fd.get("resume");
   if(!file || file.size>5*1024*1024){msg.className="danger";msg.textContent="Resume must be PDF/DOC/DOCX and maximum 5 MB.";return;}
-  msg.className="";msg.textContent="Submitting...";
-  const {data:{user}}=await sb.auth.getUser();
-  const {data:app,error}=await sb.from("applications").insert({
-    job_id:currentJob.id,hr_email:currentJob.hr_email,
-    candidate_name:fd.get("name"),candidate_mobile:fd.get("mobile"),candidate_email:fd.get("email"),
-    candidate_location:fd.get("location"),qualification:fd.get("qualification"),experience:fd.get("experience")||""
-  }).select("id").single();
-  if(error){msg.className="danger";msg.textContent=error.message;return;}
-  const ext=file.name.split(".").pop().toLowerCase(), path=`${currentJob.id}/${app.id}.${ext}`;
-  const up=await sb.storage.from("resumes").upload(path,file,{upsert:false});
-  if(up.error){await sb.from("applications").delete().eq("id",app.id);msg.className="danger";msg.textContent=up.error.message;return;}
-  await sb.from("applications").update({resume_path:path}).eq("id",app.id);
-  // Edge Function sends the email to the HR address stored on the job.
-  const fn=await sb.functions.invoke("notify-hr",{body:{application_id:app.id}});
-  if(fn.error){msg.className="danger";msg.textContent="Application saved, but HR email notification failed. Please contact the HR.";return;}
-  msg.className="success";msg.textContent="Application submitted successfully. HR has been notified by email.";
-  form.reset();
+  if(!currentJob || !currentJob.hr_email){msg.className="danger";msg.textContent="This job has no HR email configured.";return;}
+  msg.className="";msg.textContent="Submitting application...";
+
+  try {
+    const resumeBase64=await fileToBase64(file);
+    const payload={
+      hr_email:currentJob.hr_email,
+      job_title:currentJob.title,
+      company:currentJob.company,
+      job_location:currentJob.location||"",
+      candidate_name:fd.get("name"),
+      candidate_mobile:fd.get("mobile"),
+      candidate_email:fd.get("email"),
+      candidate_location:fd.get("location"),
+      qualification:fd.get("qualification"),
+      experience:fd.get("experience")||"",
+      resume_base64:resumeBase64,
+      resume_name:file.name,
+      resume_type:file.type||"application/octet-stream"
+    };
+
+    /* Save the application in Supabase first. */
+    const {data:app,error:appError}=await sb.from("applications").insert({
+      job_id:currentJob.id,hr_email:currentJob.hr_email,
+      candidate_name:payload.candidate_name,candidate_mobile:payload.candidate_mobile,
+      candidate_email:payload.candidate_email,candidate_location:payload.candidate_location,
+      qualification:payload.qualification,experience:payload.experience
+    }).select("id").single();
+    if(appError) throw new Error(appError.message);
+
+    /* Also keep the resume in Supabase storage for the HR dashboard/history. */
+    const ext=file.name.split(".").pop().toLowerCase();
+    const path=`${currentJob.id}/${app.id}.${ext}`;
+    const up=await sb.storage.from("resumes").upload(path,file,{upsert:false});
+    if(!up.error){await sb.from("applications").update({resume_path:path}).eq("id",app.id);}
+
+    /* Google Apps Script sends the actual email from privatejobalert2026@gmail.com. */
+    await fetch(GOOGLE_APPS_SCRIPT_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(payload)
+    });
+
+    msg.className="success";
+    msg.textContent="Application submitted successfully. HR has been notified by email.";
+    form.reset();
+  } catch(err){
+    msg.className="danger";
+    msg.textContent=err.message||"Application could not be submitted.";
+  }
 }
 
 window.authForm = function(mode){
