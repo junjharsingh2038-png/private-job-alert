@@ -2,15 +2,24 @@ name: Update SEO Job Pages
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/generate_jobs.py'
+      - '.github/workflows/update-seo-job-pages.yml'
   schedule:
     - cron: '17 * * * *'
 
 permissions:
   contents: write
 
+concurrency:
+  group: seo-job-pages
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,13 +29,35 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Check Supabase API
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --retry 3 --retry-delay 2 \
+            -H 'apikey: sb_publishable_ocJhWyfPg9rVhYROn_Vj0Q_DSSgxeuE' \
+            -H 'Authorization: Bearer sb_publishable_ocJhWyfPg9rVhYROn_Vj0Q_DSSgxeuE' \
+            'https://rlidcatrwonemshwzafp.supabase.co/rest/v1/jobs?select=id,title,company,location,qualification,salary,job_type,description,hr_email,created_at&is_active=eq.true&order=created_at.desc&limit=1000' \
+            -o /tmp/jobs.json
+          python - <<'PY'
+          import json
+          with open('/tmp/jobs.json', encoding='utf-8') as f:
+              jobs = json.load(f)
+          print(f'Supabase API OK: {len(jobs)} active jobs found.')
+          for job in jobs:
+              print('-', job.get('title'), '|', job.get('company'))
+          PY
+
       - name: Generate job pages and sitemap
         run: python scripts/generate_jobs.py
 
-      - name: Commit changes
+      - name: Commit generated pages
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jobs sitemap.xml
-          git diff --cached --quiet || git commit -m 'Update job SEO pages and sitemap'
-          git push
+          if git diff --cached --quiet; then
+            echo 'No SEO page changes required.'
+          else
+            git commit -m 'Update job SEO pages and sitemap'
+            git push
+          fi
