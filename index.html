@@ -38,7 +38,7 @@ footer{background:#06152d;color:#aebfd6;padding:35px 0 17px}.foot{display:grid;g
 <footer><div class="c foot"><div><h3>Private Job Alert Rajasthan</h3><p>Professional private-job information platform for Rajasthan and India.</p></div><div><h4>For Job Seekers</h4><a href="#jobs">Latest Jobs</a><a href="#jobs">Search Jobs</a><a href="#how">How It Works</a></div><div><h4>For HR</h4><a href="#hr">Create Account</a><a href="#hr">Post a Job</a><a href="#hr">Manage Jobs</a></div></div><div class="c copy">© 2026 Private Job Alert Rajasthan. Verify vacancy details before applying.</div></footer>
 
 <div class="modal" id="hrModal"><div class="box"><div class="mh"><div><h2 style="margin:0">HR / Employer Portal</h2><p class="muted">Create your company profile or login</p></div><button class="close" onclick="closeHR()">×</button></div>
-<div id="authArea"><div class="form"><div class="field"><label>EMAIL</label><input id="email" type="email" placeholder="hr@company.com"></div><div class="field"><label>PASSWORD</label><input id="password" type="password" placeholder="Minimum 6 characters"></div></div><div style="display:flex;gap:8px;margin-top:15px"><button class="btn primary" onclick="hrLogin()">Login</button><button class="btn soft" onclick="hrSignup()">Create HR Account</button></div><p class="muted">New HR? Create an account first.</p></div>
+<div id="authArea"><div class="form"><div class="field"><label>EMAIL</label><input id="email" type="email" placeholder="hr@company.com"></div><div class="field"><label>PASSWORD</label><input id="password" type="password" placeholder="Minimum 6 characters"></div></div><div style="display:flex;gap:8px;margin-top:15px"><button type="button" id="loginBtn" class="btn primary" onclick="hrLogin(event)">Login</button><button type="button" class="btn soft" onclick="hrSignup(event)">Create HR Account</button></div><p class="muted">New HR? Create an account first.</p><button type="button" class="btn" style="background:none;color:var(--blue);padding-left:0" onclick="forgotPassword()">Forgot Password?</button><div id="authMsg" style="display:none;margin-top:12px;padding:10px;border-radius:8px;background:#fff4e5;color:#7a4b00;font-size:12px"></div></div>
 <div class="dashboard" id="dashboard">
 <div class="profile"><div class="companyLogo" id="companyLogo">🏢</div><div><b id="profileCompany">Company</b><br><span class="muted" id="profileContact"></span><br><span class="muted" id="profileLocation"></span></div><button class="btn soft" onclick="saveProfile()">Save Profile</button></div>
 <h3>Company Profile</h3><div class="form"><div class="field"><label>COMPANY NAME *</label><input id="pCompany"></div><div class="field"><label>CONTACT PERSON</label><input id="pContact"></div><div class="field"><label>PHONE</label><input id="pPhone"></div><div class="field"><label>LOCATION</label><input id="pLocation"></div><div class="field full"><label>LOGO URL</label><input id="pLogo" placeholder="https://..."></div></div>
@@ -81,19 +81,47 @@ function closeHR(){
   document.getElementById("hrModal").classList.remove("show");
 }
 async function loadJobs(){let q=val("search"),query=db.from("jobs").select("*").order("created_at",{ascending:false});if(q)query=query.or(`title.ilike.%${q}%,company.ilike.%${q}%,company_name.ilike.%${q}%,location.ilike.%${q}%,qualification.ilike.%${q}%`);let {data,error}=await query;if(error){document.getElementById("jobList").innerHTML='<div class="empty">Jobs load नहीं हो सकीं.</div>';return}document.getElementById("count").textContent=(data?.length||0)+" Jobs";document.getElementById("jobList").innerHTML=data?.length?data.map(j=>`<article class="job"><div class="jobTop"><div class="logo">${esc((j.company_name||j.company||"JOB").replace(/[^A-Za-z]/g,"").slice(0,3).toUpperCase())}</div><span class="tag">${esc(j.type||"Private Job")}</span></div><h3>${esc(j.title)}</h3><div class="company">${esc(j.company_name||j.company)}</div><div class="meta"><div>📍 ${esc(j.location)}</div><div>🎓 ${esc(j.qualification||"Any")}</div><div>💰 ${esc(j.salary||"Not specified")}</div><div>⏰ ${esc(j.lastdate||"Check source")}</div></div><div class="desc">${esc(j.description||"Official vacancy details available through apply link.")}</div><div class="bottom"><span style="font-size:10px;color:#8996a8">${j.created_at?new Date(j.created_at).toLocaleDateString("en-IN"):"Latest"}</span><a class="apply" href="${esc(/^https?:\/\//i.test(j.apply_url||"")?j.apply_url:"#")}" target="_blank" rel="noopener">Apply Now ↗</a></div></article>`).join(""):'<div class="empty">No jobs found.</div>'}
-async function hrSignup(){let e=val("email"),p=document.getElementById("password").value;if(!e||p.length<6)return toast("Valid email और 6+ character password दें");let {data,error}=await db.auth.signUp({email:e,password:p});if(error)return toast(error.message);if(data.session){session=data.session;await showDashboard();return}toast("Account created. Email verification required होने पर email verify करके Login करें.")}
-async function hrLogin(){
-  let e=val("email"),p=document.getElementById("password").value;
-  if(!e||!p)return toast("Email और password भरें");
-  let {data,error}=await db.auth.signInWithPassword({email:e,password:p});
-  if(error)return toast(error.message);
-  session=data.session;
-  document.getElementById("authArea").style.display="none";
-  document.getElementById("dashboard").classList.add("show");
-  await loadProfile();
-  await loadMyJobs();
-  toast("Login successful");
+function authMessage(msg,ok=false){const el=document.getElementById("authMsg");if(!el)return;el.textContent=msg;el.style.display="block";el.style.background=ok?"#e9faf1":"#fff4e5";el.style.color=ok?"#067647":"#7a4b00";}
+async function hrSignup(){
+  try{
+    let e=val("email"),p=document.getElementById("password").value;
+    if(!e||p.length<6)return authMessage("Valid email और कम से कम 6 character password दें।");
+    const btn=document.getElementById("loginBtn"); btn.disabled=true; btn.textContent="Please wait...";
+    let {data,error}=await db.auth.signUp({email:e,password:p});
+    btn.disabled=false; btn.textContent="Login";
+    if(error)return authMessage(error.message);
+    if(data.session){session=data.session;await showDashboard();return}
+    authMessage("Account बन गया है। अगर email verification मांगे तो email verify करके फिर Login करें।",true);
+  }catch(err){document.getElementById("loginBtn").disabled=false;document.getElementById("loginBtn").textContent="Login";authMessage("Connection error: "+(err?.message||err));}
 }
+async function hrLogin(event){
+  if(event)event.preventDefault();
+  try{
+    let e=val("email"),p=document.getElementById("password").value;
+    if(!e||!p)return authMessage("Email और password भरें।");
+    const btn=document.getElementById("loginBtn");
+    btn.disabled=true; btn.textContent="Logging in..."; authMessage("Login हो रहा है...");
+    const result=await Promise.race([
+      db.auth.signInWithPassword({email:e,password:p}),
+      new Promise((_,reject)=>setTimeout(()=>reject(new Error("Server response में बहुत समय लग रहा है। Internet check करके फिर कोशिश करें।")),15000))
+    ]);
+    const {data,error}=result;
+    if(error){btn.disabled=false;btn.textContent="Login";return authMessage(error.message);}
+    if(!data?.session){btn.disabled=false;btn.textContent="Login";return authMessage("Login नहीं हुआ। Email/password सही है या नहीं जाँचें।");}
+    session=data.session;
+    document.getElementById("authArea").style.display="none";
+    document.getElementById("dashboard").classList.add("show");
+    await loadProfile();
+    await loadMyJobs();
+    btn.disabled=false; btn.textContent="Login";
+    toast("Login successful");
+  }catch(err){
+    const btn=document.getElementById("loginBtn");btn.disabled=false;btn.textContent="Login";
+    authMessage("Login error: "+(err?.message||err));
+  }
+}
+
+async function forgotPassword(){try{let e=val("email");if(!e)return authMessage("पहले अपना email लिखें।");let {error}=await db.auth.resetPasswordForEmail(e,{redirectTo:location.origin+location.pathname});if(error)return authMessage(error.message);authMessage("Password reset link आपके email पर भेज दिया गया है।",true)}catch(err){authMessage("Reset error: "+(err?.message||err))}}
 async function showDashboard(){document.getElementById("authArea").style.display="none";document.getElementById("dashboard").classList.add("show");await loadProfile();await loadMyJobs()}
 async function loadProfile(){let {data}=await db.from("hr_profiles").select("*").eq("id",session.user.id).maybeSingle();if(data){["company","contact","phone","location","logo"].forEach(k=>document.getElementById("p"+k.charAt(0).toUpperCase()+k.slice(1)).value=data[k]||"");document.getElementById("profileCompany").textContent=data.company_name||"Company";document.getElementById("profileContact").textContent=data.contact_name||"";document.getElementById("profileLocation").textContent=data.location||"";if(data.logo_url)document.getElementById("companyLogo").innerHTML=`<img src="${esc(data.logo_url)}" style="max-width:100%;max-height:100%;border-radius:12px">`}}
 async function saveProfile(){let company=val("pCompany");if(!company)return toast("Company name जरूरी है");let payload={id:session.user.id,company_name:company,contact_name:val("pContact"),phone:val("pPhone"),email:session.user.email,location:val("pLocation"),logo_url:val("pLogo")};let {error}=await db.from("hr_profiles").upsert(payload);if(error)return toast("Profile save failed. Supabase SQL/RLS check करें.");await loadProfile();toast("Profile saved")}
