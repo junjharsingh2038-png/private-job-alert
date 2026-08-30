@@ -1,4 +1,1 @@
-User-agent: *
-Allow: /
 
-Sitemap: https://junjharsingh2038-png.github.io/private-job-alert/sitemap.xml
