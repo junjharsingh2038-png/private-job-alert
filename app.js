@@ -87,22 +87,7 @@ async function submitApplication(e){
       resume_type:file.type||"application/octet-stream"
     };
 
-    /* Save the application in Supabase first. */
-    const {data:app,error:appError}=await sb.from("applications").insert({
-      job_id:currentJob.id,hr_email:currentJob.hr_email,
-      candidate_name:payload.candidate_name,candidate_mobile:payload.candidate_mobile,
-      candidate_email:payload.candidate_email,candidate_location:payload.candidate_location,
-      qualification:payload.qualification,experience:payload.experience
-    }).select("id").single();
-    if(appError) throw new Error(appError.message);
-
-    /* Also keep the resume in Supabase storage for the HR dashboard/history. */
-    const ext=file.name.split(".").pop().toLowerCase();
-    const path=`${currentJob.id}/${app.id}.${ext}`;
-    const up=await sb.storage.from("resumes").upload(path,file,{upsert:false});
-    if(!up.error){await sb.from("applications").update({resume_path:path}).eq("id",app.id);}
-
-    /* Google Apps Script sends the actual email from privatejobalert2026@gmail.com. */
+    /* Direct email: no Resend, no domain, and no applications-table dependency. */
     await fetch(GOOGLE_APPS_SCRIPT_URL,{
       method:"POST",
       mode:"no-cors",
