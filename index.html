@@ -119,9 +119,9 @@ footer{background:#06152d;color:#aebfd6;padding:40px 0 18px}.footGrid{display:gr
 <div><h4>Contact</h4><p>📍 Rajasthan, India<br>📧 support@privatejobalertrajasthan.in<br>📱 WhatsApp / Telegram</p></div>
 </div><div class="container copy"><span>© 2026 Private Job Alert Rajasthan. All Rights Reserved.</span><span>Hero photo: Nahargarh Fort, Jaipur — CC0 / Wikimedia Commons</span></div></footer>
 
-<div class="modal" id="loginModal"><div class="modalBox small"><div class="modalHead"><div><h2 style="margin:0">Admin Login</h2><p class="muted">Manage jobs securely</p></div><button class="close" onclick="closeLogin()">×</button></div><div class="field"><label>EMAIL</label><input id="email" type="email" placeholder="HR email"></div><div class="field"><label>PASSWORD</label><input id="password" type="password" placeholder="Password"></div><button id="loginBtn" class="btn btnBlue" style="width:100%;margin-top:13px" onclick="login()">Login</button><button class="btn btnLight" style="width:100%;margin-top:8px" onclick="openSignup()">＋ Create HR Account</button><div id="loginStatus" class="muted" style="margin-top:10px;min-height:18px"></div></div></div>
+<div class="modal" id="loginModal"><div class="modalBox small"><div class="modalHead"><div><h2 style="margin:0">HR / Employer Login</h2><p class="muted">Any HR can create an account and publish vacancies</p></div><button class="close" onclick="closeLogin()">×</button></div><div class="field"><label>EMAIL</label><input id="email" type="email" placeholder="HR email"></div><div class="field"><label>PASSWORD</label><input id="password" type="password" placeholder="Password"></div><button id="loginBtn" class="btn btnBlue" style="width:100%;margin-top:13px" onclick="login()">Login</button><button class="btn btnLight" style="width:100%;margin-top:8px" onclick="openSignup()">＋ Create HR Account</button><div id="loginStatus" class="muted" style="margin-top:10px;min-height:18px"></div><button class="btn btnLight" style="width:100%;margin-top:8px" onclick="resetPassword()">Forgot Password</button></div></div>
 
-<div class="modal" id="signupModal"><div class="modalBox small"><div class="modalHead"><div><h2 style="margin:0">Create HR Account</h2><p class="muted">HR / Employer registration</p></div><button class="close" onclick="closeSignup()">×</button></div><div class="field"><label>HR / COMPANY EMAIL *</label><input id="signupEmail" type="email" placeholder="hr@company.com"></div><div class="field"><label>PASSWORD *</label><input id="signupPassword" type="password" placeholder="Minimum 6 characters"></div><div class="field"><label>COMPANY / HR NAME</label><input id="signupName" placeholder="Company or HR name"></div><button id="signupBtn" class="btn btnBlue" style="width:100%;margin-top:13px" onclick="signupHR()">Create Account</button><div id="signupStatus" class="muted" style="margin-top:10px;min-height:18px"></div></div></div>
+<div class="modal" id="signupModal"><div class="modalBox small"><div class="modalHead"><div><h2 style="margin:0">Create HR Account</h2><p class="muted">HR / Employer registration</p></div><button class="close" onclick="closeSignup()">×</button></div><div class="field"><label>EMAIL *</label><input id="signupEmail" type="email" placeholder="hr@company.com"></div><div class="field"><label>PASSWORD *</label><input id="signupPassword" type="password" placeholder="Minimum 6 characters"></div><div class="field"><label>COMPANY / HR NAME</label><input id="signupName" placeholder="Company or HR name"></div><div class="field"><label>PHONE</label><input id="signupPhone" type="tel" placeholder="10 digit mobile number"></div><div class="field"><label>COMPANY LOCATION</label><input id="signupLocation" placeholder="Jaipur, Rajasthan"></div><button id="signupBtn" class="btn btnBlue" style="width:100%;margin-top:13px" onclick="signupHR()">Create Account</button><div id="signupStatus" class="muted" style="margin-top:10px;min-height:18px"></div></div></div>
 
 <div class="modal" id="adminModal"><div class="modalBox"><div class="modalHead"><div><h2 style="margin:0">HR Dashboard</h2><p class="muted">Publish and manage your company vacancies</p></div><button class="close" onclick="closeAdmin()">×</button></div>
 <div class="adminPanel" id="adminPanel"><div class="formGrid">
@@ -167,22 +167,25 @@ async function loadJobs(){
  <div class="jobBottom"><span class="posted">${j.created_at?new Date(j.created_at).toLocaleDateString("en-IN"):"Latest"}</span><a class="apply" href="${esc(safeUrl(j.apply_url))}" target="_blank" rel="noopener noreferrer">Apply Now ↗</a></div></article>`}).join("");
 }
 function contactEmployer(plan){const subject=encodeURIComponent('Job Posting Enquiry - '+plan);const body=encodeURIComponent('Namaste, I want to purchase: '+plan+'\nCompany Name: \nContact Number: \nJob Details: ');window.location.href='mailto:support@privatejobalertrajasthan.in?subject='+subject+'&body='+body}
-function openAdmin(){document.getElementById("adminModal").classList.add("show");document.getElementById("loginModal").classList.add("show")}
+async function openAdmin(){const {data:{session}}=await db.auth.getSession();document.getElementById("adminModal").classList.add("show");if(session){document.getElementById("adminPanel").classList.add("show");await renderAdmin()}else document.getElementById("loginModal").classList.add("show")}
 function closeLogin(){document.getElementById("loginModal").classList.remove("show")}
 function closeAdmin(){document.getElementById("adminModal").classList.remove("show");closeLogin();closeSignup()}
 function openSignup(){closeLogin();document.getElementById("signupModal").classList.add("show")}
 function closeSignup(){document.getElementById("signupModal").classList.remove("show")}
 async function signupHR(){
- const e=val("signupEmail"),p=document.getElementById("signupPassword").value,n=val("signupName");
+ const e=val("signupEmail"),p=document.getElementById("signupPassword").value,n=val("signupName"),phone=val("signupPhone"),loc=val("signupLocation");
  const status=document.getElementById("signupStatus"),btn=document.getElementById("signupBtn");
- if(!e||!p)return status.textContent="Email और password जरूरी हैं";
+ if(!e||!p||!n)return status.textContent="Email, password और HR/Company name जरूरी हैं";
  if(p.length<6)return status.textContent="Password कम से कम 6 characters का रखें";
  btn.disabled=true;btn.textContent="Creating account…";status.textContent="Account बनाया जा रहा है…";
  try{
-  const {data,error}=await db.auth.signUp({email:e,password:p,options:{data:{role:"hr",company_name:n}}});
+  const {data,error}=await db.auth.signUp({email:e,password:p,options:{data:{role:"hr",company_name:n,phone:phone,location:loc}}});
   if(error){status.textContent="Registration failed: "+(error.message||"try again");return}
-  if(data?.session){closeSignup();document.getElementById("adminModal").classList.add("show");document.getElementById("adminPanel").classList.add("show");await renderAdmin();toast("HR account created")}
-  else status.textContent="Account बन गया. Email में confirmation link हो तो पहले confirm करें, फिर Login करें.";
+  if(data?.session){
+    closeSignup(); document.getElementById("adminModal").classList.add("show"); document.getElementById("adminPanel").classList.add("show"); await renderAdmin(); toast("HR account created successfully");
+  } else {
+    status.textContent="Account बन गया। Email confirmation required है—पहले email verify करें, फिर Login करें.";
+  }
  }catch(err){status.textContent="Connection error: "+(err?.message||"try again")}
  finally{btn.disabled=false;btn.textContent="Create Account"}
 }
@@ -190,21 +193,43 @@ async function login(){
  const e=val("email"),p=document.getElementById("password").value;
  const status=document.getElementById("loginStatus"),btn=document.getElementById("loginBtn");
  if(!e||!p){status.textContent="Email और password दोनों भरें";return}
- if(!window.supabase||!db){status.textContent="Supabase load नहीं हुआ. Internet check करके refresh करें.";return}
- btn.disabled=true;btn.textContent="Logging in…";status.textContent="Supabase से login हो रहा है…";
+ btn.disabled=true;btn.textContent="Logging in…";status.textContent="Login हो रहा है…";
  try{
-   const result=await db.auth.signInWithPassword({email:e,password:p});
-   if(result.error){status.textContent="Login failed: "+(result.error.message||"email/password check करें");toast("Login failed");return}
-   closeLogin();
-   document.getElementById("adminPanel").classList.add("show");
-   await renderAdmin();
-   toast("Login successful");
- }catch(err){status.textContent="Connection error: "+(err?.message||"Supabase से संपर्क नहीं हो पाया");toast("Login connection error")}
+   const {data,error}=await db.auth.signInWithPassword({email:e,password:p});
+   if(error){status.textContent="Login failed: "+(error.message||"email/password check करें");return}
+   closeLogin();document.getElementById("adminPanel").classList.add("show");await renderAdmin();toast("Login successful");
+ }catch(err){status.textContent="Connection error: "+(err?.message||"Supabase से संपर्क नहीं हो पाया")}
  finally{btn.disabled=false;btn.textContent="Login"}
 }
-async function addJob(){const j={title:val("title"),company:val("company"),location:val("location"),type:val("type"),qualification:val("qualification"),salary:val("salary"),lastdate:val("lastdate"),apply_url:val("apply"),description:val("description")};if(!j.title||!j.company||!j.location)return toast("Title, Company और Location जरूरी हैं");if(j.apply_url&&!/^https?:\/\//i.test(j.apply_url))return toast("Apply link https:// से शुरू करें");const {error}=await db.from("jobs").insert(j);if(error)return toast("Publish failed — RLS/policy check करें");["title","company","location","qualification","salary","lastdate","apply","description"].forEach(id=>document.getElementById(id).value="");document.getElementById("type").value="Full Time";toast("Job published successfully");await loadJobs();await renderAdmin()}
-async function renderAdmin(){const {data,error}=await db.from("jobs").select("*").order("created_at",{ascending:false});if(error)return;document.getElementById("adminJobs").innerHTML=data?.length?data.map(j=>`<div class="adminItem"><div><b>${esc(j.title)}</b><br><small class="muted">${esc(j.company)} • ${esc(j.location)}</small></div><button class="danger" onclick="deleteJob('${j.id}')">Delete</button></div>`).join(""):"<p class='muted'>No published jobs yet.</p>"}
-async function deleteJob(id){if(!confirm("इस job को delete करें?"))return;const {error}=await db.from("jobs").delete().eq("id",id);if(error)return toast("Delete failed");await renderAdmin();await loadJobs();toast("Job deleted")}
+async function resetPassword(){
+ const e=val("email"),status=document.getElementById("loginStatus");
+ if(!e){status.textContent="पहले अपना email डालें";return}
+ const {error}=await db.auth.resetPasswordForEmail(e,{redirectTo:location.href});
+ status.textContent=error?"Reset failed: "+error.message:"Password reset link email पर भेज दिया गया है.";
+}
+async function addJob(){
+ const {data:{user}}=await db.auth.getUser();
+ if(!user)return toast("पहले HR Login करें");
+ const j={user_id:user.id,title:val("title"),company:val("company"),location:val("location"),type:val("type"),qualification:val("qualification"),salary:val("salary"),lastdate:val("lastdate"),apply_url:val("apply"),description:val("description")};
+ if(!j.title||!j.company||!j.location)return toast("Title, Company और Location जरूरी हैं");
+ if(j.apply_url&&!/^https?:\/\//i.test(j.apply_url))return toast("Apply link https:// से शुरू करें");
+ const {error}=await db.from("jobs").insert(j);
+ if(error)return toast("Publish failed: "+error.message);
+ ["title","company","location","qualification","salary","lastdate","apply","description"].forEach(id=>document.getElementById(id).value="");document.getElementById("type").value="Full Time";
+ toast("Job published successfully");await loadJobs();await renderAdmin();
+}
+async function renderAdmin(){
+ const {data:{user}}=await db.auth.getUser(); if(!user)return;
+ const {data,error}=await db.from("jobs").select("*").eq("user_id",user.id).order("created_at",{ascending:false});
+ if(error){document.getElementById("adminJobs").innerHTML='<p class="muted">Jobs load नहीं हुईं: '+esc(error.message)+'</p>';return}
+ document.getElementById("adminJobs").innerHTML=data?.length?data.map(j=>`<div class="adminItem"><div><b>${esc(j.title)}</b><br><small class="muted">${esc(j.company)} • ${esc(j.location)}</small></div><button class="danger" onclick="deleteJob('${j.id}')">Delete</button></div>`).join(""):"<p class='muted'>आपने अभी कोई job publish नहीं की है.</p>";
+}
+async function deleteJob(id){
+ if(!confirm("इस job को delete करें?"))return;
+ const {data:{user}}=await db.auth.getUser(); if(!user)return toast("Login expired");
+ const {error}=await db.from("jobs").delete().eq("id",id).eq("user_id",user.id);
+ if(error)return toast("Delete failed: "+error.message);await renderAdmin();await loadJobs();toast("Job deleted");
+}
 async function logout(){await db.auth.signOut();location.reload()}
 document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 db.auth.onAuthStateChange((event,session)=>{if(session){document.getElementById("adminModal").classList.add("show");document.getElementById("adminPanel").classList.add("show");renderAdmin()}});
