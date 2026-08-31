@@ -10,18 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Correct broken HR register code
+      - name: Correct HR dashboard sections
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           p=Path('hr.html')
           s=p.read_text()
-          s=s.replace("const u=const updated=await sb.auth.updateUser", "const updated=await sb.auth.updateUser")
-          s=s.replace("if(u.error)throw u.error;", "")
-          s=s.replace("pending={email,hr_name:name,company};", "const password=String(f.get('password')||'');if(password.length<6){msg.className='danger';msg.textContent='Password कम से कम 6 characters का होना चाहिए।';return;}pending={email,hr_name:name,company,password};")
-          s=s.replace("data:pending", "data:{hr_name:pending.hr_name,company:pending.company}")
-          s=s.replace("await sb.auth.updateUser({data:{hr_name:pending.hr_name,company:pending.company}});", "const updated=await sb.auth.updateUser({password:pending.password,data:{hr_name:pending.hr_name,company:pending.company}});if(updated.error)throw updated.error;")
-          s=s.replace('<script src="app.js" type="module"></script>', '<script src="app.js"></script>', 1)
+          s=re.sub(r'id="postedJobsSection" class="info-section(?! hidden)"','id="postedJobsSection" class="info-section hidden"',s,count=1)
+          s=re.sub(r'id="applicationsSection" class="info-section(?! hidden)"','id="applicationsSection" class="info-section hidden"',s,count=1)
           p.write_text(s)
           PY
       - name: Commit corrected HR page
