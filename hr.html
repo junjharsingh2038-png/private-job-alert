@@ -22,9 +22,22 @@
 <div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
-<script src="hr-dashboard-v2.js?v=1"></script>
+<script src="hr-dashboard-v2.js?v=2"></script>
 <script>
 document.getElementById('loginBtn').onclick=()=>window.authForm('login');document.getElementById('createBtn').onclick=()=>window.authForm('signup');document.getElementById('createBtn2').onclick=()=>window.authForm('signup');
-const hrInfo={free:['Free Job Posting','Post your private-sector vacancy on Private Job Alert Rajasthan without a posting fee. Add the job title, company name, location, qualification, salary, job type and vacancy details.'],reach:['Reach Candidates','Candidates can find vacancies according to city, qualification and job type. Clear job details help the right candidates discover and apply for your vacancy.'],applications:['Direct Applications','Candidates can submit their name, mobile number, email, location, qualification, experience and resume. Applications are then available to the HR/employer account.'],account:['Step 1 — Create HR Account','Click Create HR Account — FREE, enter your email, password and company name, then create the employer account.'],post:['Step 2 — Post Vacancy','After login, choose Post New Job and enter the vacancy details. Publish the job so candidates can view it and apply.'],receive:['Applications Received','When candidates apply, their application details appear in your HR dashboard. You can review the candidate information and manage your vacancies from the same account.']};
-window.showHrInfo=function(key){const item=hrInfo[key];if(!item)return;document.getElementById('hrInfoTitle').textContent=item[0];document.getElementById('hrInfoText').innerHTML='<p>'+item[1]+'</p><button onclick="authForm(\'signup\')">Create HR Account — FREE</button>';const box=document.getElementById('hrInfo');box.classList.remove('hidden-info');box.scrollIntoView({behavior:'smooth',block:'center'});};
+const hrInfo={free:['Free Job Posting','Post your private-sector vacancy on Private Job Alert Rajasthan without a posting fee. Add the job title, company name, location, qualification, salary, job type and vacancy details.'],reach:['Reach Candidates','Candidates can find vacancies according to city, qualification and job type. Clear job details help the right candidates discover and apply for your vacancy.'],applications:['Direct Applications','Candidates can submit their name, mobile number, email, location, qualification, experience and resume. Applications are then available to the HR/employer account.'],account:['Step 1 — Create HR Account','Click Create HR Account — FREE, enter your email, password and company name, then create the employer account.'],post:['Step 2 — Post Vacancy','After login, choose Post New Job and enter the vacancy details. Publish the job so candidates can view it and apply.'],receive:['Applications Received','']};
+window.showHrInfo=function(key){
+  const title=document.getElementById('hrInfoTitle'), text=document.getElementById('hrInfoText'), box=document.getElementById('hrInfo');
+  if(key==='receive'){
+    const apps=window.hrApplications||[];
+    title.textContent='Applications Received';
+    if(apps.length){
+      text.innerHTML='<p>आपके HR account पर received applications इसी page में नीचे दिखाई दे रही हैं।</p><div class="hr-list">'+apps.map(a=>`<article class="application-card"><div class="candidate-top"><div><h3>${esc2(a.candidate_name)}</h3><p>📱 ${esc2(a.candidate_mobile)} &nbsp; · &nbsp; ✉️ ${esc2(a.candidate_email)}</p></div><span class="application-label">Application</span></div><div class="candidate-details"><span>🎓 ${esc2(a.qualification||'Not specified')}</span><span>💼 ${esc2(a.experience||'Fresher')}</span><span>📍 ${esc2(a.candidate_location||'Not specified')}</span></div><small>${a.created_at?new Date(a.created_at).toLocaleString():''}</small></article>`).join('')+'</div>';
+    }else{text.innerHTML='<div class="empty-state"><b>No applications to display</b><p>Login करें या candidate application आने के बाद यह card यहीं details दिखाएगा।</p></div>'}
+  }else{
+    const item=hrInfo[key];if(!item)return;title.textContent=item[0];text.innerHTML='<p>'+item[1]+'</p><button onclick="authForm(\'signup\')">Create HR Account — FREE</button>';
+  }
+  box.classList.remove('hidden-info');box.scrollIntoView({behavior:'smooth',block:'center'});
+};
+function esc2(v){return String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));}
 </script></body></html>
