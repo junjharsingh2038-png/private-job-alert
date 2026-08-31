@@ -1,0 +1,33 @@
+name: Fix HR Register Now
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix HR register now - corrected'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Correct broken HR register code
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('hr.html')
+          s=p.read_text()
+          s=s.replace("const u=const updated=await sb.auth.updateUser", "const updated=await sb.auth.updateUser")
+          s=s.replace("if(u.error)throw u.error;", "")
+          s=s.replace("pending={email,hr_name:name,company};", "const password=String(f.get('password')||'');if(password.length<6){msg.className='danger';msg.textContent='Password कम से कम 6 characters का होना चाहिए।';return;}pending={email,hr_name:name,company,password};")
+          s=s.replace("data:pending", "data:{hr_name:pending.hr_name,company:pending.company}")
+          s=s.replace("await sb.auth.updateUser({data:{hr_name:pending.hr_name,company:pending.company}});", "const updated=await sb.auth.updateUser({password:pending.password,data:{hr_name:pending.hr_name,company:pending.company}});if(updated.error)throw updated.error;")
+          s=s.replace('<script src="app.js" type="module"></script>', '<script src="app.js"></script>', 1)
+          p.write_text(s)
+          PY
+      - name: Commit corrected HR page
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hr.html
+          git diff --cached --quiet || git commit -m 'Fix HR register now - corrected'
+          git push
