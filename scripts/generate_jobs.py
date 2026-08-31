@@ -36,27 +36,44 @@ def job_slug(job):
     return f"{slug(job.get('title'))}-{slug(job.get('company'))}-{str(job.get('id'))[:8]}"
 
 
+def clean_text(value, fallback=''):
+    text = re.sub(r'<[^>]+>', ' ', str(value or ''))
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text or fallback
+
+
 def page(job):
-    raw_title = job.get('title') or 'Private Job'
-    raw_company = job.get('company') or 'Employer'
-    raw_location = job.get('location') or 'Rajasthan'
-    raw_qualification = job.get('qualification') or 'Any qualification'
-    raw_salary = job.get('salary') or 'As per company'
-    raw_type = job.get('job_type') or 'Full Time'
-    raw_description = job.get('description') or f'Apply for {raw_title} at {raw_company} in {raw_location}.'
+    raw_title = clean_text(job.get('title'), 'Private Job')
+    raw_company = clean_text(job.get('company'), 'Employer')
+    raw_location = clean_text(job.get('location'), 'Rajasthan')
+    raw_qualification = clean_text(job.get('qualification'), 'Any qualification')
+    raw_salary = clean_text(job.get('salary'), 'As per company')
+    raw_type = clean_text(job.get('job_type'), 'Full Time')
+    raw_description = clean_text(job.get('description'), f'Apply for {raw_title} at {raw_company} in {raw_location}.')
     jid = str(job.get('id'))
     url = f'{BASE}/jobs/{job_slug(job)}/'
+    date_posted = str(job.get('created_at') or '')[:10]
 
-    title, company, location, qualification, salary, job_type, description = map(
-        escape,
-        [raw_title, raw_company, raw_location, raw_qualification, raw_salary, raw_type, raw_description],
+    title = escape(raw_title)
+    company = escape(raw_company)
+    location = escape(raw_location)
+    qualification = escape(raw_qualification)
+    salary = escape(raw_salary)
+    job_type = escape(raw_type)
+    description = escape(raw_description)
+    meta_description = escape(
+        f'{raw_title} at {raw_company} in {raw_location}. Qualification: {raw_qualification}. '
+        f'Salary: {raw_salary}. Apply online for this private job in Rajasthan.'[:158],
+        quote=True,
     )
+    safe_url = escape(url, quote=True)
+
     schema = json.dumps({
         '@context': 'https://schema.org',
         '@type': 'JobPosting',
         'title': raw_title,
-        'description': re.sub(r'<[^>]+>', ' ', raw_description),
-        'datePosted': str(job.get('created_at') or '')[:10],
+        'description': raw_description,
+        'datePosted': date_posted,
         'hiringOrganization': {'@type': 'Organization', 'name': raw_company},
         'jobLocation': {
             '@type': 'Place',
@@ -70,25 +87,44 @@ def page(job):
         'url': url,
     }, ensure_ascii=False).replace('</', '<\\/')
 
+    breadcrumb = json.dumps({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        'itemListElement': [
+            {'@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': f'{BASE}/'},
+            {'@type': 'ListItem', 'position': 2, 'name': 'Latest Jobs', 'item': f'{BASE}/jobs/'},
+            {'@type': 'ListItem', 'position': 3, 'name': raw_title, 'item': url},
+        ],
+    }, ensure_ascii=False).replace('</', '<\\/')
+
     html = '''<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>__TITLE__ | __COMPANY__ | Private Jobs Rajasthan</title>
-<meta name="description" content="__TITLE__ at __COMPANY__ in __LOCATION__. Qualification: __QUALIFICATION__. Salary: __SALARY__. Apply online.">
-<meta name="robots" content="index,follow">
+<meta name="description" content="__META_DESCRIPTION__">
+<meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="__URL__">
+<meta property="og:type" content="website">
+<meta property="og:title" content="__TITLE__ | __COMPANY__ | Private Jobs Rajasthan">
+<meta property="og:description" content="__META_DESCRIPTION__">
+<meta property="og:url" content="__URL__">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="__TITLE__ | __COMPANY__">
+<meta name="twitter:description" content="__META_DESCRIPTION__">
 <link rel="stylesheet" href="../../style.css">
 <script type="application/ld+json">__SCHEMA__</script>
+<script type="application/ld+json">__BREADCRUMB__</script>
 </head>
 <body>
 <header>
 <div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div>
-<nav><a href="../../">Home</a> <a href="../../#jobs">Latest Jobs</a></nav>
+<nav><a href="../../">Home</a> <a href="../../#jobs">Latest Jobs</a> <a href="../../categories/">Job Categories</a></nav>
 </header>
 <main>
 <article class="job" style="max-width:900px;margin:30px auto">
+<p class="muted"><a href="../../">Home</a> › <a href="../../#jobs">Latest Jobs</a> › __TITLE__</p>
 <h1>__TITLE__</h1>
 <h2>__COMPANY__</h2>
 <p class="muted">📍 __LOCATION__ &nbsp; 🎓 __QUALIFICATION__ &nbsp; 💰 __SALARY__ &nbsp; 🕒 __JOB_TYPE__</p>
@@ -98,7 +134,7 @@ def page(job):
 <h3>How to Apply</h3>
 <p>Click Apply Now and submit your candidate details and resume. Your application will be sent to the HR email configured for this vacancy.</p>
 <button class="apply" id="applyButton">Apply Now →</button>
-<p><a href="../../">← View Latest Private Jobs</a></p>
+<p><a href="../../">← View Latest Private Jobs in Rajasthan</a></p>
 </article>
 </main>
 <div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
@@ -125,15 +161,15 @@ document.getElementById("applyButton").addEventListener("click", async function 
         .replace('__SALARY__', salary)
         .replace('__JOB_TYPE__', job_type)
         .replace('__DESCRIPTION__', description)
-        .replace('__URL__', escape(url, quote=True))
+        .replace('__META_DESCRIPTION__', meta_description)
+        .replace('__URL__', safe_url)
         .replace('__SCHEMA__', schema)
+        .replace('__BREADCRUMB__', breadcrumb)
         .replace('__JOB_ID__', json.dumps(jid))
     )
 
 
 urls = [f'{BASE}/']
-
-# Keep all evergreen SEO landing pages discoverable to Google.
 CATEGORY_SLUGS = [
     '10th-pass-jobs-rajasthan',
     '12th-pass-jobs-rajasthan',
@@ -149,8 +185,6 @@ CATEGORY_SLUGS = [
 urls.append(f'{BASE}/categories/')
 for category in CATEGORY_SLUGS:
     urls.append(f'{BASE}/categories/{category}/')
-
-# Employer landing page: important SEO entry point for HR/job posting traffic.
 urls.append(f'{BASE}/hr/')
 
 active = set()
@@ -173,9 +207,7 @@ lines = [
 ]
 for url in urls:
     priority = '1.0' if url == BASE + '/' else ('0.9' if '/categories/' in url or url == BASE + '/hr/' else '0.8')
-    lines.append(
-        f'<url><loc>{escape(url)}</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>'
-    )
+    lines.append(f'<url><loc>{escape(url)}</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>')
 lines.append('</urlset>')
 (ROOT / 'sitemap.xml').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 print(f'Generated {len(jobs)} job pages and {len(urls)} sitemap URLs.')
