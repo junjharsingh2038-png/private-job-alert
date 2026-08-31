@@ -10,12 +10,21 @@ window.closeModal = function(){ $("modal").classList.add("hidden"); };
 window.openModal = function(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); };
 function esc(v){return String(v??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[m]));}
 
-/* HR pages use the page itself for login, signup, dashboard and job posting. */
+/* HR login/dashboard always renders inside the HR page's #hrApp card. */
 function renderHrPage(html){
   const target=$("hrApp");
-  if(!target)return;
+  if(!target){
+    /* If HR Login was clicked from the public home page, open the real HR page instead of a popup. */
+    if(location.pathname.endsWith("index.html") || location.pathname === "/" || !location.pathname.includes("hr")){
+      sessionStorage.setItem("openHrLogin","1");
+      location.href="hr.html";
+      return;
+    }
+    return;
+  }
   target.innerHTML=html;
   target.classList.remove("hidden");
+  /* Keep the user's current scroll position. No automatic scrolling. */
 }
 window.renderHrPage=renderHrPage;
 
@@ -47,7 +56,8 @@ async function submitApplication(e){
 
 window.authForm = function(mode){
   renderHrPage(`<div class="hr-welcome"><h2>${mode==="login"?"HR Login":"Create HR Account"}</h2><p>${mode==="login"?"Login to your employer account to manage jobs and applications.":"Create your free employer account to post vacancies."}</p><form id="authForm" class="form"><label>Email<input type="email" name="email" required></label><label>Password<input type="password" name="password" minlength="6" required></label>${mode==="signup"?'<label>Company Name<input name="company" required></label>':''}<button>${mode==="login"?"Login":"Create Account"}</button><p id="authMsg"></p></form></div>`);
-  $("authForm").addEventListener("submit",async e=>{
+  const form=$("authForm"); if(!form)return;
+  form.addEventListener("submit",async e=>{
     e.preventDefault();const f=new FormData(e.target),email=f.get("email"),password=f.get("password"),msg=$("authMsg");msg.className="";msg.textContent="Please wait...";
     const r=mode==="login"?await sb.auth.signInWithPassword({email,password}):await sb.auth.signUp({email,password,options:{data:{company:f.get("company")}}});
     if(r.error){msg.className="danger";msg.textContent=r.error.message;return;}
@@ -66,11 +76,12 @@ window.showHrPanel = async function(){
 
 window.showPostJob = function(){
   renderHrPage(`<div class="hr-welcome"><h2>Post a Job</h2><p>Add your vacancy details and publish it for Rajasthan job seekers.</p><form id="jobForm" class="form"><label>Job Title<input name="title" required></label><label>Company<input name="company" required></label><label>Location<input name="location" required></label><label>Qualification<input name="qualification"></label><label>Salary<input name="salary"></label><label>Job Type<input name="job_type" value="Full Time"></label><label>Last Date<input name="lastdate" placeholder="DD-MM-YYYY"></label><label>Job Description<textarea name="description" rows="5"></textarea></label><div class="hr-actions"><button>Publish Job</button><button type="button" class="secondary" onclick="showHrPanel()">Back to Dashboard</button></div><p id="jobMsg"></p></form></div>`);
-  $("jobForm").addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target),{data:{user}}=await sb.auth.getUser(),msg=$("jobMsg");if(!user){msg.className="danger";msg.textContent="Please login again.";return;}const company=f.get("company");const row={hr_user_id:user.id,user_id:user.id,owner_id:user.id,hr_email:user.email,title:f.get("title"),company,company_name:company,location:f.get("location"),qualification:f.get("qualification"),salary:f.get("salary"),job_type:f.get("job_type"),type:f.get("job_type"),lastdate:f.get("lastdate")||null,description:f.get("description"),is_active:true};const r=await sb.from("jobs").insert(row);if(r.error){msg.className="danger";msg.textContent=r.error.message;return;}msg.className="success";msg.textContent="Job published successfully.";setTimeout(showHrPanel,700);});
+  const form=$("jobForm"); if(!form)return;
+  form.addEventListener("submit",async e=>{e.preventDefault();const f=new FormData(e.target),{data:{user}}=await sb.auth.getUser(),msg=$("jobMsg");if(!user){msg.className="danger";msg.textContent="Please login again.";return;}const company=f.get("company");const row={hr_user_id:user.id,user_id:user.id,owner_id:user.id,hr_email:user.email,title:f.get("title"),company,company_name:company,location:f.get("location"),qualification:f.get("qualification"),salary:f.get("salary"),job_type:f.get("job_type"),type:f.get("job_type"),lastdate:f.get("lastdate")||null,description:f.get("description"),is_active:true};const r=await sb.from("jobs").insert(row);if(r.error){msg.className="danger";msg.textContent=r.error.message;return;}msg.className="success";msg.textContent="Job published successfully.";setTimeout(showHrPanel,700);});
 }
 window.deleteJob = async function(id){if(!confirm("Delete this job?"))return;const {data:{user}}=await sb.auth.getUser();if(!user)return;const r=await sb.from("jobs").delete().eq("id",id).eq("user_id",user.id);if(r.error)alert(r.error.message);else showHrPanel();}
 
 function bindButtons(){const login=$("hrLoginBtn"),create=$("createHrBtn");if(login) login.onclick=()=>window.authForm("login");if(create) create.onclick=()=>window.authForm("signup");}
-window.addEventListener("DOMContentLoaded",()=>{bindButtons();loadJobs();});
+window.addEventListener("DOMContentLoaded",()=>{bindButtons();loadJobs();if(sessionStorage.getItem("openHrLogin")==="1" && $("hrApp")){sessionStorage.removeItem("openHrLogin");authForm("login");}});
 bindButtons();
 if(document.readyState!=="loading") loadJobs();
