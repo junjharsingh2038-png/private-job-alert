@@ -1,0 +1,31 @@
+name: Fix HR Register
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix HR register conflict'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix hr.html script scope
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('hr.html')
+          s=p.read_text()
+          old='<script src="app.js"></script><script>'
+          new='<script src="app.js" type="module"></script><script>'
+          if old in s:
+              s=s.replace(old,new,1)
+          p.write_text(s)
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hr.html
+          git diff --cached --quiet || git commit -m 'Fix HR register conflict'
+          git push
