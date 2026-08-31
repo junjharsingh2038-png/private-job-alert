@@ -1,0 +1,30 @@
+name: Fix HR Register V2
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix HR register conflict'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix duplicate dollar variable
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('hr.html')
+          s=p.read_text()
+          s=s.replace('<script src="app.js" type="module"></script>', '<script src="app.js"></script>', 1)
+          s=s.replace("let mode='login',pending={};const $=id=>document.getElementById(id);", "let mode='login',pending={};const $hr=id=>document.getElementById(id);")
+          s=s.replace("$('", "$hr('")
+          p.write_text(s)
+          PY
+      - name: Commit corrected HR page
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hr.html
+          git diff --cached --quiet || git commit -m 'Fix HR register conflict'
+          git push
