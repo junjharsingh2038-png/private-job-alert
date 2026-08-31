@@ -150,6 +150,9 @@ urls.append(f'{BASE}/categories/')
 for category in CATEGORY_SLUGS:
     urls.append(f'{BASE}/categories/{category}/')
 
+# Employer landing page: important SEO entry point for HR/job posting traffic.
+urls.append(f'{BASE}/hr/')
+
 active = set()
 for job in jobs:
     name = job_slug(job)
@@ -169,7 +172,7 @@ lines = [
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
 ]
 for url in urls:
-    priority = '1.0' if url == BASE + '/' else ('0.9' if '/categories/' in url else '0.8')
+    priority = '1.0' if url == BASE + '/' else ('0.9' if '/categories/' in url or url == BASE + '/hr/' else '0.8')
     lines.append(
         f'<url><loc>{escape(url)}</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>'
     )
