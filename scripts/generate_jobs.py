@@ -132,6 +132,24 @@ document.getElementById("applyButton").addEventListener("click", async function 
 
 
 urls = [f'{BASE}/']
+
+# Keep all evergreen SEO landing pages discoverable to Google.
+CATEGORY_SLUGS = [
+    '10th-pass-jobs-rajasthan',
+    '12th-pass-jobs-rajasthan',
+    'barmer-private-jobs',
+    'bikaner-private-jobs',
+    'fresher-jobs-rajasthan',
+    'graduate-jobs-rajasthan',
+    'jaipur-private-jobs',
+    'jaisalmer-private-jobs',
+    'jodhpur-private-jobs',
+    'work-from-home-jobs-rajasthan',
+]
+urls.append(f'{BASE}/categories/')
+for category in CATEGORY_SLUGS:
+    urls.append(f'{BASE}/categories/{category}/')
+
 active = set()
 for job in jobs:
     name = job_slug(job)
@@ -151,7 +169,7 @@ lines = [
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
 ]
 for url in urls:
-    priority = '1.0' if url == BASE + '/' else '0.8'
+    priority = '1.0' if url == BASE + '/' else ('0.9' if '/categories/' in url else '0.8')
     lines.append(
         f'<url><loc>{escape(url)}</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>'
     )
