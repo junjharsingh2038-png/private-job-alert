@@ -1,0 +1,51 @@
+name: Fix My Posted Jobs card
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add visible dashboard cards
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('hr.html')
+          text = p.read_text(encoding='utf-8')
+
+          marker = '<div id="dashContent">Loading...</div><div id="infoSections"></div>'
+          replacement = '''<div class="dashboard-quick-cards">
+          <article class="info-card" data-card="posted"><b>01</b><h3>My Posted Jobs</h3><p>अपनी पोस्ट की गई vacancies यहाँ देखें।</p><span class="info-link">View Posted Jobs →</span></article>
+          <article class="info-card" data-card="direct"><b>02</b><h3>Applications Received</h3><p>प्राप्त applications यहाँ देखें।</p><span class="info-link">View Applications →</span></article>
+          </div><div id="dashContent">Loading...</div><div id="infoSections"></div>'''
+
+          if marker in text and 'dashboard-quick-cards' not in text:
+              text = text.replace(marker, replacement, 1)
+
+          css = '.dashboard-quick-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:24px}.dashboard-quick-cards .info-card{min-height:150px}@media(max-width:750px){.dashboard-quick-cards{grid-template-columns:1fr}}'
+          if css not in text:
+              text = text.replace('</style>', css + '</style>', 1)
+
+          marker2 = "$('postBtn').onclick=showPost;$('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload()};await loadDashboard();renderInfoSections()"
+          replacement2 = "$('postBtn').onclick=showPost;$('logoutBtn').onclick=async()=>{await sb.auth.signOut();location.reload()};document.querySelectorAll('#dashboard .dashboard-quick-cards [data-card]').forEach(card=>card.onclick=()=>handleCard(card.dataset.card));await loadDashboard();renderInfoSections()"
+          if marker2 in text:
+              text = text.replace(marker2, replacement2, 1)
+
+          p.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit card fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add hr.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Show My Posted Jobs as dashboard card'
+          git push
