@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HR Login & Job Posting | Private Job Alert Rajasthan</title>
+<meta name="description" content="HR and employers can create an account, login and post private job vacancies in Rajasthan for free.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://junjharsingh2038-png.github.io/private-job-alert/hr.html">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div>
+<nav><a href="index.html">Job Seekers</a><a href="#how">How It Works</a><button id="loginBtn">HR Login</button></nav>
+</header>
+<main>
+<section class="hero">
+<span>✓ FREE JOB POSTING FOR EMPLOYERS</span>
+<h1>Hire Candidates in Rajasthan</h1>
+<p>Create an HR account, login and publish your private-sector vacancy directly to Rajasthan job seekers.</p>
+<div class="search"><button id="createBtn">Create HR Account — FREE</button></div>
+<p><small>Easy online job posting for employers.</small></p>
+</section>
+<section><h2>Why HRs Should Post Here</h2><div class="steps">
+<div><b>01</b><h3>Free Job Posting</h3><p>Publish private-sector vacancies without a posting fee.</p></div>
+<div><b>02</b><h3>Reach Candidates</h3><p>Reach candidates searching by city, qualification and job type.</p></div>
+<div><b>03</b><h3>Direct Applications</h3><p>Receive candidate applications for your published vacancy.</p></div>
+</div></section>
+<section id="how"><h2>How HR Job Posting Works</h2><div class="steps">
+<div><b>1</b><h3>Create Account</h3><p>Register with your email and company name.</p></div>
+<div><b>2</b><h3>Post Vacancy</h3><p>Add title, company, location, qualification, salary and description.</p></div>
+<div><b>3</b><h3>Receive Applications</h3><p>Candidates can apply through your vacancy page.</p></div>
+</div></section>
+<section class="employer"><h2>Ready to Hire?</h2><p>Login or create your free HR account.</p><button id="createBtn2">Post Your Job FREE →</button></section>
+</main>
+<footer>© 2026 Private Job Alert Rajasthan · Employer Job Posting</footer>
+<div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+<script>
+document.getElementById('loginBtn').onclick=()=>window.authForm('login');
+document.getElementById('createBtn').onclick=()=>window.authForm('signup');
+document.getElementById('createBtn2').onclick=()=>window.authForm('signup');
+</script>
+</body>
+</html>
