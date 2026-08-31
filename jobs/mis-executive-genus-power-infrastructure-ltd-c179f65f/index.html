@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mis Executive  | Genus power Infrastructure Ltd  | Private Jobs Rajasthan</title>
+<meta name="description" content="Mis Executive  at Genus power Infrastructure Ltd  in Barmer . Qualification: Graduate . Salary: 18000. Apply online.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://junjharsingh2038-png.github.io/private-job-alert/jobs/mis-executive-genus-power-infrastructure-ltd-c179f65f/">
+<link rel="stylesheet" href="../../style.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "JobPosting", "title": "Mis Executive ", "description": "Apply for Mis Executive  at Genus power Infrastructure Ltd  in Barmer .", "datePosted": "2026-08-30", "hiringOrganization": {"@type": "Organization", "name": "Genus power Infrastructure Ltd "}, "jobLocation": {"@type": "Place", "address": {"@type": "PostalAddress", "addressLocality": "Barmer ", "addressCountry": "IN"}}, "employmentType": "FULL_TIME", "url": "https://junjharsingh2038-png.github.io/private-job-alert/jobs/mis-executive-genus-power-infrastructure-ltd-c179f65f/"}</script>
+</head>
+<body>
+<header>
+<div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div>
+<nav><a href="../../">Home</a> <a href="../../#jobs">Latest Jobs</a></nav>
+</header>
+<main>
+<article class="job" style="max-width:900px;margin:30px auto">
+<h1>Mis Executive </h1>
+<h2>Genus power Infrastructure Ltd </h2>
+<p class="muted">📍 Barmer  &nbsp; 🎓 Graduate  &nbsp; 💰 18000 &nbsp; 🕒 Full Time</p>
+<hr>
+<h3>Job Description</h3>
+<p>Apply for Mis Executive  at Genus power Infrastructure Ltd  in Barmer .</p>
+<h3>How to Apply</h3>
+<p>Click Apply Now and submit your candidate details and resume. Your application will be sent to the HR email configured for this vacancy.</p>
+<button class="apply" id="applyButton">Apply Now →</button>
+<p><a href="../../">← View Latest Private Jobs</a></p>
+</article>
+</main>
+<div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../../app.js"></script>
+<script>
+document.getElementById("applyButton").addEventListener("click", async function () {
+  const r = await sb.from("jobs").select("id,title,company,location,qualification,salary,job_type,description,hr_email,created_at").eq("id", "c179f65f-e9b2-45e3-a53c-93917d699f88").eq("is_active", true).single();
+  if (r.error || !r.data) {
+    alert("This job is no longer available.");
+    return;
+  }
+  openApply(r.data);
+});
+</script>
+</body>
+</html>
