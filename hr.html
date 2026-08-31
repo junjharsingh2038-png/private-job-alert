@@ -10,72 +10,21 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="hr-page">
-<header>
-<div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div>
-<nav><a href="index.html">Job Seekers</a><a href="#how">How It Works</a><button id="loginBtn">HR Login</button></nav>
-</header>
+<header><div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div><nav><a href="index.html">Job Seekers</a><a href="#how">How It Works</a><button id="loginBtn">HR Login</button></nav></header>
 <main>
-<section class="hero">
-<span>✓ FREE JOB POSTING FOR EMPLOYERS</span>
-<h1>Hire Candidates in Rajasthan</h1>
-<p>Create an HR account, login and publish your private-sector vacancy directly to Rajasthan job seekers.</p>
-<div class="search"><button id="createBtn">Create HR Account — FREE</button></div>
-<p><small>Easy online job posting for employers.</small></p>
-</section>
-
-<section id="hrApp" class="hr-app">
-  <div class="hr-welcome">
-    <h2>Employer Portal</h2>
-    <p>Create your free HR account or login to post vacancies and manage applications.</p>
-    <div class="hr-actions"><button onclick="authForm('signup')">Create HR Account — FREE</button><button class="secondary" onclick="authForm('login')">HR Login</button></div>
-  </div>
-</section>
-
-<section>
-<h2>Why HRs Should Post Here</h2>
-<div class="steps clickable-cards">
-<div role="button" tabindex="0" onclick="showHrInfo('free')" onkeydown="if(event.key==='Enter')showHrInfo('free')"><b>01</b><h3>Free Job Posting</h3><p>Publish private-sector vacancies without a posting fee.</p><span class="card-link">Learn More →</span></div>
-<div role="button" tabindex="0" onclick="showHrInfo('reach')" onkeydown="if(event.key==='Enter')showHrInfo('reach')"><b>02</b><h3>Reach Candidates</h3><p>Reach candidates searching by city, qualification and job type.</p><span class="card-link">Learn More →</span></div>
-<div role="button" tabindex="0" onclick="showHrInfo('applications')" onkeydown="if(event.key==='Enter')showHrInfo('applications')"><b>03</b><h3>Direct Applications</h3><p>Receive candidate applications for your published vacancy.</p><span class="card-link">Learn More →</span></div>
-</div>
-</section>
-
-<section id="hrInfo" class="hr-info hidden-info">
-<h2 id="hrInfoTitle">Employer Information</h2>
-<div id="hrInfoText"></div>
-</section>
-
-<section id="how"><h2>How HR Job Posting Works</h2><div class="steps clickable-cards">
-<div role="button" tabindex="0" onclick="showHrInfo('account')" onkeydown="if(event.key==='Enter')showHrInfo('account')"><b>1</b><h3>Create Account</h3><p>Register with your email and company name.</p><span class="card-link">View Steps →</span></div>
-<div role="button" tabindex="0" onclick="showHrInfo('post')" onkeydown="if(event.key==='Enter')showHrInfo('post')"><b>2</b><h3>Post Vacancy</h3><p>Add title, company, location, qualification, salary and description.</p><span class="card-link">View Steps →</span></div>
-<div role="button" tabindex="0" onclick="showHrInfo('receive')" onkeydown="if(event.key==='Enter')showHrInfo('receive')"><b>3</b><h3>Receive Applications</h3><p>Candidates can apply through your vacancy page.</p><span class="card-link">View Steps →</span></div>
-</div></section>
-
+<section class="hero"><span>✓ FREE JOB POSTING FOR EMPLOYERS</span><h1>Hire Candidates in Rajasthan</h1><p>Create an HR account, login and publish your private-sector vacancy directly to Rajasthan job seekers.</p><div class="search"><button id="createBtn">Create HR Account — FREE</button></div><p><small>Easy online job posting for employers.</small></p></section>
+<section id="hrApp" class="hr-app"><div class="hr-welcome"><h2>Employer Portal</h2><p>Create your free HR account or login to post vacancies and manage applications.</p><div class="hr-actions"><button onclick="authForm('signup')">Create HR Account — FREE</button><button class="secondary" onclick="authForm('login')">HR Login</button></div></div></section>
+<section><h2>Why HRs Should Post Here</h2><div class="steps clickable-cards"><div role="button" tabindex="0" onclick="showHrInfo('free')" onkeydown="if(event.key==='Enter')showHrInfo('free')"><b>01</b><h3>Free Job Posting</h3><p>Publish private-sector vacancies without a posting fee.</p><span class="card-link">Learn More →</span></div><div role="button" tabindex="0" onclick="showHrInfo('reach')" onkeydown="if(event.key==='Enter')showHrInfo('reach')"><b>02</b><h3>Reach Candidates</h3><p>Reach candidates searching by city, qualification and job type.</p><span class="card-link">Learn More →</span></div><div role="button" tabindex="0" onclick="showHrInfo('applications')" onkeydown="if(event.key==='Enter')showHrInfo('applications')"><b>03</b><h3>Direct Applications</h3><p>Receive candidate applications for your published vacancy.</p><span class="card-link">Learn More →</span></div></div></section>
+<section id="hrInfo" class="hr-info hidden-info"><h2 id="hrInfoTitle">Employer Information</h2><div id="hrInfoText"></div></section>
+<section id="how"><h2>How HR Job Posting Works</h2><div class="steps clickable-cards"><div role="button" tabindex="0" onclick="showHrInfo('account')" onkeydown="if(event.key==='Enter')showHrInfo('account')"><b>1</b><h3>Create Account</h3><p>Register with your email and company name.</p><span class="card-link">View Steps →</span></div><div role="button" tabindex="0" onclick="showHrInfo('post')" onkeydown="if(event.key==='Enter')showHrInfo('post')"><b>2</b><h3>Post Vacancy</h3><p>Add title, company, location, qualification, salary and description.</p><span class="card-link">View Steps →</span></div><div role="button" tabindex="0" onclick="showHrInfo('receive')" onkeydown="if(event.key==='Enter')showHrInfo('receive')"><b>3</b><h3>Receive Applications</h3><p>Candidates can apply through your vacancy page.</p><span class="card-link">View Steps →</span></div></div></section>
 <section class="employer"><h2>Ready to Hire?</h2><p>Login or create your free HR account.</p><button id="createBtn2">Post Your Job FREE →</button></section>
-</main>
-<footer>© 2026 Private Job Alert Rajasthan · Employer Job Posting</footer>
+</main><footer>© 2026 Private Job Alert Rajasthan · Employer Job Posting</footer>
 <div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
+<script src="hr-dashboard.js"></script>
 <script>
-document.getElementById('loginBtn').onclick=()=>window.authForm('login');
-document.getElementById('createBtn').onclick=()=>window.authForm('signup');
-document.getElementById('createBtn2').onclick=()=>window.authForm('signup');
-
-const hrInfo={
- free:['Free Job Posting','Post your private-sector vacancy on Private Job Alert Rajasthan without a posting fee. Add the job title, company name, location, qualification, salary, job type and vacancy details.'],
- reach:['Reach Candidates','Candidates can find vacancies according to city, qualification and job type. Clear job details help the right candidates discover and apply for your vacancy.'],
- applications:['Direct Applications','Candidates can submit their name, mobile number, email, location, qualification, experience and resume. Applications are then available to the HR/employer account.'],
- account:['Step 1 — Create HR Account','Click Create HR Account — FREE, enter your email, password and company name, then create the employer account.'],
- post:['Step 2 — Post Vacancy','After login, choose Post New Job and enter the vacancy details. Publish the job so candidates can view it and apply.'],
- receive:['Step 3 — Receive Applications','When candidates apply, their application details appear in your HR dashboard. You can review the candidate information and manage your vacancies from the same account.']
-};
-window.showHrInfo=function(key){
- const item=hrInfo[key]; if(!item)return;
- document.getElementById('hrInfoTitle').textContent=item[0];
- document.getElementById('hrInfoText').innerHTML='<p>'+item[1]+'</p><button onclick="authForm(\'signup\')">Create HR Account — FREE</button>';
- const box=document.getElementById('hrInfo'); box.classList.remove('hidden-info'); box.scrollIntoView({behavior:'smooth',block:'center'});
-};
-</script>
-</body>
-</html>
+document.getElementById('loginBtn').onclick=()=>window.authForm('login');document.getElementById('createBtn').onclick=()=>window.authForm('signup');document.getElementById('createBtn2').onclick=()=>window.authForm('signup');
+const hrInfo={free:['Free Job Posting','Post your private-sector vacancy on Private Job Alert Rajasthan without a posting fee. Add the job title, company name, location, qualification, salary, job type and vacancy details.'],reach:['Reach Candidates','Candidates can find vacancies according to city, qualification and job type. Clear job details help the right candidates discover and apply for your vacancy.'],applications:['Direct Applications','Candidates can submit their name, mobile number, email, location, qualification, experience and resume. Applications are then available to the HR/employer account.'],account:['Step 1 — Create HR Account','Click Create HR Account — FREE, enter your email, password and company name, then create the employer account.'],post:['Step 2 — Post Vacancy','After login, choose Post New Job and enter the vacancy details. Publish the job so candidates can view it and apply.'],receive:['Step 3 — Receive Applications','When candidates apply, their application details appear in your HR dashboard. You can review the candidate information and manage your vacancies from the same account.']};
+window.showHrInfo=function(key){const item=hrInfo[key];if(!item)return;document.getElementById('hrInfoTitle').textContent=item[0];document.getElementById('hrInfoText').innerHTML='<p>'+item[1]+'</p><button onclick="authForm(\'signup\')">Create HR Account — FREE</button>';const box=document.getElementById('hrInfo');box.classList.remove('hidden-info');box.scrollIntoView({behavior:'smooth',block:'center'});};
+</script></body></html>
