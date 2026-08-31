@@ -10,11 +10,9 @@ window.closeModal = function(){ $("modal").classList.add("hidden"); };
 window.openModal = function(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); };
 function esc(v){return String(v??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[m]));}
 
-/* HR login/dashboard always renders inside the HR page's #hrApp card. */
 function renderHrPage(html){
   const target=$("hrApp");
   if(!target){
-    /* If HR Login was clicked from the public home page, open the real HR page instead of a popup. */
     if(location.pathname.endsWith("index.html") || location.pathname === "/" || !location.pathname.includes("hr")){
       sessionStorage.setItem("openHrLogin","1");
       location.href="hr.html";
@@ -24,7 +22,6 @@ function renderHrPage(html){
   }
   target.innerHTML=html;
   target.classList.remove("hidden");
-  /* Keep the user's current scroll position. No automatic scrolling. */
 }
 window.renderHrPage=renderHrPage;
 
@@ -81,7 +78,30 @@ window.showPostJob = function(){
 }
 window.deleteJob = async function(id){if(!confirm("Delete this job?"))return;const {data:{user}}=await sb.auth.getUser();if(!user)return;const r=await sb.from("jobs").delete().eq("id",id).eq("user_id",user.id);if(r.error)alert(r.error.message);else showHrPanel();}
 
+/* When HR clicks the "Post Vacancy" card, show the vacancies already posted by this HR. */
+window.showPostedJobs = async function(){
+  const {data:{user}}=await sb.auth.getUser();
+  if(!user){authForm("login");return;}
+  const {data:jobs,error}=await sb.from("jobs").select("*").eq("hr_user_id",user.id).order("created_at",{ascending:false});
+  if(error){renderHrPage('<div class="hr-welcome"><h2>My Posted Jobs</h2><p class="danger">Posted jobs could not be loaded. Please try again.</p><button onclick="showHrPanel()">Back to Dashboard</button></div>');return;}
+  renderHrPage(`<div class="hr-welcome"><h2>My Posted Jobs</h2><p>Here are the vacancies you have already posted.</p><div class="hr-actions"><button onclick="showPostJob()">+ Post New Job</button><button class="secondary" onclick="showHrPanel()">Back to Dashboard</button></div>${(jobs||[]).map(j=>`<div class="job"><h3>${esc(j.title)}</h3><b>${esc(j.company||j.company_name||"")}</b><p>📍 ${esc(j.location||"Rajasthan")} &nbsp; 🎓 ${esc(j.qualification||"Any")} &nbsp; 💰 ${esc(j.salary||"As per company")}</p><p>${esc(j.description||"")}</p><small>Status: ${j.is_active!==false?"Active":"Inactive"}</small></div>`).join("")||"<p>No jobs posted yet.</p>"}</div>`);
+};
+
 function bindButtons(){const login=$("hrLoginBtn"),create=$("createHrBtn");if(login) login.onclick=()=>window.authForm("login");if(create) create.onclick=()=>window.authForm("signup");}
 window.addEventListener("DOMContentLoaded",()=>{bindButtons();loadJobs();if(sessionStorage.getItem("openHrLogin")==="1" && $("hrApp")){sessionStorage.removeItem("openHrLogin");authForm("login");}});
 bindButtons();
 if(document.readyState!=="loading") loadJobs();
+
+/* Capture the HR information-card click before hr.html's detail-only handler. */
+(function(){
+  document.addEventListener("click",function(e){
+    const card=e.target.closest("[data-card]");
+    if(!card)return;
+    const key=card.getAttribute("data-card");
+    if(key==="post"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      window.showPostedJobs();
+    }
+  },true);
+})();
