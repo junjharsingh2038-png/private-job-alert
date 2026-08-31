@@ -36,7 +36,7 @@ root.querySelectorAll('[data-card]').forEach(card=>card.addEventListener('click'
 async function handleCard(key){
 if(key==='free'){showPost();return}
 if(key==='reach'){showCandidates();return}
-if(key==='direct'||key==='receive'){await loadDashboard();scrollTo('applicationsSection');return}
+if(key==='direct'||key==='receive'){await loadDashboard();const s=$('applicationsSection');if(s)s.classList.remove('hidden');scrollTo('applicationsSection');return}
 if(key==='account'){ $('dashboard').classList.add('hidden');$('authCard').classList.remove('hidden');setMode('register');scrollTo('authCard');return }
 if(key==='post'){showPost();return}
 }
