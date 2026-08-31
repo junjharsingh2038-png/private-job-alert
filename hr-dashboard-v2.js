@@ -7,6 +7,7 @@
     const jobsResult=await sb.from("jobs").select("*").eq("hr_user_id",user.id).order("created_at",{ascending:false});
     const appsResult=await sb.from("applications").select("*").eq("hr_email",user.email).order("created_at",{ascending:false});
     const jobs=jobsResult.data||[],apps=appsResult.data||[];
+    window.hrApplications=apps;
     if(jobsResult.error){renderHrPage(`<div class="hr-card"><h2>HR Dashboard</h2><p class="danger">Your account is logged in, but jobs could not be loaded.</p><button onclick="sb.auth.signOut().then(()=>authForm('login'))">Logout</button></div>`);return;}
     renderHrPage(`<div class="hr-dashboard">
       <section class="hr-card hr-head-card"><div><span class="hr-badge">HR / EMPLOYER PORTAL</span><h2>Welcome to your HR Dashboard</h2><p>Logged in as <b>${esc2(user.email)}</b></p></div><div class="hr-actions"><button onclick="showPostJob()">+ Post New Job</button><button class="secondary" onclick="sb.auth.signOut().then(()=>authForm('login'))">Logout</button></div></section>
