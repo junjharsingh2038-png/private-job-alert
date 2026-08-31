@@ -9,7 +9,7 @@
 <link rel="canonical" href="https://junjharsingh2038-png.github.io/private-job-alert/hr.html">
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="hr-page">
 <header>
 <div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div>
 <nav><a href="index.html">Job Seekers</a><a href="#how">How It Works</a><button id="loginBtn">HR Login</button></nav>
@@ -22,6 +22,15 @@
 <div class="search"><button id="createBtn">Create HR Account — FREE</button></div>
 <p><small>Easy online job posting for employers.</small></p>
 </section>
+
+<section id="hrApp" class="hr-app">
+  <div class="hr-welcome">
+    <h2>Employer Portal</h2>
+    <p>Create your free HR account or login to post vacancies and manage applications.</p>
+    <div class="hr-actions"><button onclick="authForm('signup')">Create HR Account — FREE</button><button class="secondary" onclick="authForm('login')">HR Login</button></div>
+  </div>
+</section>
+
 <section><h2>Why HRs Should Post Here</h2><div class="steps">
 <div><b>01</b><h3>Free Job Posting</h3><p>Publish private-sector vacancies without a posting fee.</p></div>
 <div><b>02</b><h3>Reach Candidates</h3><p>Reach candidates searching by city, qualification and job type.</p></div>
