@@ -11,18 +11,17 @@
 </head>
 <body>
 <header><div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div><nav>
-<a href="#jobs">Latest Jobs</a><a href="#how">How It Works</a><button id="hrLoginBtn">HR Login</button>
+<a href="#jobs">Latest Jobs</a><a href="#how">How It Works</a><a href="hr.html">HR / Employer</a><button id="hrLoginBtn">HR Login</button>
 </nav></header>
 <main>
 <section class="hero"><span>✓ FREE FOR JOB SEEKERS</span><h1>Find your next <b>private job</b> in Rajasthan</h1>
 <p>Latest private vacancies, fresher jobs and work-from-home opportunities.</p>
 <div class="search"><input id="search" placeholder="Search job, company, location or qualification"><button onclick="loadJobs()">Search Jobs</button></div></section>
 <section id="jobs"><h2>Latest Private Jobs</h2><div id="jobsList">Loading jobs...</div></section>
-<section class="employer"><h2>Are you an HR / Employer?</h2><p>Create an HR account and publish vacancies directly to Rajasthan job seekers.</p><button id="createHrBtn">Create HR Account</button></section>
+<section class="employer"><h2>Are you an HR / Employer?</h2><p>Create an HR account and publish vacancies directly to Rajasthan job seekers.</p><a class="button" href="hr.html">HR / Employer Job Posting →</a></section>
 <section id="how"><h2>How It Works</h2><div class="steps"><div><b>01</b><h3>Find a Job</h3><p>Search by title, company, location or qualification.</p></div><div><b>02</b><h3>Apply</h3><p>Enter candidate details and upload your resume.</p></div><div><b>03</b><h3>HR Receives</h3><p>The application is saved and the HR receives an email notification.</p></div></div></section>
 </main>
 <footer>© 2026 Private Job Alert Rajasthan</footer>
-
 <div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
