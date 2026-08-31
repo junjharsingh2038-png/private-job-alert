@@ -13,10 +13,9 @@ function esc(v){return String(v??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&
 /* HR pages use the page itself for login, signup, dashboard and job posting. */
 function renderHrPage(html){
   const target=$("hrApp");
-  if(!target)return openModal(html);
+  if(!target)return;
   target.innerHTML=html;
   target.classList.remove("hidden");
-  target.scrollIntoView({behavior:"smooth",block:"start"});
 }
 window.renderHrPage=renderHrPage;
 
