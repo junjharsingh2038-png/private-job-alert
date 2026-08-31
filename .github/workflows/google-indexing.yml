@@ -1,0 +1,61 @@
+name: Google Job Indexing
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'jobs/**'
+      - 'sitemap.xml'
+
+permissions:
+  contents: read
+
+jobs:
+  indexing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Submit JobPosting URLs to Google Indexing API
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GOOGLE_SERVICE_ACCOUNT_JSON:-}" ]; then
+            echo "GOOGLE_SERVICE_ACCOUNT_JSON secret is not configured yet."
+            echo "Complete Google Cloud + Search Console setup, then add the secret in GitHub."
+            exit 0
+          fi
+
+          python -m pip install --quiet google-auth requests
+          printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > /tmp/google-service-account.json
+
+          python - <<'PY'
+          import json, pathlib, re, requests
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import AuthorizedSession
+
+          data = json.loads(pathlib.Path('/tmp/google-service-account.json').read_text())
+          creds = service_account.Credentials.from_service_account_info(
+              data,
+              scopes=['https://www.googleapis.com/auth/indexing'],
+          )
+          session = AuthorizedSession(creds)
+          root = pathlib.Path('jobs')
+          urls = []
+          if root.exists():
+              for p in root.glob('*/index.html'):
+                  urls.append('https://junjharsingh2038-png.github.io/private-job-alert/jobs/' + p.parent.name + '/')
+          urls = sorted(set(urls))
+          print(f'Found {len(urls)} JobPosting URLs.')
+          for url in urls:
+              r = session.post(
+                  'https://indexing.googleapis.com/v3/urlNotifications:publish',
+                  json={'url': url, 'type': 'URL_UPDATED'},
+                  timeout=30,
+              )
+              print(r.status_code, url)
+              if r.status_code >= 300:
+                  print(r.text)
+          PY
