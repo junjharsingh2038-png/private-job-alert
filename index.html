@@ -1,28 +1,21 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Private Job Alert Rajasthan | Latest Private Jobs</title>
-<meta name="description" content="Find latest private jobs in Rajasthan. Search jobs by title, company, location and qualification and apply directly.">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://junjharsingh2038-png.github.io/private-job-alert/">
-<link rel="stylesheet" href="style.css">
+<meta name="description" content="Find latest private jobs in Rajasthan, fresher jobs, company vacancies and work from home opportunities. Search and apply directly.">
+<meta name="robots" content="index,follow"><link rel="canonical" href="https://junjharsingh2038-png.github.io/private-job-alert/"><link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><div class="brand">💼 PRIVATE JOB ALERT RAJASTHAN</div><nav>
-<a href="#jobs">Latest Jobs</a><a href="#how">How It Works</a><a href="hr.html">HR / Employer</a><button id="hrLoginBtn">HR Login</button>
-</nav></header>
+<header><a class="brand" href="index.html">💼 <span>PRIVATE JOB ALERT</span><small>RAJASTHAN</small></a><nav><a href="#jobs">Jobs</a><a href="#categories">Categories</a><a href="#how">How It Works</a><a href="hr.html">For HR</a><a class="nav-cta" href="hr.html">Post a Job</a></nav></header>
 <main>
-<section class="hero"><span>✓ FREE FOR JOB SEEKERS</span><h1>Find your next <b>private job</b> in Rajasthan</h1>
-<p>Latest private vacancies, fresher jobs and work-from-home opportunities.</p>
-<div class="search"><input id="search" placeholder="Search job, company, location or qualification"><button onclick="loadJobs()">Search Jobs</button></div></section>
-<section id="jobs"><h2>Latest Private Jobs</h2><div id="jobsList">Loading jobs...</div></section>
-<section class="employer"><h2>Are you an HR / Employer?</h2><p>Create an HR account and publish vacancies directly to Rajasthan job seekers.</p><a class="button" href="hr.html">HR / Employer Job Posting →</a></section>
-<section id="how"><h2>How It Works</h2><div class="steps"><div><b>01</b><h3>Find a Job</h3><p>Search by title, company, location or qualification.</p></div><div><b>02</b><h3>Apply</h3><p>Enter candidate details and upload your resume.</p></div><div><b>03</b><h3>HR Receives</h3><p>The application is saved and the HR receives an email notification.</p></div></div></section>
-</main>
-<footer>© 2026 Private Job Alert Rajasthan</footer>
+<section class="hero"><div class="hero-inner"><span class="hero-pill">✓ 100% FREE FOR JOB SEEKERS</span><h1>Find the right <b>private job</b><br>in Rajasthan</h1><p>Search verified-style vacancy listings by job title, company, location or qualification and apply directly.</p><div class="search"><input id="search" aria-label="Search jobs" placeholder="Job title, company, location or qualification"><button onclick="loadJobs()">🔎 Search Jobs</button></div><div class="hero-links"><span>✓ Fresher Jobs</span><span>✓ Rajasthan Jobs</span><span>✓ Work From Home</span></div></div></section>
+<section id="jobs"><div class="section-head"><div><span class="section-kicker">OPPORTUNITIES</span><h2>Latest Private Jobs</h2><p>New vacancies for candidates across Rajasthan.</p></div><a class="text-link" href="#jobs">View All Jobs →</a></div><div id="jobsList">Loading latest jobs...</div></section>
+<section id="categories" class="category-section"><div class="section-head"><div><span class="section-kicker">EXPLORE</span><h2>Popular Job Categories</h2></div></div><div class="category-grid"><a href="#jobs" onclick="document.getElementById('search').value='Sales';loadJobs()">💼 Sales & Marketing</a><a href="#jobs" onclick="document.getElementById('search').value='Computer';loadJobs()">💻 Computer & IT</a><a href="#jobs" onclick="document.getElementById('search').value='Account';loadJobs()">📊 Accounts & Finance</a><a href="#jobs" onclick="document.getElementById('search').value='Field';loadJobs()">🚗 Field Jobs</a><a href="#jobs" onclick="document.getElementById('search').value='Fresher';loadJobs()">🎓 Fresher Jobs</a><a href="#jobs" onclick="document.getElementById('search').value='Work From Home';loadJobs()">🏠 Work From Home</a></div></section>
+<section class="employer"><div><span class="section-kicker">FOR EMPLOYERS</span><h2>Hiring in Rajasthan?</h2><p>Post your vacancy and reach candidates looking for private-sector opportunities.</p></div><a class="button" href="hr.html">Create HR Account →</a></section>
+<section id="how"><div class="section-head"><div><span class="section-kicker">SIMPLE PROCESS</span><h2>How It Works</h2></div></div><div class="steps"><article><span>01</span><h3>Search Jobs</h3><p>Find vacancies using title, company, location or qualification.</p></article><article><span>02</span><h3>Check Details</h3><p>Review job information, eligibility, salary and location.</p></article><article><span>03</span><h3>Apply Directly</h3><p>Submit your details and resume to the employer through the portal.</p></article></div></section>
+<section class="trust"><div><strong>For Job Seekers</strong><span>Search & apply for private jobs</span></div><div><strong>For HRs</strong><span>Post vacancies and receive applications</span></div><div><strong>Rajasthan Focus</strong><span>Opportunities across Rajasthan</span></div></section>
+</main><footer><div><b>PRIVATE JOB ALERT RAJASTHAN</b><p>Private-sector job opportunities for Rajasthan.</p></div><div><a href="#jobs">Jobs</a><a href="hr.html">HR / Employer</a><a href="#how">How It Works</a></div><small>© 2026 Private Job Alert Rajasthan</small></footer>
 <div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="app.js"></script>
 </body></html>
