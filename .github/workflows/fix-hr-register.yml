@@ -9,4 +9,4 @@ jobs:
     if: false
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Obsolete fixer disabled"
+      - run: echo "Obsolete fixer disabled; HR auth V2 is active"
