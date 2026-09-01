@@ -10,15 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Attach invitation and notification scripts
+      - name: Attach invitation notification and HR profile scripts
         run: |
           python3 - <<'PY'
           from pathlib import Path
           changed=False
-          for name,tag in (
+          items=(
               ('hr.html','<script src="job-invitations.js"></script>'),
+              ('hr.html','<script src="hr-employee-profiles.js"></script>'),
               ('seeker.html','<script src="job-invitations.js"></script>'),
-              ('seeker.html','<script src="employee-notifications.js"></script>')):
+              ('seeker.html','<script src="employee-notifications.js"></script>'))
+          for name,tag in items:
               p=Path(name)
               s=p.read_text()
               if tag not in s:
