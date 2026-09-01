@@ -64,9 +64,18 @@
     const ar=await sb.from('applications').select('*').eq('hr_email',user.email).order('created_at',{ascending:false});
     const jobs=jr.data||[],apps=ar.data||[];
     q('jobCount').textContent=jobs.length;q('appCount').textContent=apps.length;
-    q('jobsArea').innerHTML=jobs.length?jobs.map(j=>`<article class="job-card"><div><h3>${esc2(j.title)}</h3><p class="muted"><b>${esc2(j.company||j.company_name||'')}</b> · ${esc2(j.location||'')}</p><span class="status">${j.is_active===false?'Inactive':'Active'}</span></div><button onclick="hrDeleteJob('${j.id}')">Delete</button></article>`).join(''):'<div class="empty-state">No jobs posted yet. Click “Post New Job”.</div>';
+    q('jobsArea').innerHTML=jobs.length?jobs.map(j=>`<article class="job-card"><div><h3>${esc2(j.title)}</h3><p class="muted"><b>${esc2(j.company||j.company_name||'')}</b> · ${esc2(j.location||'')}</p><div class="status-row"><span class="status ${j.is_active===false?'inactive':'active'}">${j.is_active===false?'Inactive':'Active'}</span><select aria-label="Change job status" onchange="hrChangeJobStatus('${j.id}',this.value)"><option value="active" ${j.is_active!==false?'selected':''}>Active</option><option value="inactive" ${j.is_active===false?'selected':''}>Inactive</option></select></div></div><button onclick="hrDeleteJob('${j.id}')">Delete</button></article>`).join(''):'<div class="empty-state">No jobs posted yet. Click “Post New Job”.</div>';
     q('appsArea').innerHTML=apps.length?apps.map(a=>`<article class="application-card"><div class="candidate-top"><div><h3>${esc2(a.candidate_name)}</h3><p>📱 ${esc2(a.candidate_mobile)} · ✉️ ${esc2(a.candidate_email)}</p></div><span class="application-label">Application</span></div><div class="candidate-details"><span>🎓 ${esc2(a.qualification||'Not specified')}</span><span>💼 ${esc2(a.experience||'Fresher')}</span><span>📍 ${esc2(a.candidate_location||'Not specified')}</span></div><small>${a.created_at?new Date(a.created_at).toLocaleString():''}</small></article>`).join(''):'<div class="empty-state">No applications received yet.</div>';
   }
+
+  window.hrChangeJobStatus=async function(id,status){
+    const isActive=status==='active';
+    const {data:{user}}=await sb.auth.getUser();
+    if(!user)return;
+    const r=await sb.from('jobs').update({is_active:isActive}).eq('id',id).eq('hr_user_id',user.id);
+    if(r.error){alert('Job status could not be changed: '+r.error.message);await refreshPortal();return;}
+    await refreshPortal();
+  };
 
   window.showHrPanel=loadPortal;
   window.hrPostJob=function(){
