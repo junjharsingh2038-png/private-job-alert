@@ -18,14 +18,14 @@ jobs:
           items=(
               ('index.html','<link rel="stylesheet" href="naukri-style.css">'),('index.html','<link rel="stylesheet" href="company-logo.css">'),('index.html','<link rel="stylesheet" href="professional-job-description.css">'),('index.html','<link rel="stylesheet" href="job-details.css">'),('index.html','<link rel="stylesheet" href="compact-filters.css">'),('index.html','<script src="company-logo.js"></script>'),('index.html','<script src="job-details.js"></script>'),
               ('hr.html','<script src="job-invitations.js"></script>'),('hr.html','<script src="hr-employee-profiles.js"></script>'),('hr.html','<script src="auth-guard.js"></script>'),('hr.html','<script src="password-reset-otp.js?v=20260902"></script>'),('hr.html','<link rel="stylesheet" href="naukri-style.css">'),('hr.html','<link rel="stylesheet" href="company-logo.css">'),('hr.html','<link rel="stylesheet" href="professional-job-description.css">'),('hr.html','<link rel="stylesheet" href="job-details.css">'),('hr.html','<link rel="stylesheet" href="compact-filters.css">'),('hr.html','<link rel="stylesheet" href="password-reset-otp.css">'),('hr.html','<script src="company-logo.js"></script>'),('hr.html','<script src="job-details.js"></script>'),
-              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260902"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="job-details.css">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
-              ('admin.html','<script src="auth-guard.js"></script>'),('admin.html','<script src="password-reset-otp.js?v=20260902"></script>'),('admin.html','<link rel="stylesheet" href="password-reset-otp.css">'))
+              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260903"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="job-details.css">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
+              ('admin.html','<script src="auth-guard.js"></script>'),('admin.html','<script src="password-reset-otp.js?v=20260903"></script>'),('admin.html','<link rel="stylesheet" href="password-reset-otp.css">'))
           for name,tag in items:
               p=Path(name);s=p.read_text()
-              old='<script src="password-reset-otp.js"></script>'
-              if old in s:
-                  s=s.replace(old,tag);changed=True
-              elif tag not in s:
+              import re
+              if name in ('hr.html','seeker.html','admin.html'):
+                  s=re.sub(r'<script src="password-reset-otp\.js(?:\?v=[^"]+)?"></script>','',s)
+              if tag not in s:
                   s=s.replace('</body>',tag+'</body>',1);changed=True
               p.write_text(s)
           print('changed=',changed)
