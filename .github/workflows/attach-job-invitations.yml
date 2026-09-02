@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Attach invitation notification and HR profile scripts
+      - name: Attach invitation notification HR profile and auth scripts
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -18,8 +18,10 @@ jobs:
           items=(
               ('hr.html','<script src="job-invitations.js"></script>'),
               ('hr.html','<script src="hr-employee-profiles.js"></script>'),
+              ('hr.html','<script src="auth-guard.js"></script>'),
               ('seeker.html','<script src="job-invitations.js"></script>'),
-              ('seeker.html','<script src="employee-notifications.js"></script>'))
+              ('seeker.html','<script src="employee-notifications.js"></script>'),
+              ('seeker.html','<script src="auth-guard.js"></script>'))
           for name,tag in items:
               p=Path(name)
               s=p.read_text()
