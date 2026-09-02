@@ -18,19 +18,28 @@ jobs:
           items=(
               ('index.html','<link rel="stylesheet" href="naukri-style.css">'),
               ('index.html','<link rel="stylesheet" href="company-logo.css">'),
+              ('index.html','<link rel="stylesheet" href="professional-job-description.css">'),
+              ('index.html','<link rel="stylesheet" href="job-details.css">'),
               ('index.html','<script src="company-logo.js"></script>'),
+              ('index.html','<script src="job-details.js"></script>'),
               ('hr.html','<script src="job-invitations.js"></script>'),
               ('hr.html','<script src="hr-employee-profiles.js"></script>'),
               ('hr.html','<script src="auth-guard.js"></script>'),
               ('hr.html','<link rel="stylesheet" href="naukri-style.css">'),
               ('hr.html','<link rel="stylesheet" href="company-logo.css">'),
+              ('hr.html','<link rel="stylesheet" href="professional-job-description.css">'),
+              ('hr.html','<link rel="stylesheet" href="job-details.css">'),
               ('hr.html','<script src="company-logo.js"></script>'),
+              ('hr.html','<script src="job-details.js"></script>'),
               ('seeker.html','<script src="job-invitations.js"></script>'),
               ('seeker.html','<script src="employee-notifications.js"></script>'),
               ('seeker.html','<script src="auth-guard.js"></script>'),
               ('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),
               ('seeker.html','<link rel="stylesheet" href="company-logo.css">'),
-              ('seeker.html','<script src="company-logo.js"></script>'))
+              ('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),
+              ('seeker.html','<link rel="stylesheet" href="job-details.css">'),
+              ('seeker.html','<script src="company-logo.js"></script>'),
+              ('seeker.html','<script src="job-details.js"></script>'))
           for name,tag in items:
               p=Path(name)
               s=p.read_text()
