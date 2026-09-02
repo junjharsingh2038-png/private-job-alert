@@ -17,15 +17,27 @@ jobs:
           import re
           items=(
               ('index.html','<link rel="stylesheet" href="naukri-style.css">'),('index.html','<link rel="stylesheet" href="company-logo.css">'),('index.html','<link rel="stylesheet" href="professional-job-description.css">'),('index.html','<link rel="stylesheet" href="job-details.css">'),('index.html','<link rel="stylesheet" href="compact-filters.css">'),('index.html','<script src="company-logo.js"></script>'),('index.html','<script src="job-details.js"></script>'),
-              ('hr.html','<script src="job-invitations.js"></script>'),('hr.html','<script src="hr-employee-profiles.js"></script>'),('hr.html','<script src="auth-guard.js"></script>'),('hr.html','<script src="password-reset-otp.js?v=20260902"></script>'),('hr.html','<link rel="stylesheet" href="naukri-style.css">'),('hr.html','<link rel="stylesheet" href="company-logo.css">'),('hr.html','<link rel="stylesheet" href="professional-job-description.css">'),('hr.html','<link rel="stylesheet" href="job-details.css">'),('hr.html','<link rel="stylesheet" href="compact-filters.css">'),('hr.html','<link rel="stylesheet" href="password-reset-otp.css">'),('hr.html','<script src="company-logo.js"></script>'),('hr.html','<script src="job-details.js"></script>'),
-              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260903"></script>'),('seeker.html','<script src="employee-registration-fix.js?v=20260906"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="job-details.css">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
-              ('admin.html','<script src="auth-guard.js"></script>'),('admin.html','<script src="password-reset-otp.js?v=20260903"></script>'),('admin.html','<link rel="stylesheet" href="password-reset-otp.css">'))
+              ('hr.html','<script src="job-invitations.js"></script>'),('hr.html','<script src="hr-employee-profiles.js"></script>'),('hr.html','<script src="auth-guard.js"></script>'),('hr.html','<script src="password-reset-otp.js?v=20260904"></script>'),('hr.html','<link rel="stylesheet" href="naukri-style.css">'),('hr.html','<link rel="stylesheet" href="company-logo.css">'),('hr.html','<link rel="stylesheet" href="professional-job-description.css">'),('hr.html','<link rel="stylesheet" href="job-details.css">'),('hr.html','<link rel="stylesheet" href="compact-filters.css">'),('hr.html','<link rel="stylesheet" href="password-reset-otp.css">'),('hr.html','<script src="company-logo.js"></script>'),('hr.html','<script src="job-details.js"></script>'),
+              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260904"></script>'),('seeker.html','<script src="employee-registration-fix.js?v=20260906"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="job-details.css">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
+              ('admin.html','<script src="auth-guard.js"></script>'),('admin.html','<script src="password-reset-otp.js?v=20260904"></script>'),('admin.html','<link rel="stylesheet" href="password-reset-otp.css">'))
           for name,tag in items:
               p=Path(name);s=p.read_text()
+              if name in ('hr.html','seeker.html','admin.html'):
+                  s=re.sub(r'(?:<script src="auth-guard\.js"></script>\s*)+','',s)
+                  s=re.sub(r'<script src="password-reset-otp\.js(?:\?v=[^"]+)?"></script>','',s)
               if name=='seeker.html':
                   s=re.sub(r'<script src="employee-signup-otp\.js(?:\?v=[^"]+)?"></script>','',s)
                   s=re.sub(r'<script src="employee-registration-fix\.js(?:\?v=[^"]+)?"></script>','',s)
-              if name in ('hr.html','seeker.html','admin.html'): s=re.sub(r'<script src="password-reset-otp\.js(?:\?v=[^"]+)?"></script>','',s)
+              if name in ('index.html','hr.html','seeker.html'):
+                  for base in ('naukri-style.css','company-logo.css','professional-job-description.css','job-details.css','compact-filters.css'):
+                      if name!='index.html' or base!='compact-filters.css':
+                          s=re.sub(r'<link rel="stylesheet" href="'+re.escape(base)+r'"></link>|<link rel="stylesheet" href="'+re.escape(base)+r'">','',s)
+              if name in ('hr.html','seeker.html','admin.html'):
+                  s=re.sub(r'<link rel="stylesheet" href="password-reset-otp\.css">','',s)
+              if name=='index.html':
+                  s=re.sub(r'<script src="company-logo\.js"></script>','',s);s=re.sub(r'<script src="job-details\.js"></script>','',s)
+              if name in ('hr.html','seeker.html'):
+                  s=re.sub(r'<script src="company-logo\.js"></script>','',s);s=re.sub(r'<script src="job-details\.js"></script>','',s)
               if tag not in s: s=s.replace('</body>',tag+'</body>',1)
               p.write_text(s)
           PY
