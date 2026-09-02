@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Attach invitation notification HR profile and auth scripts
+      - name: Attach portal scripts and design
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -19,14 +19,17 @@ jobs:
               ('hr.html','<script src="job-invitations.js"></script>'),
               ('hr.html','<script src="hr-employee-profiles.js"></script>'),
               ('hr.html','<script src="auth-guard.js"></script>'),
+              ('hr.html','<link rel="stylesheet" href="portal-design.css">'),
               ('seeker.html','<script src="job-invitations.js"></script>'),
               ('seeker.html','<script src="employee-notifications.js"></script>'),
-              ('seeker.html','<script src="auth-guard.js"></script>'))
+              ('seeker.html','<script src="auth-guard.js"></script>'),
+              ('seeker.html','<link rel="stylesheet" href="portal-design.css">'))
           for name,tag in items:
               p=Path(name)
               s=p.read_text()
               if tag not in s:
-                  s=s.replace('</body>',tag+'</body>',1)
+                  if tag.startswith('<link '): s=s.replace('</head>',tag+'</head>',1)
+                  else: s=s.replace('</body>',tag+'</body>',1)
                   p.write_text(s)
                   changed=True
           print('changed=',changed)
