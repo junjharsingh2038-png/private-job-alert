@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Attach portal scripts and design
         run: |
           python3 - <<'PY'
@@ -18,7 +20,7 @@ jobs:
           items=(
               ('index.html','<link rel="stylesheet" href="naukri-style.css">'),('index.html','<link rel="stylesheet" href="company-logo.css">'),('index.html','<link rel="stylesheet" href="professional-job-description.css">'),('index.html','<link rel="stylesheet" href="job-details.css">'),('index.html','<link rel="stylesheet" href="compact-filters.css">'),('index.html','<script src="company-logo.js"></script>'),('index.html','<script src="job-details.js"></script>'),
               ('hr.html','<script src="job-invitations.js"></script>'),('hr.html','<script src="hr-employee-profiles.js"></script>'),('hr.html','<script src="auth-guard.js"></script>'),('hr.html','<script src="password-reset-otp.js?v=20260904"></script>'),('hr.html','<link rel="stylesheet" href="naukri-style.css">'),('hr.html','<link rel="stylesheet" href="company-logo.css">'),('hr.html','<link rel="stylesheet" href="professional-job-description.css">'),('hr.html','<link rel="stylesheet" href="job-details.css">'),('hr.html','<link rel="stylesheet" href="compact-filters.css">'),('hr.html','<link rel="stylesheet" href="password-reset-otp.css">'),('hr.html','<script src="company-logo.js"></script>'),('hr.html','<script src="job-details.js"></script>'),
-              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260904"></script>'),('seeker.html','<script src="employee-registration-fix.js?v=20260906"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="job-details.css">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
+              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260904"></script>'),('seeker.html','<script src="employee-registration-fix.js?v=20260906"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="job-details.js">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
               ('admin.html','<script src="auth-guard.js"></script>'),('admin.html','<script src="password-reset-otp.js?v=20260904"></script>'),('admin.html','<link rel="stylesheet" href="password-reset-otp.css">'))
           for name,tag in items:
               p=Path(name);s=p.read_text()
@@ -46,5 +48,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html hr.html seeker.html admin.html
-          git diff --cached --quiet || git commit -m 'Attach Job Invitation UI'
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m 'Attach Job Invitation UI'
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
