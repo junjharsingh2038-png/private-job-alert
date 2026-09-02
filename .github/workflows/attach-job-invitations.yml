@@ -16,14 +16,15 @@ jobs:
           from pathlib import Path
           changed=False
           items=(
+              ('index.html','<link rel="stylesheet" href="naukri-style.css">'),
               ('hr.html','<script src="job-invitations.js"></script>'),
               ('hr.html','<script src="hr-employee-profiles.js"></script>'),
               ('hr.html','<script src="auth-guard.js"></script>'),
-              ('hr.html','<link rel="stylesheet" href="portal-design.css">'),
+              ('hr.html','<link rel="stylesheet" href="naukri-style.css">'),
               ('seeker.html','<script src="job-invitations.js"></script>'),
               ('seeker.html','<script src="employee-notifications.js"></script>'),
               ('seeker.html','<script src="auth-guard.js"></script>'),
-              ('seeker.html','<link rel="stylesheet" href="portal-design.css">'))
+              ('seeker.html','<link rel="stylesheet" href="naukri-style.css">'))
           for name,tag in items:
               p=Path(name)
               s=p.read_text()
@@ -38,6 +39,6 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add hr.html seeker.html
+          git add index.html hr.html seeker.html
           git diff --cached --quiet || git commit -m 'Attach Job Invitation UI'
           git push
