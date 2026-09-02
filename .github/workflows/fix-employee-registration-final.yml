@@ -1,0 +1,35 @@
+name: Fix Employee Registration Final
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.event.head_commit.message != 'Fix employee registration flow'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix registration
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('seeker.html'); s=p.read_text()
+          old="options:{data:{full_name:f.get('full_name'),role:'employee'}}"
+          new="options:{data:{full_name:f.get('full_name'),mobile:f.get('mobile'),location:f.get('location'),qualification:f.get('qualification'),experience:f.get('experience'),skills:f.get('skills'),role:'employee'}}"
+          if old not in s: raise SystemExit('signup metadata not found')
+          s=s.replace(old,new,1)
+          a="if(r.data.user){const pending={full_name:f.get('full_name'),mobile:f.get('mobile'),location:f.get('location'),qualification:f.get('qualification'),experience:f.get('experience'),skills:f.get('skills')};if(r.data.session){const p=await sb.from('job_seeker_profiles').upsert({id:r.data.user.id,...pending});if(p.error){localStorage.setItem('pja_pending_profile',JSON.stringify(pending));msg('registerMsg','Account created. Profile will be saved after email verification and login.','success')}}else{localStorage.setItem('pja_pending_profile',JSON.stringify(pending));msg('registerMsg','Account created. Please verify your email, then login. Your profile details are saved for completion.','success');return}}msg('registerMsg','Registration successful. Please verify your email if required, then login.','success')"
+          b="if(r.data.user){msg('registerMsg',r.data.session?'Registration successful. Your profile has been saved.':'Registration successful. Please verify your email, then login. Your profile will be created automatically.','success');return}"
+          if a not in s: raise SystemExit('registration save block not found')
+          s=s.replace(a,b,1)
+          p.write_text(s)
+          PY
+      - name: Remove workflow and commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f .github/workflows/fix-employee-registration-final.yml
+          git add seeker.html .github/workflows/fix-employee-registration-final.yml
+          git diff --cached --quiet || git commit -m 'Fix employee registration flow'
+          git push
