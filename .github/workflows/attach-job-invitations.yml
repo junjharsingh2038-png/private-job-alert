@@ -37,25 +37,23 @@ jobs:
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
               ('js','company-logo.js'),('js','job-details.js')],
             'admin.html':[
-              ('js','auth-guard.js'),('js','password-reset-otp.js'),('css','password-reset-otp.css')]
+              ('js','auth-guard.js'),('js','password-reset-otp.js'),('js','admin-reports.js'),
+              ('css','password-reset-otp.css'),('css','admin-reports.css')]
           }
           for name,items in assets.items():
             p=Path(name); s=p.read_text()
-            # Remove every previous copy/version of managed assets.
             for typ,base in items:
               b=re.escape(base)
               if typ=='js':
                 s=re.sub(r'<script\s+src=["\']'+b+r'(?:\?[^"\']*)?["\']\s*></script>\s*','',s,flags=re.I)
               else:
                 s=re.sub(r'<link\s+rel=["\']stylesheet["\']\s+href=["\']'+b+r'(?:\?[^"\']*)?["\']\s*/?>\s*','',s,flags=re.I)
-            # Remove the known old stylesheet/JS mismatch.
             if name=='seeker.html':
               s=re.sub(r'<link\s+rel=["\']stylesheet["\']\s+href=["\']job-details\.js["\']\s*/?>\s*','',s,flags=re.I)
             tags=[]
             for typ,base in items:
               tags.append((f'<script src="{base}?v={v}"></script>' if typ=='js' else f'<link rel="stylesheet" href="{base}?v={v}">'))
-            insert=''.join(tags)
-            s=s.replace('</body>',insert+'</body>',1)
+            s=s.replace('</body>', ''.join(tags)+'</body>', 1)
             p.write_text(s)
           PY
       - name: Validate managed assets
@@ -64,18 +62,18 @@ jobs:
           test -s password-reset-otp.css
           test -s auth-guard.js
           test -s employee-registration-fix.js
+          test -s admin-reports.js
+          test -s admin-reports.css
           python3 - <<'PY'
           from pathlib import Path
-          import re
           checks={
             'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js'],
             'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js'],
-            'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js'],
+            'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','admin-reports.js','admin-reports.css'],
             'index.html':['company-logo.js','job-details.js']}
           for f,need in checks.items():
             s=Path(f).read_text()
-            for x in need:
-              assert x in s, f'{x} missing from {f}'
+            for x in need: assert x in s, f'{x} missing from {f}'
             assert 'href="job-details.js"' not in s, f'bad stylesheet reference in {f}'
           print('Portal asset validation passed')
           PY
