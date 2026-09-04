@@ -1,0 +1,1 @@
+(function(){'use strict';if(window.__PJA_GOATCOUNTER__)return;window.__PJA_GOATCOUNTER__=1;var s=document.createElement('script');s.async=true;s.src='https://gc.zgo.at/count.js';s.setAttribute('data-goatcounter','https://private-job-alert.goatcounter.com/count');document.head.appendChild(s);})();
