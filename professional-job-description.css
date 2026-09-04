@@ -1,5 +1,18 @@
-/* Professional job listing / description presentation only */
-.job-card,.job{position:relative!important}.job-card h3,.job h3{margin:0 0 7px!important;font-size:18px!important;line-height:1.35!important}.job-card b,.job b{display:block!important;font-size:14px!important;color:#26364a!important;margin:4px 0 10px!important}.job-card .muted,.job .muted{line-height:1.7!important;color:#68778b!important}.job-card p:not(.muted),.job p:not(.muted){font-size:14px!important;line-height:1.65!important;color:#4d5d72!important;margin:12px 0!important;display:-webkit-box!important;-webkit-line-clamp:3!important;-webkit-box-orient:vertical!important;overflow:hidden!important}.job-card small,.job small{display:block!important;color:#7a8798!important;margin-top:8px!important}.job-card .apply,.job .apply{float:right!important;margin-left:14px!important;border:0!important;border-radius:6px!important;padding:10px 16px!important;background:#1676f3!important;color:#fff!important;font-weight:700!important;cursor:pointer!important}.job-card .apply:hover,.job .apply:hover{filter:brightness(.94)!important}.job-card:after,.job:after{content:""!important;display:block!important;clear:both!important}
+/* Compact job listing cards: full description opens in View Details */
+.job-card,.job{position:relative!important}
+.job-card h3,.job h3{margin:0 0 5px!important;font-size:17px!important;line-height:1.3!important}
+.job-card b,.job b{display:block!important;font-size:14px!important;color:#26364a!important;margin:3px 0 7px!important}
+.job-card .muted,.job .muted{line-height:1.5!important;color:#68778b!important}
+.nk-job-card .nk-description{display:none!important}
+.job-card small,.job small{display:block!important;color:#7a8798!important;margin-top:6px!important}
+.job-card .apply,.job .apply{float:right!important;margin-left:8px!important;border:0!important;border-radius:6px!important;padding:8px 13px!important;background:#1676f3!important;color:#fff!important;font-weight:700!important;cursor:pointer!important}
+.job-card .apply:hover,.job .apply:hover{filter:brightness(.94)!important}
+.job-card:after,.job:after{content:""!important;display:block!important;clear:both!important}
+.nk-job-card .nk-job-main{padding:14px 16px 11px!important}
+.nk-job-card .nk-meta{margin:8px 0 4px!important;gap:5px 12px!important;font-size:12px!important}
+.nk-job-card .nk-experience{margin:3px 0!important;font-size:12px!important}
+.nk-job-card .nk-job-bottom{padding-top:8px!important}
+.nk-job-card .nk-actions button{height:32px!important;padding:0 10px!important;font-size:12px!important}
 /* HR posted-job description */
 .hr-welcome .job{background:#fff!important;border:1px solid #e5eaf0!important;border-radius:10px!important;padding:18px!important;margin:12px 0!important;box-shadow:0 2px 10px rgba(30,45,70,.06)!important}
 .hr-welcome .job h3{color:#1c5db5!important}
