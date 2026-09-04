@@ -1,33 +1,11 @@
-name: Attach HR Employee Profiles
+name: Obsolete HR Profile Attachment
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'hr-employee-profiles.js'
-      - '.github/workflows/attach-hr-employee-profiles.yml'
+  workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  attach:
+  disabled:
+    if: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Attach script to HR portal
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('hr.html')
-          s=p.read_text()
-          tag='<script src="hr-employee-profiles.js"></script>'
-          if tag not in s:
-              s=s.replace('</body>',tag+'</body>')
-              p.write_text(s)
-          PY
-      - name: Commit attachment
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add hr.html
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m 'Enable HR employee profiles'
-          git push
+      - run: echo "Disabled. Portal assets are managed by the unified attachment workflow."
