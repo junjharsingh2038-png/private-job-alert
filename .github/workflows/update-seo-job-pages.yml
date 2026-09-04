@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -43,21 +45,28 @@ jobs:
           with open('/tmp/jobs.json', encoding='utf-8') as f:
               jobs = json.load(f)
           print(f'Supabase API OK: {len(jobs)} active jobs found.')
-          for job in jobs:
-              print('-', job.get('title'), '|', job.get('company'))
           PY
 
       - name: Generate job pages and sitemap
         run: python scripts/generate_jobs.py
 
       - name: Commit generated pages
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add jobs sitemap.xml
           if git diff --cached --quiet; then
             echo 'No SEO page changes required.'
-          else
-            git commit -m 'Update job SEO pages and sitemap'
-            git push
+            exit 0
           fi
+          git commit -m 'Update job SEO pages and sitemap'
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main && git push origin HEAD:main && exit 0
+            git rebase --abort || true
+            sleep $((attempt * 3))
+          done
+          echo 'Could not push SEO update after retries.'
+          exit 1
