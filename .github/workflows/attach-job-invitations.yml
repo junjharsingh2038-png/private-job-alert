@@ -1,60 +1,91 @@
-name: Attach Portal Assets
+name: Unified Portal Assets
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 permissions:
   contents: write
 concurrency:
   group: portal-assets-main
   cancel-in-progress: true
 jobs:
-  attach:
-    if: github.event.head_commit.message != 'Attach Portal Assets'
+  sync:
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message != 'Sync portal assets'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Attach portal scripts and styles
+      - name: Sync required portal assets
+        env:
+          VERSION: ${{ github.sha }}
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
-          items={
+          import re, os
+          v=os.environ['VERSION']
+          assets={
             'index.html':[
-              '<link rel="stylesheet" href="naukri-style.css?v=20260907">','<link rel="stylesheet" href="company-logo.css?v=20260907">','<link rel="stylesheet" href="professional-job-description.css?v=20260907">','<link rel="stylesheet" href="job-details.css?v=20260907">','<link rel="stylesheet" href="compact-filters.css?v=20260907">','<script src="company-logo.js?v=20260907"></script>','<script src="job-details.js?v=20260907"></script>'],
+              ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),
+              ('js','company-logo.js'),('js','job-details.js')],
             'hr.html':[
-              '<script src="job-invitations.js?v=20260907"></script>','<script src="hr-employee-profiles.js?v=20260907"></script>','<script src="auth-guard.js?v=20260907"></script>','<script src="password-reset-otp.js?v=20260907"></script>','<link rel="stylesheet" href="naukri-style.css?v=20260907">','<link rel="stylesheet" href="company-logo.css?v=20260907">','<link rel="stylesheet" href="professional-job-description.css?v=20260907">','<link rel="stylesheet" href="job-details.css?v=20260907">','<link rel="stylesheet" href="compact-filters.css?v=20260907">','<link rel="stylesheet" href="password-reset-otp.css?v=20260907">','<script src="company-logo.js?v=20260907"></script>','<script src="job-details.js?v=20260907"></script>'],
+              ('js','job-invitations.js'),('js','hr-employee-profiles.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),
+              ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
+              ('js','company-logo.js'),('js','job-details.js')],
             'seeker.html':[
-              '<script src="job-invitations.js?v=20260907"></script>','<script src="employee-notifications.js?v=20260907"></script>','<script src="auth-guard.js?v=20260907"></script>','<script src="password-reset-otp.js?v=20260907"></script>','<script src="employee-registration-fix.js?v=20260907"></script>','<link rel="stylesheet" href="naukri-style.css?v=20260907">','<link rel="stylesheet" href="company-logo.css?v=20260907">','<link rel="stylesheet" href="professional-job-description.css?v=20260907">','<link rel="stylesheet" href="compact-filters.css?v=20260907">','<link rel="stylesheet" href="password-reset-otp.css?v=20260907">','<script src="company-logo.js?v=20260907"></script>','<script src="job-details.js?v=20260907"></script>'],
+              ('js','job-invitations.js'),('js','employee-notifications.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','employee-registration-fix.js'),
+              ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
+              ('js','company-logo.js'),('js','job-details.js')],
             'admin.html':[
-              '<script src="auth-guard.js?v=20260907"></script>','<script src="password-reset-otp.js?v=20260907"></script>','<link rel="stylesheet" href="password-reset-otp.css?v=20260907">']}
-          for name,tags in items.items():
-            p=Path(name);s=p.read_text()
-            bases=['naukri-style.css','company-logo.css','professional-job-description.css','job-details.css','compact-filters.css','password-reset-otp.css']
-            for base in bases:
-              s=re.sub(r'<link\s+rel="stylesheet"\s+href="'+re.escape(base)+r'(?:\?v=[^"]+)?"\s*/?>','',s)
-            for base in ['job-invitations.js','hr-employee-profiles.js','employee-notifications.js','auth-guard.js','password-reset-otp.js','employee-registration-fix.js','company-logo.js','job-details.js','employee-signup-otp.js']:
-              s=re.sub(r'<script\s+src="'+re.escape(base)+r'(?:\?v=[^"]+)?"\s*></script>','',s)
-            s=re.sub(r'<link rel="stylesheet" href="job-details\.js">','',s)
-            for tag in tags:
-              s=s.replace('</body>',tag+'</body>',1)
+              ('js','auth-guard.js'),('js','password-reset-otp.js'),('css','password-reset-otp.css')]
+          }
+          for name,items in assets.items():
+            p=Path(name); s=p.read_text()
+            # Remove every previous copy/version of managed assets.
+            for typ,base in items:
+              b=re.escape(base)
+              if typ=='js':
+                s=re.sub(r'<script\s+src=["\']'+b+r'(?:\?[^"\']*)?["\']\s*></script>\s*','',s,flags=re.I)
+              else:
+                s=re.sub(r'<link\s+rel=["\']stylesheet["\']\s+href=["\']'+b+r'(?:\?[^"\']*)?["\']\s*/?>\s*','',s,flags=re.I)
+            # Remove the known old stylesheet/JS mismatch.
+            if name=='seeker.html':
+              s=re.sub(r'<link\s+rel=["\']stylesheet["\']\s+href=["\']job-details\.js["\']\s*/?>\s*','',s,flags=re.I)
+            tags=[]
+            for typ,base in items:
+              tags.append((f'<script src="{base}?v={v}"></script>' if typ=='js' else f'<link rel="stylesheet" href="{base}?v={v}">'))
+            insert=''.join(tags)
+            s=s.replace('</body>',insert+'</body>',1)
             p.write_text(s)
           PY
-      - name: Validate required OTP assets
+      - name: Validate managed assets
         run: |
           test -s password-reset-otp.js
           test -s password-reset-otp.css
-          grep -q 'password-reset-otp.js?v=20260907' hr.html
-          grep -q 'password-reset-otp.js?v=20260907' seeker.html
-          grep -q 'password-reset-otp.js?v=20260907' admin.html
-      - name: Commit attachment
+          test -s auth-guard.js
+          test -s employee-registration-fix.js
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          checks={
+            'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js'],
+            'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js'],
+            'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js'],
+            'index.html':['company-logo.js','job-details.js']}
+          for f,need in checks.items():
+            s=Path(f).read_text()
+            for x in need:
+              assert x in s, f'{x} missing from {f}'
+            assert 'href="job-details.js"' not in s, f'bad stylesheet reference in {f}'
+          print('Portal asset validation passed')
+          PY
+      - name: Commit synced pages
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html hr.html seeker.html admin.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Attach Portal Assets'
+          git commit -m 'Sync portal assets'
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
