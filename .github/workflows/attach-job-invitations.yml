@@ -1,56 +1,60 @@
-name: Attach Job Invitations
+name: Attach Portal Assets
 on:
   push:
     branches: [main]
 permissions:
   contents: write
+concurrency:
+  group: portal-assets-main
+  cancel-in-progress: true
 jobs:
   attach:
-    if: github.event.head_commit.message != 'Attach Job Invitation UI'
+    if: github.event.head_commit.message != 'Attach Portal Assets'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Attach portal scripts and design
+      - name: Attach portal scripts and styles
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
-          items=(
-              ('index.html','<link rel="stylesheet" href="naukri-style.css">'),('index.html','<link rel="stylesheet" href="company-logo.css">'),('index.html','<link rel="stylesheet" href="professional-job-description.css">'),('index.html','<link rel="stylesheet" href="job-details.css">'),('index.html','<link rel="stylesheet" href="compact-filters.css">'),('index.html','<script src="company-logo.js"></script>'),('index.html','<script src="job-details.js"></script>'),
-              ('hr.html','<script src="job-invitations.js"></script>'),('hr.html','<script src="hr-employee-profiles.js"></script>'),('hr.html','<script src="auth-guard.js"></script>'),('hr.html','<script src="password-reset-otp.js?v=20260904"></script>'),('hr.html','<link rel="stylesheet" href="naukri-style.css">'),('hr.html','<link rel="stylesheet" href="company-logo.css">'),('hr.html','<link rel="stylesheet" href="professional-job-description.css">'),('hr.html','<link rel="stylesheet" href="job-details.css">'),('hr.html','<link rel="stylesheet" href="compact-filters.css">'),('hr.html','<link rel="stylesheet" href="password-reset-otp.css">'),('hr.html','<script src="company-logo.js"></script>'),('hr.html','<script src="job-details.js"></script>'),
-              ('seeker.html','<script src="job-invitations.js"></script>'),('seeker.html','<script src="employee-notifications.js"></script>'),('seeker.html','<script src="auth-guard.js"></script>'),('seeker.html','<script src="password-reset-otp.js?v=20260904"></script>'),('seeker.html','<script src="employee-registration-fix.js?v=20260906"></script>'),('seeker.html','<link rel="stylesheet" href="naukri-style.css">'),('seeker.html','<link rel="stylesheet" href="company-logo.css">'),('seeker.html','<link rel="stylesheet" href="professional-job-description.css">'),('seeker.html','<link rel="stylesheet" href="compact-filters.css">'),('seeker.html','<link rel="stylesheet" href="password-reset-otp.css">'),('seeker.html','<script src="company-logo.js"></script>'),('seeker.html','<script src="job-details.js"></script>'),
-              ('admin.html','<script src="auth-guard.js"></script>'),('admin.html','<script src="password-reset-otp.js?v=20260904"></script>'),('admin.html','<link rel="stylesheet" href="password-reset-otp.css">'))
-          for name,tag in items:
-              p=Path(name);s=p.read_text()
-              if name in ('hr.html','seeker.html','admin.html'):
-                  s=re.sub(r'(?:<script src="auth-guard\.js"></script>\s*)+','',s)
-                  s=re.sub(r'<script src="password-reset-otp\.js(?:\?v=[^"]+)?"></script>','',s)
-              if name=='seeker.html':
-                  s=re.sub(r'<script src="employee-signup-otp\.js(?:\?v=[^"]+)?"></script>','',s)
-                  s=re.sub(r'<script src="employee-registration-fix\.js(?:\?v=[^"]+)?"></script>','',s)
-                  s=re.sub(r'<link rel="stylesheet" href="job-details\.js">','',s)
-              if name in ('index.html','hr.html','seeker.html'):
-                  for base in ('naukri-style.css','company-logo.css','professional-job-description.css','job-details.css','compact-filters.css'):
-                      if name!='index.html' or base!='compact-filters.css':
-                          s=re.sub(r'<link rel="stylesheet" href="'+re.escape(base)+r'"></link>|<link rel="stylesheet" href="'+re.escape(base)+r'">','',s)
-              if name in ('hr.html','seeker.html','admin.html'):
-                  s=re.sub(r'<link rel="stylesheet" href="password-reset-otp\.css">','',s)
-              if name=='index.html':
-                  s=re.sub(r'<script src="company-logo\.js"></script>','',s);s=re.sub(r'<script src="job-details\.js"></script>','',s)
-              if name in ('hr.html','seeker.html'):
-                  s=re.sub(r'<script src="company-logo\.js"></script>','',s);s=re.sub(r'<script src="job-details\.js"></script>','',s)
-              if tag not in s: s=s.replace('</body>',tag+'</body>',1)
-              p.write_text(s)
+          items={
+            'index.html':[
+              '<link rel="stylesheet" href="naukri-style.css?v=20260907">','<link rel="stylesheet" href="company-logo.css?v=20260907">','<link rel="stylesheet" href="professional-job-description.css?v=20260907">','<link rel="stylesheet" href="job-details.css?v=20260907">','<link rel="stylesheet" href="compact-filters.css?v=20260907">','<script src="company-logo.js?v=20260907"></script>','<script src="job-details.js?v=20260907"></script>'],
+            'hr.html':[
+              '<script src="job-invitations.js?v=20260907"></script>','<script src="hr-employee-profiles.js?v=20260907"></script>','<script src="auth-guard.js?v=20260907"></script>','<script src="password-reset-otp.js?v=20260907"></script>','<link rel="stylesheet" href="naukri-style.css?v=20260907">','<link rel="stylesheet" href="company-logo.css?v=20260907">','<link rel="stylesheet" href="professional-job-description.css?v=20260907">','<link rel="stylesheet" href="job-details.css?v=20260907">','<link rel="stylesheet" href="compact-filters.css?v=20260907">','<link rel="stylesheet" href="password-reset-otp.css?v=20260907">','<script src="company-logo.js?v=20260907"></script>','<script src="job-details.js?v=20260907"></script>'],
+            'seeker.html':[
+              '<script src="job-invitations.js?v=20260907"></script>','<script src="employee-notifications.js?v=20260907"></script>','<script src="auth-guard.js?v=20260907"></script>','<script src="password-reset-otp.js?v=20260907"></script>','<script src="employee-registration-fix.js?v=20260907"></script>','<link rel="stylesheet" href="naukri-style.css?v=20260907">','<link rel="stylesheet" href="company-logo.css?v=20260907">','<link rel="stylesheet" href="professional-job-description.css?v=20260907">','<link rel="stylesheet" href="compact-filters.css?v=20260907">','<link rel="stylesheet" href="password-reset-otp.css?v=20260907">','<script src="company-logo.js?v=20260907"></script>','<script src="job-details.js?v=20260907"></script>'],
+            'admin.html':[
+              '<script src="auth-guard.js?v=20260907"></script>','<script src="password-reset-otp.js?v=20260907"></script>','<link rel="stylesheet" href="password-reset-otp.css?v=20260907">']}
+          for name,tags in items.items():
+            p=Path(name);s=p.read_text()
+            bases=['naukri-style.css','company-logo.css','professional-job-description.css','job-details.css','compact-filters.css','password-reset-otp.css']
+            for base in bases:
+              s=re.sub(r'<link\s+rel="stylesheet"\s+href="'+re.escape(base)+r'(?:\?v=[^"]+)?"\s*/?>','',s)
+            for base in ['job-invitations.js','hr-employee-profiles.js','employee-notifications.js','auth-guard.js','password-reset-otp.js','employee-registration-fix.js','company-logo.js','job-details.js','employee-signup-otp.js']:
+              s=re.sub(r'<script\s+src="'+re.escape(base)+r'(?:\?v=[^"]+)?"\s*></script>','',s)
+            s=re.sub(r'<link rel="stylesheet" href="job-details\.js">','',s)
+            for tag in tags:
+              s=s.replace('</body>',tag+'</body>',1)
+            p.write_text(s)
           PY
+      - name: Validate required OTP assets
+        run: |
+          test -s password-reset-otp.js
+          test -s password-reset-otp.css
+          grep -q 'password-reset-otp.js?v=20260907' hr.html
+          grep -q 'password-reset-otp.js?v=20260907' seeker.html
+          grep -q 'password-reset-otp.js?v=20260907' admin.html
       - name: Commit attachment
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html hr.html seeker.html admin.html
           git diff --cached --quiet && exit 0
-          git commit -m 'Attach Job Invitation UI'
+          git commit -m 'Attach Portal Assets'
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
