@@ -26,8 +26,8 @@ jobs:
           v=os.environ['VERSION']
           assets={
             'index.html':[
-              ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','job-share.css'),
-              ('js','company-logo.js'),('js','job-details.js'),('js','job-share.js'),('js','goatcounter.js')],
+              ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','job-share.css'),('css','job-view.css'),
+              ('js','company-logo.js'),('js','job-details.js'),('js','job-share.js'),('js','job-view.js'),('js','goatcounter.js')],
             'hr.html':[
               ('js','job-invitations.js'),('js','hr-employee-profiles.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','goatcounter.js'),
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
@@ -48,8 +48,6 @@ jobs:
                 s=re.sub(r'<script\s+src=["\']'+b+r'(?:\?[^"\']*)?["\']\s*></script>\s*','',s,flags=re.I)
               else:
                 s=re.sub(r'<link\s+rel=["\']stylesheet["\']\s+href=["\']'+b+r'(?:\?[^"\']*)?["\']\s*/?>\s*','',s,flags=re.I)
-            if name=='seeker.html':
-              s=re.sub(r'<link\s+rel=["\']stylesheet["\']\s+href=["\']job-details\.js["\']\s*/?>\s*','',s,flags=re.I)
             tags=[]
             for typ,base in items:
               tags.append((f'<script src="{base}?v={v}"></script>' if typ=='js' else f'<link rel="stylesheet" href="{base}?v={v}">'))
@@ -67,13 +65,15 @@ jobs:
           test -s goatcounter.js
           test -s job-share.js
           test -s job-share.css
+          test -s job-view.js
+          test -s job-view.css
           python3 - <<'PY'
           from pathlib import Path
           checks={
             'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','goatcounter.js'],
             'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js','goatcounter.js'],
             'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','admin-reports.js','admin-reports.css'],
-            'index.html':['company-logo.js','job-details.js','job-share.js','job-share.css','goatcounter.js']}
+            'index.html':['company-logo.js','job-details.js','job-share.js','job-share.css','job-view.js','job-view.css','goatcounter.js']}
           for f,need in checks.items():
             s=Path(f).read_text()
             for x in need: assert x in s, f'{x} missing from {f}'
