@@ -27,13 +27,13 @@ jobs:
           assets={
             'index.html':[
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),
-              ('js','company-logo.js'),('js','job-details.js')],
+              ('js','company-logo.js'),('js','job-details.js'),('js','goatcounter.js')],
             'hr.html':[
-              ('js','job-invitations.js'),('js','hr-employee-profiles.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),
+              ('js','job-invitations.js'),('js','hr-employee-profiles.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','goatcounter.js'),
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
               ('js','company-logo.js'),('js','job-details.js')],
             'seeker.html':[
-              ('js','job-invitations.js'),('js','employee-notifications.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','employee-registration-fix.js'),
+              ('js','job-invitations.js'),('js','employee-notifications.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','employee-registration-fix.js'),('js','goatcounter.js'),
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
               ('js','company-logo.js'),('js','job-details.js')],
             'admin.html':[
@@ -64,13 +64,14 @@ jobs:
           test -s employee-registration-fix.js
           test -s admin-reports.js
           test -s admin-reports.css
+          test -s goatcounter.js
           python3 - <<'PY'
           from pathlib import Path
           checks={
-            'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js'],
-            'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js'],
+            'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','goatcounter.js'],
+            'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js','goatcounter.js'],
             'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','admin-reports.js','admin-reports.css'],
-            'index.html':['company-logo.js','job-details.js']}
+            'index.html':['company-logo.js','job-details.js','goatcounter.js']}
           for f,need in checks.items():
             s=Path(f).read_text()
             for x in need: assert x in s, f'{x} missing from {f}'
