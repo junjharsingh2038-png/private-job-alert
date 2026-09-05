@@ -33,7 +33,7 @@ jobs:
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
               ('js','company-logo.js'),('js','job-details.js')],
             'seeker.html':[
-              ('js','job-invitations.js'),('js','employee-notifications.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','employee-registration-fix.js'),('js','employee-public-jobs.js'),('js','goatcounter.js'),
+              ('js','job-invitations.js'),('js','employee-notifications.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','employee-registration-fix.js'),('js','goatcounter.js'),
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),('css','employee-public-jobs.css'),
               ('js','company-logo.js'),('js','job-details.js')],
             'admin.html':[
@@ -60,8 +60,6 @@ jobs:
           test -s password-reset-otp.css
           test -s auth-guard.js
           test -s employee-registration-fix.js
-          test -s employee-public-jobs.js
-          test -s employee-public-jobs.css
           test -s admin-reports.js
           test -s admin-reports.css
           test -s admin-design.css
@@ -70,11 +68,12 @@ jobs:
           test -s job-share.css
           test -s job-view.js
           test -s job-view.css
+          test -s employee-public-jobs.css
           python3 - <<'PY'
           from pathlib import Path
           checks={
             'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','goatcounter.js'],
-            'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js','employee-public-jobs.js','employee-public-jobs.css','goatcounter.js'],
+            'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js','goatcounter.js','employee-public-jobs.css'],
             'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','admin-reports.js','admin-reports.css','admin-design.css'],
             'index.html':['company-logo.js','job-details.js','job-share.js','job-share.css','job-view.js','job-view.css','goatcounter.js']}
           for f,need in checks.items():
