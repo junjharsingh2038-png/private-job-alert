@@ -1,0 +1,11 @@
+/* Employee job cards: public-portal style actions and full-details access. */
+(function(){'use strict';
+function esc(v){return String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]))}
+function getJob(card){const b=card.querySelector('.apply[onclick],button[onclick*="openApply("]');if(!b)return null;const s=b.getAttribute('onclick')||'',a=s.indexOf('openApply('),z=s.lastIndexOf(')');if(a<0||z<=a)return null;try{return JSON.parse(s.slice(a+10,z).replace(/&#39;/g,"'"))}catch(e){return null}}
+function details(j){if(window.openJobDetails){window.openJobDetails(j);return}const modal=document.getElementById('modal'),box=document.getElementById('modalContent');if(!modal||!box)return;box.innerHTML='<div class="job-description-view"><button class="close" onclick="closeModal()">×</button><h2>'+esc(j.title||'Job')+'</h2><p><b>'+esc(j.company||j.company_name||'')+'</b></p><p>📍 '+esc(j.location||'India')+'</p><hr><h3>Job Description</h3><div>'+esc(j.description||'No detailed description available.').replace(/\n/g,'<br>')+'</div></div>';modal.classList.remove('hidden')}
+function wire(card){if(card.dataset.publicJobWired)return;const j=getJob(card);if(!j)return;let main=card.querySelector('.job-main');if(!main){main=document.createElement('div');main.className='job-main';while(card.firstChild)main.appendChild(card.firstChild);card.appendChild(main)}let actions=card.querySelector('.job-actions');if(!actions){actions=document.createElement('div');actions.className='job-actions';card.appendChild(actions)}const apply=actions.querySelector('.apply,button[onclick*="openApply("]');if(apply&&!actions.querySelector('.pja-view')){const v=document.createElement('button');v.type='button';v.className='pja-view';v.textContent='View Details';v.onclick=e=>{e.preventDefault();e.stopPropagation();details(j)};actions.insertBefore(v,apply)}card.dataset.publicJobWired='1'}
+function add(){document.querySelectorAll('#employeeJobs .ep-job').forEach(wire)}
+function start(){add();setTimeout(add,300);setTimeout(add,900);setTimeout(add,1800);new MutationObserver(add).observe(document.body,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start);else start();
+window.PJAEmployeeJobs={add};
+})();
