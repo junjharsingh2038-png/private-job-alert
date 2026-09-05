@@ -38,7 +38,7 @@ jobs:
               ('js','company-logo.js'),('js','job-details.js')],
             'admin.html':[
               ('js','auth-guard.js'),('js','password-reset-otp.js'),('js','admin-reports.js'),
-              ('css','password-reset-otp.css'),('css','admin-reports.css')]
+              ('css','password-reset-otp.css'),('css','admin-reports.css'),('css','admin-design.css')]
           }
           for name,items in assets.items():
             p=Path(name); s=p.read_text()
@@ -62,6 +62,7 @@ jobs:
           test -s employee-registration-fix.js
           test -s admin-reports.js
           test -s admin-reports.css
+          test -s admin-design.css
           test -s goatcounter.js
           test -s job-share.js
           test -s job-share.css
@@ -72,7 +73,7 @@ jobs:
           checks={
             'hr.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','goatcounter.js'],
             'seeker.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','employee-registration-fix.js','goatcounter.js'],
-            'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','admin-reports.js','admin-reports.css'],
+            'admin.html':['password-reset-otp.js','password-reset-otp.css','auth-guard.js','admin-reports.js','admin-reports.css','admin-design.css'],
             'index.html':['company-logo.js','job-details.js','job-share.js','job-share.css','job-view.js','job-view.css','goatcounter.js']}
           for f,need in checks.items():
             s=Path(f).read_text()
