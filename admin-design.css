@@ -1,0 +1,16 @@
+/* Owner Admin portal visual layer. Keeps admin functionality unchanged. */
+:root{--admin-navy:#071b3a;--admin-blue:#1264e8;--admin-ink:#10213f;--admin-muted:#65748b;--admin-line:#e3e9f1;--admin-shadow:0 12px 34px rgba(16,38,74,.08)}
+body{background:linear-gradient(180deg,#f7f9fc 0,#eef3f9 100%)!important;color:var(--admin-ink)!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+.wrap{max-width:1180px!important;padding:34px 20px 50px!important}
+.box,.card,.hero{border:1px solid var(--admin-line)!important;border-radius:20px!important;box-shadow:var(--admin-shadow)!important;background:rgba(255,255,255,.97)!important}
+.hero{position:relative!important;overflow:hidden!important;background:linear-gradient(135deg,#061a3b 0%,#0d3e87 58%,#1264e8 100%)!important;color:#fff!important;padding:34px!important;box-shadow:0 20px 50px rgba(7,27,58,.18)!important}
+.hero:after{content:"";position:absolute;right:-100px;top:-130px;width:340px;height:340px;border:70px solid rgba(255,255,255,.08);border-radius:50%}
+.hero h1{font-size:clamp(28px,4vw,42px)!important;letter-spacing:-.03em!important;margin:12px 0!important}.hero p{opacity:.9!important}
+.grid{gap:18px!important}.card{min-height:155px!important;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important}.card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(16,38,74,.12)!important;border-color:#c9d9ef!important}.card h3{font-size:20px!important}.card p{line-height:1.5!important}
+.form{gap:15px!important}.form input{min-height:44px!important;border:1px solid #d5deea!important;background:#fbfdff!important;border-radius:11px!important;transition:border-color .15s,box-shadow .15s!important}.form input:focus{outline:none!important;border-color:#6b9ef0!important;box-shadow:0 0 0 4px rgba(18,100,232,.09)!important}
+button,.button{border-radius:11px!important;font-weight:800!important;transition:transform .15s,box-shadow .15s,opacity .15s!important}button:hover,.button:hover{transform:translateY(-1px)}
+.section{animation:adminIn .2s ease}.section h2{font-size:24px!important}.row{border:1px solid var(--admin-line)!important;border-radius:16px!important;background:#fbfdff!important;box-shadow:0 5px 18px rgba(16,38,74,.045)!important}.row h3{font-size:18px!important}.detail-grid{gap:0 24px!important}.detail{padding:11px 0!important}.btns{margin-top:12px!important}.danger-btn,.block-btn,.ok-btn{min-height:38px!important}
+.status{letter-spacing:.02em!important}.msg{line-height:1.45!important}
+@keyframes adminIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(max-width:800px){.wrap{padding:22px 14px 36px!important}.hero{padding:28px 22px!important}.grid{grid-template-columns:1fr 1fr!important}}
+@media(max-width:500px){.grid{grid-template-columns:1fr!important}.box,.hero{padding:20px!important}.hero h1{font-size:31px!important}}
