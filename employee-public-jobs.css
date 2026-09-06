@@ -10,11 +10,14 @@
 #employeeJobs .ep-job .company-logo{width:42px!important;height:42px!important;flex:0 0 42px!important;margin-right:10px!important}
 #employeeJobs .ep-job .meta{display:flex!important;flex-wrap:wrap!important;gap:7px 15px!important;margin:12px 0 8px!important;color:#5f6f84!important;font-size:13px!important}
 #employeeJobs .ep-job .meta span{white-space:nowrap!important}
+#employeeJobs .ep-job .employee-job-description{display:none!important;visibility:hidden!important;height:0!important;overflow:hidden!important;margin:0!important;padding:0!important}
+#employeeJobs .ep-job .job-description,#employeeJobs .ep-job .description{display:none!important}
 #employeeJobs .ep-job .job-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:7px!important;flex-wrap:wrap!important;padding:11px 20px 14px!important;border-top:1px solid #edf1f5!important;margin-top:0!important}
 #employeeJobs .ep-job .job-actions button{height:36px!important;padding:0 13px!important;border-radius:6px!important;font-size:13px!important;font-weight:700!important;cursor:pointer!important}
 #employeeJobs .ep-job .job-actions .pja-view{background:#fff!important;color:#1676f3!important;border:1px solid #c8d8ea!important}
 #employeeJobs .ep-job .job-actions .pja-view:hover{background:#eef6ff!important}
+#employeeJobs .ep-job .job-actions .pja-share{background:#fff!important;color:#1676f3!important;border:1px solid #c8d8ea!important}
+#employeeJobs .ep-job .job-actions .pja-share:hover{background:#eef6ff!important}
 #employeeJobs .ep-job .job-actions .apply{background:#1676f3!important;color:#fff!important;border:1px solid #1676f3!important}
 #employeeJobs .ep-job .job-actions .save{background:#fff!important;color:#1676f3!important;border:1px solid #c8d8ea!important}
-#employeeJobs .ep-job .job-description,#employeeJobs .ep-job .description{display:none!important}
 @media(max-width:600px){#employeeJobs .ep-job .job-main{padding:16px!important}#employeeJobs .ep-job .job-actions{justify-content:flex-start!important;padding:11px 16px 14px!important}#employeeJobs .ep-job .job-actions button{flex:1 1 auto!important}}
