@@ -84,7 +84,7 @@ async function main(){
   }
 
   const today=new Date().toISOString().slice(0,10);
-  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
+  const xml='<?xml version="1.0" encoding="UTF-8"?>\n<!-- generated-by-sync-seo -->\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+
     urls.map(u=>'<url><loc>'+esc(u.loc)+'</loc><lastmod>'+esc(u.lastmod||today)+'</lastmod><changefreq>daily</changefreq><priority>'+u.priority+'</priority></url>').join("\n")+
     '\n</urlset>\n';
   fs.writeFileSync("sitemap.xml",xml);
