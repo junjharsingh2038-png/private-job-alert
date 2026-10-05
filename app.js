@@ -16,19 +16,31 @@ window.clearJobFilters=clearJobFilters;
 function renderHrPage(html){const target=$("hrApp");if(!target){if(location.pathname.endsWith("index.html")||location.pathname==="/"||!location.pathname.includes("hr")){sessionStorage.setItem("openHrLogin","1");location.href="hr.html";return;}return;}target.innerHTML=html;target.classList.remove("hidden");}
 window.renderHrPage=renderHrPage;
 async function loadJobs(){
- const q=($("search")?.value||"").trim(),state=$("stateFilter")?.value||"",type=$("typeFilter")?.value||"",exp=$("experienceFilter")?.value||"",qual=$("qualificationFilter")?.value||"";
- let query=sb.from("jobs").select("id,title,company,company_name,location,state,city,qualification,salary,job_type,type,experience,description,hr_email,created_at,is_active,lastdate").eq("is_active",true).order("created_at",{ascending:false});
- if(q) query=query.or(`title.ilike.%${q}%,company.ilike.%${q}%,company_name.ilike.%${q}%,location.ilike.%${q}%,state.ilike.%${q}%,city.ilike.%${q}%,qualification.ilike.%${q}%,experience.ilike.%${q}%`);
- if(state) query=query.ilike("state",`%${state}%`);
- if(type) query=query.or(`job_type.ilike.%${type}%,type.ilike.%${type}%`);
- if(exp) query=query.ilike("experience",`%${exp}%`);
- if(qual) query=query.ilike("qualification",`%${qual}%`);
- const {data,error}=await query;
- if(error){if($("jobsList"))$("jobsList").innerHTML="<p class='danger'>Jobs could not be loaded. Please try again.</p>";if($("jobCount"))$("jobCount").textContent="";return;}
- if($("jobCount"))$("jobCount").textContent=`${data.length} job${data.length===1?'':'s'} found`;
- if(!$("jobsList"))return;
- $("jobsList").innerHTML=data.length?data.map(j=>{const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India",company=j.company||j.company_name||"",type=j.job_type||j.type||"Full Time",posted=j.created_at?new Date(j.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):"";return `<article class="job nk-job-card"><div class="nk-job-main"><div class="nk-job-top"><div class="nk-job-title-wrap"><h3>${esc(j.title)}</h3><b class="company">${jobCompanyLogo(j.company_logo)}${esc(company)}</b></div><span class="nk-save" aria-label="Job">♡</span></div><p class="nk-meta"><span>📍 ${esc(loc)}</span><span>💼 ${esc(type)}</span><span>🎓 ${esc(j.qualification||"Any")}</span><span>💰 ${esc(j.salary||"As per company")}</span></p>${j.experience?`<p class="nk-experience">Experience: ${esc(j.experience)}</p>`:''}<p class="nk-description">${esc(j.description||"Official vacancy details available through the employer.")}</p><div class="nk-job-bottom"><small>${posted?'Posted on '+esc(posted):'Latest vacancy'}</small><div class="nk-actions"><button type="button" class="job-share-btn" data-job-share="1">↗ Share</button><button type="button" class="job-copy-btn" data-job-copy="1">🔗 Copy Link</button><button type="button" class="apply nk-apply" onclick='openApply(${JSON.stringify(j).replace(/'/g,"&#39;")})'>Apply Now</button></div></div></div></article>`}).join(""):"<p>No jobs found for the selected filters.</p>";
- if(window.PJAJobShare?.add)window.PJAJobShare.add();
+ const q=($("search")?.value||"").trim().toLowerCase(),state=($("stateFilter")?.value||"").trim().toLowerCase(),type=($("typeFilter")?.value||"").trim().toLowerCase(),exp=($("experienceFilter")?.value||"").trim().toLowerCase(),qual=($("qualificationFilter")?.value||"").trim().toLowerCase();
+ const list=$("jobsList"),count=$("jobCount"); if(list)list.innerHTML="Loading latest jobs...";
+ try{
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);
+  const res=await fetch(SUPABASE_URL+"/rest/v1/jobs?select=*&is_active=eq.true&order=created_at.desc",{headers:{apikey:SUPABASE_ANON_KEY,Authorization:"Bearer "+SUPABASE_ANON_KEY},signal:controller.signal});
+  clearTimeout(timer);
+  if(!res.ok)throw new Error("Jobs server returned "+res.status);
+  let data=await res.json();
+  const text=j=>[j.title,j.company,j.company_name,j.location,j.state,j.city,j.qualification,j.experience].filter(Boolean).join(" ").toLowerCase();
+  data=data.filter(j=>
+   (!q||text(j).includes(q))&&
+   (!state||String(j.state||"").toLowerCase().includes(state))&&
+   (!type||String(j.job_type||j.type||"").toLowerCase().includes(type))&&
+   (!exp||String(j.experience||"").toLowerCase().includes(exp))&&
+   (!qual||String(j.qualification||"").toLowerCase().includes(qual))
+  );
+  if(count)count.textContent=`${data.length} job${data.length===1?'':'s'} found`;
+  if(!list)return;
+  list.innerHTML=data.length?data.map(j=>{const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India",company=j.company||j.company_name||"",jt=j.job_type||j.type||"Full Time",posted=j.created_at?new Date(j.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):"";return `<article class="job nk-job-card"><div class="nk-job-main"><div class="nk-job-top"><div class="nk-job-title-wrap"><h3>${esc(j.title)}</h3><b class="company">${jobCompanyLogo(j.company_logo)}${esc(company)}</b></div></div><p class="nk-meta"><span>📍 ${esc(loc)}</span><span>💼 ${esc(jt)}</span><span>🎓 ${esc(j.qualification||"Any")}</span><span>💰 ${esc(j.salary||"As per company")}</span></p>${j.experience?`<p class="nk-experience">Experience: ${esc(j.experience)}</p>`:''}<p class="nk-description">${esc(j.description||"Official vacancy details available through the employer.")}</p><div class="nk-job-bottom"><small>${posted?'Posted on '+esc(posted):'Latest vacancy'}</small><div class="nk-actions"><button type="button" class="job-share-btn" data-job-share="1">↗ Share</button><button type="button" class="job-copy-btn" data-job-copy="1">🔗 Copy Link</button><button type="button" class="apply nk-apply" onclick='openApply(${JSON.stringify(j).replace(/'/g,"&#39;")})'>Apply Now</button></div></div></div></article>`}).join(""):"<p>No jobs found for the selected filters.</p>";
+  if(window.PJAJobShare?.add)window.PJAJobShare.add();
+ }catch(err){
+  if(count)count.textContent="";
+  if(list)list.innerHTML=`<p class="danger">Jobs could not be loaded. Please refresh and try again.</p>`;
+  console.error("Job loading error:",err);
+ }
 }
 window.loadJobs=loadJobs;
 window.openApply=function(job){currentJob=job;const loc=[job.city,job.state].filter(Boolean).join(", ")||job.location||"India";openModal(`<h2>Apply for ${esc(job.title)}</h2><p><b>${esc(job.company||job.company_name||"")}</b> · ${esc(loc)}</p><form id="applyForm" class="form"><label>Full Name<input name="name" required></label><label>Mobile Number<input name="mobile" required pattern="[0-9]{10}"></label><label>Email<input type="email" name="email" required></label><label>Current Location<input name="location" required></label><label>Qualification<input name="qualification" required></label><label>Experience<input name="experience" placeholder="Fresher / Years"></label><label>Resume (PDF/DOC/DOCX, max 5 MB)<input type="file" name="resume" accept=".pdf,.doc,.docx" required></label><button type="submit">Submit Application</button><p id="applyMsg"></p></form>`);$("applyForm").addEventListener("submit",submitApplication);};
