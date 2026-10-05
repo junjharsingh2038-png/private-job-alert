@@ -8,7 +8,7 @@ let currentJob = null;
 window.closeModal = function(){ $("modal").classList.add("hidden"); };
 window.openModal = function(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); };
 function esc(v){return String(v??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[m]));}
-function jobCompanyLogo(url){const u=String(url||'').trim();return '<span class="company-logo" aria-label="Company logo">'+(u?'<img src="'+esc(u)+'" alt="Company logo" loading="lazy" onerror="this.parentElement.classList.add(\\'logo-missing\\');this.remove()">':'<span class="company-logo-placeholder" aria-hidden="true">▣</span>')+'</span>'}
+function jobCompanyLogo(url){const u=String(url||'').trim();if(!u)return '<span class="company-logo" aria-label="Company logo"><span class="company-logo-placeholder" aria-hidden="true">▣</span></span>';return '<span class="company-logo" aria-label="Company logo"><img src="'+esc(u)+'" alt="Company logo" loading="lazy" onerror="this.parentElement.classList.add(&quot;logo-missing&quot;);this.remove()"></span>';}
 function setSearch(value){const e=$("search");if(e)e.value=value;loadJobs();}
 window.setSearch=setSearch;
 function clearJobFilters(){["search","stateFilter","typeFilter","experienceFilter","qualificationFilter"].forEach(id=>{const e=$(id);if(e)e.value="";});loadJobs();}
