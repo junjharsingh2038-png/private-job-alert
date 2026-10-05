@@ -8,7 +8,7 @@ let currentJob = null;
 window.closeModal = function(){ $("modal").classList.add("hidden"); };
 window.openModal = function(html){ $("modalContent").innerHTML=html; $("modal").classList.remove("hidden"); };
 function esc(v){return String(v??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#39;"}[m]));}
-function jobCompanyLogo(url){const u=String(url||'').trim();return '<span class="company-logo" aria-label="Company logo">'+(u?'<img src="'+esc(u)+'" alt="Company logo" loading="lazy" onerror="this.parentElement.classList.add(\\'logo-missing\\');this.remove()">':'<span class="company-logo-placeholder" aria-hidden="true">▣</span>')+'</span>'}
+function jobCompanyLogo(url){const u=String(url||'').trim();return '<span class="company-logo" aria-label="Company logo">'+(u?'<img src="'+esc(u)+'" alt="Company logo" loading="lazy" onerror="this.parentElement.classList.add("logo-missing");this.remove()">':'<span class="company-logo-placeholder" aria-hidden="true">▣</span>')+'</span>'}
 function setSearch(value){const e=$("search");if(e)e.value=value;loadJobs();}
 window.setSearch=setSearch;
 function clearJobFilters(){["search","stateFilter","typeFilter","experienceFilter","qualificationFilter"].forEach(id=>{const e=$(id);if(e)e.value="";});loadJobs();}
@@ -17,7 +17,7 @@ function renderHrPage(html){const target=$("hrApp");if(!target){if(location.path
 window.renderHrPage=renderHrPage;
 async function loadJobs(){
  const q=($("search")?.value||"").trim(),state=$("stateFilter")?.value||"",type=$("typeFilter")?.value||"",exp=$("experienceFilter")?.value||"",qual=$("qualificationFilter")?.value||"";
- let query=sb.from("jobs").select("id,title,company,company_name,location,state,city,qualification,salary,job_type,type,experience,description,hr_email,created_at,is_active,lastdate").eq("is_active",true).order("created_at",{ascending:false});
+ let query=sb.from("jobs").select("id,title,company,company_name,location,state,city,qualification,salary,job_type,type,experience,description,hr_email,created_at,is_active,lastdate,company_logo").eq("is_active",true).order("created_at",{ascending:false});
  if(q) query=query.or(`title.ilike.%${q}%,company.ilike.%${q}%,company_name.ilike.%${q}%,location.ilike.%${q}%,state.ilike.%${q}%,city.ilike.%${q}%,qualification.ilike.%${q}%,experience.ilike.%${q}%`);
  if(state) query=query.ilike("state",`%${state}%`);
  if(type) query=query.or(`job_type.ilike.%${type}%,type.ilike.%${type}%`);
