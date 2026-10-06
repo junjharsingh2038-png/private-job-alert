@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apply for Job | Private Job Alert</title>
+<meta name="robots" content="noindex,follow">
+<link rel="stylesheet" href="style.css">
+<style>
+body{font-family:Arial,sans-serif;background:#f5f8fc;color:#17243a;margin:0}
+.wrap{max-width:850px;margin:30px auto;padding:0 16px}
+.card{background:#fff;border:1px solid #dce5f0;border-radius:18px;padding:26px;box-shadow:0 8px 25px #10264a12}
+.top{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;color:#1264e8;text-decoration:none}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}
+.meta span{background:#eef5ff;padding:8px 11px;border-radius:9px;font-size:13px}
+.form{display:grid;gap:13px;margin-top:20px}
+.form label{font-weight:700}
+.form input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #ccd7e5;border-radius:10px;font:inherit;margin-top:6px}
+button,.btn{display:inline-block;border:0;background:#1264e8;color:#fff;padding:12px 18px;border-radius:10px;font-weight:800;cursor:pointer;text-decoration:none}
+.secondary{background:#fff;color:#1264e8;border:1px solid #1264e8}
+.msg{margin-top:12px;font-weight:700}
+.success{color:#087a36}.danger{color:#b00020}.muted{color:#63728a}
+.hidden{display:none!important}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+<div class="top">
+<a class="brand" href="index.html">💼 PRIVATE JOB ALERT – INDIA</a>
+<a href="seeker.html" target="_blank" rel="noopener">Employee Portal ↗</a>
+</div>
+<div id="loading">Loading job details...</div>
+<div id="content" class="hidden">
+<h1 id="title"></h1>
+<strong id="company"></strong>
+<div class="meta" id="meta"></div>
+<p id="description" class="muted"></p>
+
+<div id="loginBox" class="hidden">
+<h2>Employee Login Required</h2>
+<p class="muted">Please login or register as an Employee before applying. Your application will be linked to your employee account, and you can apply only once for this job.</p>
+<div class="actions">
+<a id="loginBtn" class="btn" href="seeker.html" target="_blank" rel="noopener">Employee Login / Register ↗</a>
+<a class="btn secondary" href="index.html" target="_blank" rel="noopener">Back to Jobs ↗</a>
+</div>
+</div>
+
+<div id="applyBox" class="hidden">
+<h2>Apply for this Job</h2>
+<form id="applyForm" class="form">
+<label>Full Name<input name="name" id="name" required></label>
+<label>Mobile Number<input name="mobile" id="mobile" pattern="[0-9]{10}" required></label>
+<label>Current Location<input name="location" id="location" placeholder="City, State" required></label>
+<label>Qualification<input name="qualification" id="qualification" required></label>
+<label>Experience<input name="experience" id="experience" placeholder="Fresher / 0-2 Years / 2-5 Years / 5+ Years"></label>
+<label>Resume (PDF/DOC/DOCX, maximum 5 MB)<input name="resume" type="file" accept=".pdf,.doc,.docx" required></label>
+<button type="submit">Submit Application</button>
+</form>
+<p id="msg" class="msg"></p>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB=window.supabase.createClient(
+  'https://rlidcatrwonemshwzafp.supabase.co',
+  'sb_publishable_ocJhWyfPg9rVhYROn_Vj0Q_DSSgxeuE'
+);
+const jobId=new URLSearchParams(location.search).get('job');
+let job=null,user=null;
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function showMsg(t,c){$('msg').textContent=t;$('msg').className='msg '+(c||'')}
+function fillJob(){
+  $('title').textContent=job.title||'Job Vacancy';
+  $('company').textContent=job.company||job.company_name||'';
+  $('meta').innerHTML='<span>📍 '+esc(job.location||'India')+'</span><span>💼 '+esc(job.job_type||job.type||'Full Time')+'</span><span>🎓 '+esc(job.qualification||'Any')+'</span><span>💰 '+esc(job.salary||'As per company')+'</span>';
+  $('description').textContent=job.description||'Official vacancy details available through the employer.';
+  $('content').classList.remove('hidden');$('loading').classList.add('hidden');
+}
+async function start(){
+  if(!jobId){$('loading').textContent='Job ID is missing.';return}
+  const jr=await SB.from('jobs').select('*').eq('id',jobId).eq('is_active',true).single();
+  if(jr.error||!jr.data){$('loading').textContent='This job is no longer available.';return}
+  job=jr.data;fillJob();
+  const ur=await SB.auth.getUser();user=ur.data?.user||null;
+  if(!user){
+    $('loginBox').classList.remove('hidden');
+    $('loginBtn').href='seeker.html?apply='+encodeURIComponent(jobId);
+    return;
+  }
+  if((user.user_metadata||{}).role!=='employee'){
+    $('loginBox').classList.remove('hidden');
+    $('loginBox').querySelector('h2').textContent='Employee Account Required';
+    $('loginBox').querySelector('p').textContent='Please use an Employee account to apply for jobs.';
+    $('loginBtn').href='seeker.html?apply='+encodeURIComponent(jobId);
+    return;
+  }
+  const existing=await SB.from('applications').select('id').eq('job_id',jobId).eq('candidate_user_id',user.id).maybeSingle();
+  if(existing.error){$('loginBox').classList.remove('hidden');$('loginBox').querySelector('h2').textContent='Unable to check application';$('loginBox').querySelector('p').textContent=existing.error.message;return}
+  if(existing.data){
+    $('applyBox').classList.remove('hidden');
+    $('applyBox').querySelector('h2').textContent='Already Applied';
+    $('applyBox').querySelector('form').classList.add('hidden');
+    showMsg('You have already applied for this job. One employee can apply only once for each job.','danger');
+    return;
+  }
+  const m=user.user_metadata||{};
+  $('name').value=m.full_name||'';
+  $('mobile').value=m.mobile||'';
+  $('location').value=m.location||'';
+  $('qualification').value=m.qualification||'';
+  $('experience').value=m.experience||'';
+  $('applyBox').classList.remove('hidden');
+}
+$('applyForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!user||!job)return;
+  const f=new FormData(e.target),file=f.get('resume');
+  if(!file||!file.size||file.size>5*1024*1024){showMsg('Resume must be PDF/DOC/DOCX and maximum 5 MB.','danger');return}
+  if(!job.hr_email){showMsg('This job has no HR email configured.','danger');return}
+  showMsg('Checking application...');
+  try{
+    const existing=await SB.from('applications').select('id').eq('job_id',job.id).eq('candidate_user_id',user.id).maybeSingle();
+    if(existing.error)throw new Error(existing.error.message);
+    if(existing.data){showMsg('You have already applied for this job. One employee can apply only once for each job.','danger');return}
+    showMsg('Uploading resume...');
+    const ext=(file.name.split('.').pop()||'pdf').toLowerCase();
+    const up=await SB.storage.from('resumes').upload(user.id+'/application-'+Date.now()+'.'+ext,file,{upsert:false});
+    if(up.error)throw new Error(up.error.message);
+    showMsg('Submitting application...');
+    const ins=await SB.from('applications').insert({
+      job_id:job.id,hr_email:job.hr_email,candidate_user_id:user.id,
+      candidate_name:f.get('name'),candidate_mobile:f.get('mobile'),
+      candidate_email:user.email,candidate_location:f.get('location'),
+      qualification:f.get('qualification'),experience:f.get('experience')||'',
+      resume_path:up.path,status:'Received'
+    }).select('id').single();
+    if(ins.error){
+      if(ins.error.code==='23505'){showMsg('You have already applied for this job.','danger');return}
+      throw new Error(ins.error.message);
+    }
+    showMsg('Application submitted successfully. You can track it in Applied Jobs.','success');
+    e.target.reset();
+    if(ins.data?.id){
+      const n=await SB.functions.invoke('notify-hr',{body:{application_id:ins.data.id,action:'application_received'}});
+      if(n.error)console.warn('HR notification failed:',n.error.message);
+    }
+  }catch(err){showMsg(err.message||'Application could not be submitted.','danger')}
+});
+start();
+</script>
+</body>
+</html>
