@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+<defs><linearGradient id="o" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff9d00"/><stop offset="1" stop-color="#f15a00"/></linearGradient><linearGradient id="b" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#0c5caf"/><stop offset="1" stop-color="#06244d"/></linearGradient></defs>
+<circle cx="300" cy="300" r="284" fill="#fff" stroke="url(#o)" stroke-width="13"/><circle cx="300" cy="300" r="266" fill="none" stroke="#082e60" stroke-width="12"/>
+<circle cx="215" cy="210" r="118" fill="none" stroke="url(#o)" stroke-width="30"/>
+<path d="M126 295L62 360Q39 383 61 405Q83 427 105 405L174 336" fill="url(#o)"/>
+<path d="M159 235q-4-65 48-83q60-22 87 28q20 42-2 95l-25 48h-90z" fill="url(#b)"/>
+<path d="M180 229q35 18 75-5l19 18-9 75h-82l-12-64z" fill="#fff"/>
+<path d="M175 319l-32 63h166l-25-63-53-27z" fill="url(#b)"/><path d="M213 300l19 22 18-22-10-17h-18z" fill="#ff7900"/>
+<rect x="340" y="170" width="170" height="215" rx="24" fill="url(#b)"/><rect x="355" y="190" width="140" height="175" rx="14" fill="#fff"/>
+<text x="425" y="242" font-family="Arial,sans-serif" font-size="34" font-weight="900" text-anchor="middle" fill="#082e60">JOBS</text>
+<g fill="#ff8200"><circle cx="378" cy="276" r="9"/><circle cx="378" cy="315" r="9"/><circle cx="378" cy="354" r="9"/></g><g stroke="#8aa5c3" stroke-width="12" stroke-linecap="round"><path d="M400 276h75M400 315h75M400 354h65"/></g>
+<path d="M468 125q0-38 29-38t29 38v30h-58z" fill="url(#o)"/><path d="M460 156h74l-12 17h-50z" fill="#f15a00"/>
+<path d="M105 430q195 70 392 0" fill="none" stroke="url(#o)" stroke-width="18" stroke-linecap="round"/>
+<text x="300" y="490" font-family="Arial,sans-serif" font-size="62" font-weight="900" text-anchor="middle" fill="#082e60">PRIVATE JOB ALERT</text>
+<text x="300" y="530" font-family="Arial,sans-serif" font-size="18" font-weight="700" letter-spacing="3" text-anchor="middle" fill="#082e60">LATEST JOBS • RIGHT OPPORTUNITIES</text>
+</svg>
