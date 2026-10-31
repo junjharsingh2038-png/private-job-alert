@@ -31,7 +31,7 @@ footer{background:linear-gradient(110deg,#062344,#0a3768);align-items:center;pad
 
 /* Responsive brand refresh */
 .site-header .brand-logo{width:76px;height:76px;object-fit:contain;border-radius:50%;background:#fff}
-.hero-modern{background-image:linear-gradient(90deg,rgba(246,250,253,.98) 0%,rgba(246,250,253,.92) 42%,rgba(246,250,253,.20) 100%),url('pja-hero-people.jpg');background-size:cover;background-position:center right}
+.hero-modern{background-image:linear-gradient(105deg,#f7fbff 0%,#edf6fd 56%,#dcecf7 100%);background-size:cover;background-position:center right}
 .hero-modern:before,.hero-modern:after{display:none}
 .hero-modern .hero-inner{max-width:1200px}
 .hero-copy{position:relative;z-index:2}
@@ -66,3 +66,13 @@ footer{background:linear-gradient(110deg,#062344,#0a3768);align-items:center;pad
  .footer-brand img{width:64px;height:64px}
  .footer-brand b{font-size:22px}
 }
+
+/* Logo recovery and refined mobile homepage */
+.brand-mark,.footer-mark{display:grid;place-items:center;flex:0 0 auto;border-radius:50%;font-weight:950;letter-spacing:-3px;color:#fff;background:linear-gradient(145deg,#0a3768,#1264e8);border:4px solid #ff7900;box-shadow:0 4px 12px #0b315b20}
+.brand-mark{width:58px;height:58px;font-size:25px;letter-spacing:-2px}
+.brand-mark span,.footer-mark span{color:#ff8a00}
+.hero-mark{width:160px;height:120px;margin:0 0 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#0b315b}
+.hero-mark>span{width:62px;height:62px;display:grid;place-items:center;border-radius:50%;background:#fff;border:4px solid #ff7900;color:#1264e8;font-size:34px;box-shadow:0 5px 15px #0b315b20}
+.hero-mark b{font-size:16px;letter-spacing:.8px}.hero-mark small{font-size:7px;letter-spacing:.7px;font-weight:800;color:#65758b}
+.footer-mark{width:70px;height:70px;font-size:28px}
+@media(max-width:700px){.brand-mark{width:48px;height:48px;font-size:21px}.hero-mark{width:105px;height:88px;align-items:flex-start}.hero-mark>span{width:46px;height:46px;font-size:25px}.hero-mark b{font-size:11px}.hero-mark small{font-size:6px}.footer-mark{width:54px;height:54px;font-size:22px}}
