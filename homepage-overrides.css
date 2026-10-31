@@ -1,0 +1,83 @@
+
+/* Final homepage layout overrides - loaded after all legacy styles */
+body .site-header{display:flex!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;min-height:82px!important;padding:8px clamp(12px,2.5vw,38px)!important;overflow:visible!important}
+body .site-header .brand{display:flex!important;align-items:center!important;gap:8px!important;flex:0 0 auto!important;min-width:0!important;white-space:nowrap!important}
+body .site-header .brand-logo{display:block!important;width:68px!important;height:64px!important;max-width:68px!important;max-height:64px!important;object-fit:contain!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+body .site-header .brand-copy{display:flex!important;flex-direction:column!important;gap:3px!important}
+body .site-header .brand-copy strong{font-size:clamp(19px,2.2vw,30px)!important;line-height:1!important;white-space:nowrap!important}
+body .site-header .brand-copy small{font-size:7px!important;letter-spacing:.35px!important;white-space:nowrap!important}
+body .site-header .main-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(7px,1.2vw,18px)!important;flex:1 1 auto!important;min-width:0!important;flex-wrap:nowrap!important}
+body .site-header .main-nav a{display:inline-flex!important;align-items:center!important;white-space:nowrap!important;font-size:clamp(10px,1vw,13px)!important;padding:6px 0!important}
+body .site-header .header-actions{display:flex!important;align-items:center!important;gap:8px!important;flex:0 0 auto!important}
+body .site-header .header-actions a{font-size:12px!important;padding:9px 12px!important}
+body .hero-modern{display:block!important;min-height:0!important;padding:26px 0 20px!important;margin:0!important;max-width:none!important;background:linear-gradient(105deg,#edf6fc 0%,#f8fbfd 48%,#d9e9f2 100%)!important;overflow:hidden!important}
+body .hero-modern:before{right:-5%!important;top:-20%!important;width:48%!important;height:145%!important;opacity:.55!important}
+body .hero-modern:after{right:4%!important;bottom:-160px!important;width:42%!important;height:320px!important}
+body .hero-modern .hero-inner{width:min(1200px,92%)!important;max-width:1200px!important;margin:0 auto!important;padding:0!important;text-align:left!important}
+body .hero-modern .hero-copy{max-width:720px!important;position:relative!important;z-index:2!important}
+body .hero-modern .hero-logo{display:block!important;width:112px!important;height:105px!important;max-width:112px!important;max-height:105px!important;object-fit:contain!important;margin:0 0 3px -4px!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+body .hero-modern .hero-eyebrow{display:block!important;font-size:12px!important;letter-spacing:1.2px!important;color:#ff6500!important}
+body .hero-modern h1{font-size:clamp(42px,5vw,64px)!important;line-height:1.04!important;margin:2px 0 8px!important;color:#082b55!important}
+body .hero-modern .hero-tagline{font-size:clamp(15px,1.6vw,20px)!important;line-height:1.4!important;margin:0!important;color:#082b55!important}
+body .hero-modern .search-modern{display:flex!important;max-width:none!important;width:100%!important;margin:24px 0 0!important;padding:8px!important;gap:8px!important;background:#fff!important;border:1px solid #edf1f5!important;border-radius:14px!important;box-shadow:0 10px 28px #082b5518!important;overflow:hidden!important}
+body .hero-modern .search-modern input{display:block!important;flex:1 1 auto!important;width:auto!important;min-width:0!important;min-height:52px!important;padding:14px 18px!important;background:#f5f7fa!important;border:0!important;border-radius:9px!important;font-size:14px!important}
+body .hero-modern .search-modern button{display:block!important;flex:0 0 190px!important;width:auto!important;min-height:52px!important;margin:0!important;padding:0 16px!important;background:#ff6500!important;color:#fff!important;border:0!important;border-radius:9px!important;font-size:15px!important}
+body .feature-row{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important;width:min(1200px,100%)!important;max-width:1200px!important;margin:0 auto!important;padding:18px 18px 10px!important;background:transparent!important}
+body .feature-row article{display:flex!important;align-items:center!important;gap:13px!important;min-width:0!important;padding:16px!important;background:#fff!important;border:1px solid #edf1f6!important;border-radius:16px!important;box-shadow:0 5px 18px #10264a0b!important}
+body .feature-row article>div{display:block!important;min-width:0!important}
+body .feature-row article b,body .feature-row article small{display:block!important;white-space:normal!important}
+body .feature-row article b{font-size:15px!important;color:#082b55!important}
+body .feature-row article small{font-size:12px!important;color:#596a80!important;margin-top:3px!important}
+body .feature-row .feature-icon{display:grid!important;place-items:center!important;flex:0 0 56px!important;width:56px!important;height:56px!important;border-radius:50%!important;color:#fff!important;font-size:26px!important}
+body main>section#jobs.jobs-section{max-width:1240px!important;margin:0 auto!important;padding:24px 18px 36px!important;background:transparent!important}
+body .jobs-section>.section-head{display:flex!important;justify-content:space-between!important;align-items:center!important;margin:0 0 18px!important}
+body .jobs-section>.section-head h2{font-size:26px!important;color:#082b55!important}
+body .jobs-section>.section-head p{font-size:13px!important}
+body #jobsList{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:14px!important}
+body footer{display:flex!important;justify-content:space-between!important;align-items:center!important;gap:20px!important;background:linear-gradient(110deg,#062344,#0a3768)!important;color:#fff!important}
+body footer a{color:#fff!important}
+body .footer-brand{display:flex!important;align-items:center!important;gap:10px!important}
+body .footer-brand img{width:82px!important;height:78px!important;object-fit:contain!important}
+body .footer-brand b{font-size:25px!important;white-space:nowrap!important}
+body .footer-brand p{font-size:7px!important;white-space:nowrap!important}
+@media(max-width:900px){
+ body .site-header{flex-wrap:wrap!important;gap:5px 12px!important;padding:7px 12px!important}
+ body .site-header .brand{flex:1 1 auto!important}
+ body .site-header .brand-logo{width:48px!important;height:46px!important;max-width:48px!important;max-height:46px!important}
+ body .site-header .brand-copy strong{font-size:21px!important}
+ body .site-header .main-nav{order:3!important;display:flex!important;flex:1 1 100%!important;justify-content:flex-start!important;gap:16px!important;overflow-x:auto!important;scrollbar-width:none!important;padding:4px 2px!important}
+ body .site-header .main-nav::-webkit-scrollbar{display:none!important}
+ body .site-header .main-nav a{display:inline-flex!important;font-size:11px!important}
+ body .site-header .header-actions a{font-size:11px!important;padding:7px 9px!important}
+ body .hero-modern .hero-inner{width:92%!important}
+ body .hero-modern .hero-logo{width:84px!important;height:78px!important;max-width:84px!important;max-height:78px!important}
+ body .hero-modern h1{font-size:42px!important}
+ body .feature-row{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:12px!important;gap:9px!important}
+ body .feature-row article{padding:11px!important;gap:9px!important}
+ body .feature-row .feature-icon{width:44px!important;height:44px!important;flex-basis:44px!important;font-size:20px!important}
+ body .feature-row article b{font-size:12px!important}
+ body .feature-row article small{font-size:10px!important}
+ body #jobsList{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:520px){
+ body .site-header .brand-copy small{font-size:5.5px!important}
+ body .site-header .header-actions{gap:5px!important}
+ body .site-header .header-actions a{padding:6px 8px!important;font-size:10px!important}
+ body .site-header .main-nav{gap:13px!important}
+ body .site-header .main-nav a{font-size:10px!important}
+ body .hero-modern{padding:18px 0 16px!important}
+ body .hero-modern .hero-logo{width:72px!important;height:68px!important;max-width:72px!important;max-height:68px!important}
+ body .hero-modern .hero-eyebrow{font-size:10px!important}
+ body .hero-modern h1{font-size:37px!important}
+ body .hero-modern .hero-tagline{font-size:13px!important}
+ body .hero-modern .search-modern{display:flex!important;flex-direction:column!important;padding:7px!important;margin-top:15px!important}
+ body .hero-modern .search-modern input{width:100%!important;min-height:44px!important;padding:10px!important}
+ body .hero-modern .search-modern button{width:100%!important;flex:0 0 44px!important;min-height:44px!important}
+ body .feature-row article{min-height:66px!important}
+ body #jobsList{grid-template-columns:1fr!important}
+ body .jobs-section>.section-head h2{font-size:21px!important}
+ body footer{justify-content:center!important;text-align:center!important;padding:22px 12px!important}
+ body .footer-brand{justify-content:center!important}
+ body .footer-brand img{width:58px!important;height:58px!important}
+ body .footer-brand b{font-size:19px!important}
+}
