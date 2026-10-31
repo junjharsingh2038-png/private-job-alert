@@ -27,3 +27,42 @@ main>section#jobs{padding-top:22px!important}.jobs-section .section-head{align-i
 footer{background:linear-gradient(110deg,#062344,#0a3768);align-items:center;padding:28px 5%;gap:25px}footer>div:nth-child(2){display:flex;flex-wrap:wrap;gap:10px}footer a{font-size:14px;margin:0;padding:0 9px;border-right:1px solid #8da6c0}.footer-brand{display:flex;align-items:center;gap:12px}.footer-brand img{width:100px;height:95px;object-fit:contain}.footer-brand b{font-size:32px;color:white;white-space:nowrap}.footer-brand p{font-size:8px;font-weight:800;letter-spacing:.5px;margin:0;color:#fff}
 @media(max-width:1100px){.site-header{flex-wrap:wrap}.main-nav{order:3;width:100%;justify-content:center}.feature-row{grid-template-columns:repeat(2,1fr)}#jobsList{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.site-header{padding:8px 12px;min-height:70px}.site-header .brand-logo{width:55px;height:52px}.brand-copy strong{font-size:21px}.brand-copy small{font-size:6px}.main-nav{display:none}.header-actions{margin-left:auto;gap:6px}.header-actions a{font-size:11px;padding:8px 10px}.hero-modern{min-height:350px}.hero-modern .hero-inner{width:92%;padding:18px 0}.hero-logo{width:112px;height:100px}.hero-modern h1{font-size:42px}.hero-modern .hero-tagline{font-size:14px}.hero-tagline b{padding:0 3px}.search-modern{display:flex;background:#fff;padding:7px}.search-modern input{min-width:0;font-size:13px;padding:12px 10px}.search-modern button{min-width:105px;font-size:12px;padding:11px 8px}.feature-row{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px!important;gap:9px}.feature-row article{padding:11px 9px;gap:9px}.feature-icon{width:42px;height:42px;font-size:20px}.feature-row article b{font-size:12px}.feature-row article small{font-size:10px}.jobs-section .section-head h2{font-size:21px}.view-all{font-size:12px;padding:8px 10px}#jobsList{grid-template-columns:1fr}.job.nk-job-card{min-height:210px!important}footer{padding:24px 16px;justify-content:center;text-align:center}.footer-brand{justify-content:center}.footer-brand img{width:65px;height:65px}.footer-brand b{font-size:22px}footer>div:nth-child(2){justify-content:center}}
+
+
+/* Responsive brand refresh */
+.site-header .brand-logo{width:76px;height:76px;object-fit:contain;border-radius:50%;background:#fff}
+.hero-modern{background-image:linear-gradient(90deg,rgba(246,250,253,.98) 0%,rgba(246,250,253,.92) 42%,rgba(246,250,253,.20) 100%),url('pja-hero-people.jpg');background-size:cover;background-position:center right}
+.hero-modern:before,.hero-modern:after{display:none}
+.hero-modern .hero-inner{max-width:1200px}
+.hero-copy{position:relative;z-index:2}
+@media(max-width:700px){
+ .site-header{display:grid;grid-template-columns:1fr auto;gap:8px;padding:8px 12px}
+ .site-header .brand-logo{width:54px;height:54px}
+ .brand-copy strong{font-size:19px}
+ .brand-copy small{font-size:6px;letter-spacing:.4px}
+ .main-nav{display:flex;order:3;grid-column:1/-1;width:100%;justify-content:center;gap:8px 13px;padding:4px 0;flex-wrap:wrap}
+ .main-nav a{display:inline-flex!important;font-size:11px;white-space:nowrap}
+ .header-actions{grid-column:2;grid-row:1;display:flex;gap:5px}
+ .header-actions a{font-size:10px;padding:7px 9px}
+ .hero-modern{min-height:330px;background-position:62% center}
+ .hero-modern .hero-inner{width:92%;padding:22px 0}
+ .hero-copy{max-width:78%;text-align:left}
+ .hero-logo{width:88px;height:84px;margin:0 0 5px}
+ .hero-eyebrow{font-size:10px;letter-spacing:.8px}
+ .hero-modern h1{font-size:34px;line-height:1.05}
+ .hero-modern .hero-tagline{font-size:12px;line-height:1.5;max-width:270px}
+ .search-modern{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:16px}
+ .search-modern input{grid-column:1/-1;width:100%;font-size:13px}
+ .search-modern button{grid-column:1/-1;width:100%;min-width:0;font-size:14px}
+ .feature-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:14px 12px!important}
+ .feature-row article{padding:12px 10px;gap:9px;border-radius:13px}
+ .feature-icon{width:42px;height:42px;font-size:20px}
+ .feature-row article b{font-size:12px}
+ .feature-row article small{font-size:10px}
+ main>section#jobs{padding:22px 12px!important}
+ .jobs-section .section-head h2{font-size:21px}
+ #jobsList{grid-template-columns:1fr}
+ footer{padding:24px 16px}
+ .footer-brand img{width:64px;height:64px}
+ .footer-brand b{font-size:22px}
+}
