@@ -27,18 +27,18 @@ jobs:
           assets={
             'index.html':[
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','job-share.css'),('css','job-view.css'),
-              ('js','company-logo.js'),('js','job-details.js'),('js','job-share.js'),('js','job-view.js'),('js','goatcounter.js')],
+              ('js','company-logo.js'),('js','job-details.js'),('js','job-share.js'),('js','job-view.js'),('js','goatcounter.js'),('css','portal-design.css')],
             'hr.html':[
               ('js','job-invitations.js'),('js','hr-employee-profiles.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','goatcounter.js'),
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','job-details.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),
-              ('js','company-logo.js'),('js','job-details.js')],
+              ('js','company-logo.js'),('js','job-details.js'),('css','portal-design.css')],
             'seeker.html':[
               ('js','job-invitations.js'),('js','employee-notifications.js'),('js','auth-guard.js'),('js','password-reset-otp.js'),('js','employee-registration-fix.js'),('js','goatcounter.js'),('js','employee-public-jobs.js'),('js','job-share.js'),
               ('css','naukri-style.css'),('css','company-logo.css'),('css','professional-job-description.css'),('css','compact-filters.css'),('css','password-reset-otp.css'),('css','employee-public-jobs.css'),('css','job-share.css'),('css','job-details.css'),
-              ('js','company-logo.js'),('js','job-details.js')],
+              ('js','company-logo.js'),('js','job-details.js'),('css','portal-design.css')],
             'admin.html':[
               ('js','auth-guard.js'),('js','password-reset-otp.js'),('js','admin-reports.js'),
-              ('css','password-reset-otp.css'),('css','admin-reports.css'),('css','admin-design.css')]
+              ('css','password-reset-otp.css'),('css','admin-reports.css'),('css','admin-design.css'),('css','portal-design.css')]
           }
           for name,items in assets.items():
             p=Path(name); s=p.read_text()
