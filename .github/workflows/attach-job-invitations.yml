@@ -54,6 +54,8 @@ jobs:
             s=s.replace('</body>', ''.join(tags)+'</body>', 1)
             p.write_text(s)
           PY
+      - name: Apply homepage master design to every website page
+        run: python3 scripts/apply_home_master.py
       - name: Validate managed assets
         run: |
           test -s password-reset-otp.js
@@ -87,7 +89,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html hr.html seeker.html admin.html
+          git add -A -- '*.html' 'jobs' 'categories' 'hr'
           git diff --cached --quiet && exit 0
           git commit -m 'Sync portal assets'
           git fetch origin main
