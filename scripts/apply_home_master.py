@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKIP = {"mark-attendance.html", "admin-login.html"}
 
 def rel_prefix(path: Path) -> str:
-    return "../" * len(path.parent.parts)
+    return "../" * len(path.relative_to(ROOT).parent.parts)
 
 def shared_header(prefix: str) -> str:
     home, seeker, hr = prefix + "index.html", prefix + "seeker.html", prefix + "hr.html"
