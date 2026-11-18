@@ -28,12 +28,46 @@ footer{border-top:1px solid var(--pja-line)!important;background:#fff!important;
 @media(max-width:480px){header{position:relative!important}nav{gap:10px!important;overflow:auto}.portal-hero h1,.ep-hero h1{font-size:32px!important}.auth-tabs{grid-template-columns:1fr!important}.detail-grid{grid-template-columns:1fr!important}.full{grid-column:auto!important}}
 
 
-/* Shared shell for every HR, employee, admin, attendance and job-action portal. */
+/* Shared visual system for the public site, job seeker, HR, admin and job-action pages. Attendance is a separate system. */
 body{background:linear-gradient(180deg,#f7f9fc 0%,#eef3f9 100%)!important;color:#10213f!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important}
 .box,.card,.panel,.ep-panel,.detail-card,.login{background:#fff!important;border:1px solid #e4eaf2!important;border-radius:20px!important;box-shadow:0 12px 34px rgba(16,38,74,.08)!important;color:#10213f!important}
 input,select,textarea,.field{border:1px solid #d5deea!important;border-radius:11px!important;background:#fbfdff!important;color:#10213f!important;font:inherit}
 button,.btn,.button{background:#1264e8!important;color:#fff!important;border:0!important;border-radius:11px!important;font-weight:800!important;box-shadow:0 7px 18px rgba(18,100,232,.16)!important}
 button.secondary,.secondary{background:#fff!important;color:#1264e8!important;border:1px solid #1264e8!important;box-shadow:none!important}
 a{transition:color .15s ease}
-@media(max-width:760px){.wrap,.hr-wrap,.ep-wrap,.detail-wrap{width:auto!important;max-width:none!important;margin:0 auto!important;padding:18px 14px 32px!important}.box,.card,.panel,.ep-panel,.detail-card,.login{padding:20px!important;border-radius:16px!important}.grid,.detail-grid{grid-template-columns:1fr 1fr!important}.side{position:relative!important;width:auto!important;height:auto!important;bottom:auto!important;border-right:0!important;border-bottom:1px solid #e4eaf2!important}.main{margin-left:0!important;padding:16px!important}.top,.dashboard-head{align-items:flex-start!important;flex-wrap:wrap!important}}
+@media(max-width:760px){.wrap,.hr-wrap,.ep-wrap,.detail-wrap{width:auto!important;max-width:none!important;margin:0 auto!important;padding:18px 14px 32px!important}.box,.card,.panel,.ep-panel,.detail-card,.login{padding:20px!important;border-radius:16px!important}.grid,.detail-grid{grid-template-columns:1fr 1fr!important}.top,.dashboard-head{align-items:flex-start!important;flex-wrap:wrap!important}}
 @media(max-width:480px){.grid,.detail-grid,.ep-choice,.auth-tabs{grid-template-columns:1fr!important}.portal-hero,.ep-hero{padding:24px 18px!important}}
+
+
+/* Job Seeker master design — consistent across all Private Job Alert pages. */
+:root{--pja-orange:#ff6500}
+body{min-height:100vh}
+header,.site-header{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;padding:12px clamp(16px,3vw,42px)!important;min-height:70px!important;box-sizing:border-box!important}
+header .brand,.site-header .brand{display:flex!important;align-items:center!important;gap:10px!important;text-decoration:none!important}
+header .brand-logo,header .brand-mark{width:52px!important;height:52px!important;object-fit:contain!important}
+header .brand-name,header .brand span,.site-header .brand-copy strong{font-weight:900!important;letter-spacing:-.02em!important;color:#071b3a!important}
+header nav,.site-header nav,.main-nav{display:flex!important;align-items:center!important;gap:clamp(10px,1.8vw,24px)!important;flex-wrap:wrap!important}
+header nav a,.site-header nav a,.main-nav a{font-weight:750!important;text-decoration:none!important;color:#344761!important;padding:8px 4px!important}
+header nav a:hover,.site-header nav a:hover,.main-nav a:hover{color:#1264e8!important}
+.wrap,.hr-wrap,.ep-wrap,.detail-wrap{max-width:1180px!important;margin:0 auto!important;padding:30px 20px 48px!important;box-sizing:border-box!important}
+.portal-hero,.ep-hero,.hero:not(.hero-modern){border-radius:24px!important}
+.box,.card,.panel,.ep-panel,.detail-card,.about-card,.account-card,.account-strip .account-card{border:1px solid #e2e9f2!important;border-radius:18px!important;background:#fff!important;box-shadow:0 10px 30px rgba(7,27,58,.07)!important}
+.hero,.portal-hero,.ep-hero{background:linear-gradient(125deg,#071b3a 0%,#1052a7 65%,#1264e8 100%)!important;color:#fff!important}
+input,select,textarea,.field{min-height:44px;box-sizing:border-box;padding:11px 13px!important}
+button,.btn,.button{background:#1264e8!important;color:#fff!important;border-radius:10px!important;padding:11px 17px!important}
+button:hover,.btn:hover,.button:hover{background:#0b53c6!important}
+button.secondary,.secondary{background:#fff!important;color:#1264e8!important;border:1px solid #1264e8!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(255,101,0,.3)!important;outline-offset:2px!important}
+footer{background:#fff!important;border-top:1px solid #e2e9f2!important}
+@media(max-width:760px){
+ header,.site-header{padding:10px 14px!important;gap:8px!important;flex-wrap:wrap!important}
+ header nav,.site-header nav,.main-nav{width:100%!important;justify-content:flex-start!important;overflow-x:auto!important;flex-wrap:nowrap!important}
+ .wrap,.hr-wrap,.ep-wrap,.detail-wrap{padding:18px 14px 30px!important}
+ .box,.card,.panel,.ep-panel,.detail-card{padding:18px!important}
+ .quick-grid,.info-grid,.how-grid{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:480px){
+ header nav a,.site-header nav a,.main-nav a{font-size:12px!important;white-space:nowrap!important}
+ .quick-grid,.info-grid,.how-grid,.grid,.detail-grid{grid-template-columns:1fr!important}
+ .portal-hero,.ep-hero{padding:24px 18px!important}
+}
