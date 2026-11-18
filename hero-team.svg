@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 650">
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#edf7fc"/><stop offset=".55" stop-color="#d8eaf2"/><stop offset="1" stop-color="#b7d0df"/></linearGradient>
+ <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".82"/><stop offset="1" stop-color="#b5d3e3" stop-opacity=".25"/></linearGradient>
+ <linearGradient id="suit" x2="0" y2="1"><stop stop-color="#244d78"/><stop offset="1" stop-color="#08294e"/></linearGradient>
+ <linearGradient id="skin" x2="0" y2="1"><stop stop-color="#e9b995"/><stop offset="1" stop-color="#b87959"/></linearGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="16"/></filter>
+</defs>
+<rect width="1600" height="650" fill="url(#bg)"/>
+<g opacity=".55"><rect x="780" y="0" width="170" height="500" fill="url(#glass)"/><rect x="980" y="0" width="170" height="500" fill="url(#glass)"/><rect x="1180" y="0" width="170" height="500" fill="url(#glass)"/><path d="M0 490H1600" stroke="#fff" stroke-width="14"/><path d="M900 0V520M1100 0V520M1300 0V520" stroke="#fff" stroke-width="10"/></g>
+<ellipse cx="1260" cy="570" rx="470" ry="95" fill="#7897a9" opacity=".22" filter="url(#blur)"/>
+<!-- rear professional, right -->
+<g transform="translate(1260 130)"><path d="M-125 500Q-120 270-75 235Q0 195 80 235Q135 280 145 500Z" fill="#f5f8fa"/><path d="M-105 500Q-90 290-50 255L0 360L50 255Q95 285 120 500Z" fill="#fff"/><ellipse cy="120" rx="72" ry="90" fill="url(#skin)"/><path d="M-73 115Q-82 10 5 15Q78 10 78 105L60 78Q20 45-52 75Z" fill="#2d2929"/><path d="M-55 500L-20 325L0 370L25 325L65 500Z" fill="url(#suit)"/></g>
+<!-- woman behind left -->
+<g transform="translate(1000 165)"><path d="M-125 485Q-115 275-65 230Q0 190 75 230Q125 275 135 485Z" fill="#f8fafc"/><path d="M-80 485L-40 300L0 365L42 300L90 485Z" fill="#fff"/><ellipse cy="120" rx="67" ry="82" fill="url(#skin)"/><path d="M-72 135Q-110 25-20 12Q60-5 82 76L70 170L42 105Q-15 50-60 105Z" fill="#2c2630"/><path d="M-35 310L0 390L35 310L70 485H-75Z" fill="#244b72"/></g>
+<!-- central male professional -->
+<g transform="translate(1160 45)"><path d="M-190 605Q-180 330-125 270Q-50 215 40 245Q140 270 185 605Z" fill="url(#suit)"/><path d="M-115 300L0 475L112 300L155 605H-150Z" fill="#f8fbfd"/><path d="M-55 330L0 475L55 330L28 605H-28Z" fill="#16416d"/><path d="M-22 475L0 525L22 475L40 605H-40Z" fill="#e7eef4"/><ellipse cy="160" rx="91" ry="112" fill="url(#skin)"/><path d="M-92 154Q-102 18-8 15Q90 8 95 130L72 105Q35 70-45 93L-78 126Z" fill="#211f20"/><path d="M-72 208Q0 255 72 205Q48 282 0 282Q-50 278-72 208Z" fill="#573a30" opacity=".35"/><path d="M-92 142Q-70 65-10 62Q55 50 90 112Q70 30 5 25Q-85 24-92 142Z" fill="#17191d"/></g>
+<g opacity=".16" fill="#fff"><circle cx="1450" cy="90" r="180"/><circle cx="830" cy="90" r="100"/></g>
+</svg>
