@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Job Details | Private Job Alert</title>
+<meta name="description" content="View job details and apply through Private Job Alert.">
+<link rel="stylesheet" href="../style.css">
+<style>
+.detail-wrap{max-width:900px;margin:32px auto;padding:0 16px}.detail-card{background:#fff;border:1px solid #dce5f0;border-radius:18px;padding:26px;box-shadow:0 8px 25px rgba(16,38,74,.07)}.detail-meta{display:flex;gap:12px;flex-wrap:wrap;color:#52647b;margin:18px 0}.detail-card h1{margin:8px 0}.detail-description{white-space:pre-wrap;line-height:1.8;color:#334155}.detail-error{padding:30px;text-align:center}.detail-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+</style>
+</head>
+<body>
+<header><a class="brand" href="../">💼 <span>PRIVATE JOB ALERT</span><small>INDIA</small></a><nav><a href="../">Home</a><a href="./">All Jobs</a><a href="../hr.html">For HR</a></nav></header>
+<main class="detail-wrap"><article id="jobDetail" class="detail-card"><p>Loading job details...</p></article></main>
+<div id="modal" class="modal hidden"><div class="modal-content"><button class="modal-close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
+<footer>© 2026 Private Job Alert India</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../app.js"></script>
+<script>
+(async function(){
+ const root=document.getElementById("jobDetail");
+ const id=new URLSearchParams(location.search).get("id");
+ if(!id){root.innerHTML='<div class="detail-error"><h1>Job link is incomplete</h1><p>Please open the job again from the jobs listing.</p><a href="./">Browse jobs</a></div>';return;}
+ try{
+  const response=await fetch(SUPABASE_URL+"/rest/v1/jobs?select=*&id=eq."+encodeURIComponent(id)+"&is_active=eq.true",{headers:{apikey:SUPABASE_ANON_KEY,Authorization:"Bearer "+SUPABASE_ANON_KEY}});
+  if(!response.ok)throw new Error("Could not load this vacancy.");
+  const rows=await response.json(),j=rows[0];
+  if(!j){root.innerHTML='<div class="detail-error"><h1>Job not found</h1><p>This vacancy may have expired or been removed.</p><a href="./">Browse latest jobs</a></div>';return;}
+  window.currentJob=j;
+  const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India";
+  document.title=j.title+" at "+(j.company||"Employer")+" | Private Job Alert";
+  root.innerHTML='<span class="badge">JOB DETAILS</span><h1>'+esc(j.title)+'</h1><h3>'+esc(j.company||j.company_name||"")+'</h3><div class="detail-meta"><span>📍 '+esc(loc)+'</span><span>💼 '+esc(j.job_type||j.type||"Full Time")+'</span><span>🎓 '+esc(j.qualification||"Any")+'</span><span>💰 '+esc(j.salary||"As per company")+'</span>'+(j.experience?'<span>Experience: '+esc(j.experience)+'</span>':'')+'</div><hr><h2>Job Description</h2><div class="detail-description">'+esc(j.description||"Please contact the employer for more details.")+'</div><div class="detail-actions"><button type="button" id="applyDetail">Apply Now</button><a class="button secondary" href="./">All Jobs</a></div>';
+  document.getElementById("applyDetail").onclick=()=>window.openApply(j);
+ }catch(e){root.innerHTML='<div class="detail-error"><h1>Unable to load job</h1><p>'+String(e.message||e)+'</p><a href="./">Browse jobs</a></div>';}
+})();
+</script>
+</body></html>
