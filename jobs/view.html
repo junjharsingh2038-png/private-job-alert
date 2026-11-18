@@ -35,7 +35,7 @@
   const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India";
   document.title=j.title+" at "+(j.company||"Employer")+" | Private Job Alert";
   root.innerHTML='<span class="badge">JOB DETAILS</span><h1>'+esc(j.title)+'</h1><h3>'+esc(j.company||j.company_name||"")+'</h3><div class="detail-meta"><span>📍 '+esc(loc)+'</span><span>💼 '+esc(j.job_type||j.type||"Full Time")+'</span><span>🎓 '+esc(j.qualification||"Any")+'</span><span>💰 '+esc(j.salary||"As per company")+'</span>'+(j.experience?'<span>Experience: '+esc(j.experience)+'</span>':'')+'</div><hr><h2>Job Description</h2><div class="detail-description">'+esc(j.description||"Please contact the employer for more details.")+'</div><div class="detail-actions"><button type="button" id="applyDetail">Apply Now</button><button type="button" id="shareJobPoster" class="pja-detail-share">Share Job Poster ↗</button><a class="button secondary" href="./">All Jobs</a></div>';
-  document.getElementById("applyDetail").onclick=()=>window.openApply(j);\n  document.getElementById("shareJobPoster").onclick=()=>window.PJAJobShare?.share(j);
+  document.getElementById("applyDetail").onclick=()=>window.openApply(j);\n  document.getElementById("shareJobPoster").onclick=()=>window.PJAJobShare?.share(j);\n  if(new URLSearchParams(location.search).get("share")==="1"){setTimeout(()=>window.PJAJobShare?.share(j),350)}
  }catch(e){root.innerHTML='<div class="detail-error"><h1>Unable to load job</h1><p>'+String(e.message||e)+'</p><a href="./">Browse jobs</a></div>';}
 })();
 </script>
