@@ -71,3 +71,35 @@ footer{background:#fff!important;border-top:1px solid #e2e9f2!important}
  .quick-grid,.info-grid,.how-grid,.grid,.detail-grid{grid-template-columns:1fr!important}
  .portal-hero,.ep-hero{padding:24px 18px!important}
 }
+
+
+/* === PJA unified Job Seeker master shell (all website pages; excludes attendance) === */
+.pja-site-header{position:sticky!important;top:0!important;z-index:100!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;width:100%!important;min-height:76px!important;padding:10px clamp(16px,4vw,56px)!important;background:rgba(255,255,255,.97)!important;border-bottom:1px solid #e3eaf3!important;box-shadow:0 5px 20px rgba(7,27,58,.06)!important;box-sizing:border-box!important}
+.pja-brand{display:flex!important;align-items:center!important;gap:11px!important;text-decoration:none!important;color:#071b3a!important;min-width:0!important}
+.pja-brand img{display:block!important;width:52px!important;height:52px!important;object-fit:contain!important}
+.pja-brand span{display:flex!important;flex-direction:column!important;gap:3px!important}
+.pja-brand strong{font-size:17px!important;font-weight:950!important;letter-spacing:.035em!important;color:#071b3a!important;white-space:nowrap!important}
+.pja-brand small{font-size:9px!important;font-weight:800!important;letter-spacing:.14em!important;color:#1264e8!important}
+.pja-nav{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:clamp(10px,2vw,26px)!important;flex-wrap:wrap!important}
+.pja-nav a{display:inline-flex!important;align-items:center!important;min-height:40px!important;padding:8px 3px!important;border:0!important;background:transparent!important;color:#344761!important;font-size:13px!important;font-weight:800!important;text-decoration:none!important;white-space:nowrap!important}
+.pja-nav a:hover{color:#1264e8!important}
+body{background:#f3f6fb!important;color:#10213f!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif!important}
+main.wrap,main.detail-wrap,.wrap,.hr-wrap,.ep-wrap{max-width:1180px!important;width:calc(100% - 40px)!important;margin:30px auto 54px!important;padding:0!important;box-sizing:border-box!important}
+.box,.card,.panel,.ep-panel,.detail-card{background:#fff!important;border:1px solid #e1e8f1!important;border-radius:20px!important;box-shadow:0 12px 34px rgba(7,27,58,.07)!important}
+.pja-page-intro{margin:0 0 20px!important;padding:30px!important;border-radius:22px!important;background:linear-gradient(120deg,#071b3a,#1052a7 70%,#1264e8)!important;color:#fff!important}
+.pja-page-intro h1{margin:0 0 8px!important;color:#fff!important;font-size:clamp(26px,4vw,38px)!important}
+.pja-page-intro p{margin:0!important;color:#e8f1ff!important}
+input,select,textarea{min-height:44px!important;box-sizing:border-box!important;border:1px solid #d5deea!important;border-radius:11px!important;background:#fbfdff!important;color:#10213f!important;padding:11px 13px!important;font:inherit!important}
+button,.btn,.button{min-height:42px!important;border-radius:11px!important;background:#1264e8!important;color:#fff!important;border:0!important;padding:11px 17px!important;font-weight:800!important;cursor:pointer!important}
+button.secondary,.secondary,.btn.secondary{background:#fff!important;color:#1264e8!important;border:1px solid #1264e8!important}
+label{color:#263953!important;font-weight:750!important}
+footer{background:#fff!important;border-top:1px solid #e2e9f2!important;color:#607089!important}
+@media(max-width:760px){
+ .pja-site-header{position:relative!important;display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:8px!important;padding:10px 14px!important}
+ .pja-brand img{width:44px!important;height:44px!important}.pja-brand strong{font-size:14px!important}.pja-brand small{font-size:8px!important}
+ .pja-nav{width:100%!important;justify-content:flex-start!important;gap:8px 17px!important;overflow-x:auto!important;flex-wrap:nowrap!important}
+ .pja-nav a{font-size:12px!important;min-height:34px!important}
+ main.wrap,main.detail-wrap,.wrap,.hr-wrap,.ep-wrap{width:calc(100% - 24px)!important;margin:18px auto 32px!important;padding:0!important}
+ .box,.card,.panel,.ep-panel,.detail-card{padding:18px!important;border-radius:16px!important}
+ .pja-page-intro{padding:22px 18px!important}
+}
