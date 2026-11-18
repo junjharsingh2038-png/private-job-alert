@@ -32,8 +32,8 @@ def transform(path: Path):
         return False
     prefix = rel_prefix(path)
     header = shared_header(prefix)
-    if re.search(r"<header\\b[\\s\\S]*?</header>", html, re.I):
-        html = re.sub(r"<header\\b[\\s\\S]*?</header>", lambda _: header, html, count=1, flags=re.I)
+    if re.search(r"<header\b[\s\\S]*?</header>", html, re.I):
+        html = re.sub(r"<header\b[\s\\S]*?</header>", lambda _: header, html, count=1, flags=re.I)
     elif re.search(r"<body[^>]*>", html, re.I):
         html = re.sub(r"<body[^>]*>", lambda m: m.group(0) + header, html, count=1, flags=re.I)
     else:
@@ -41,7 +41,7 @@ def transform(path: Path):
     # Load the homepage design layer last so older portal styles cannot override it.
     for name in ("style.css", "homepage-overrides.css"):
         href = prefix + name + "?v=home-master-20261118"
-        html = re.sub(r'<link\\b[^>]*href=["\\'][^"\\']*' + re.escape(name) + r'(?:\\?[^"\\']*)?["\\'][^>]*>\\s*', "", html, flags=re.I)
+        html = re.sub(r'<link\b[^>]*href=["\\'][^"\\']*' + re.escape(name) + r'(?:\?[^"\\']*)?["\\'][^>]*>\s*', "", html, flags=re.I)
         link = f'<link rel="stylesheet" href="{href}">'
         html = re.sub(r"</head>", link + "</head>", html, count=1, flags=re.I)
     path.write_text(html, encoding="utf-8")
