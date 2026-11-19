@@ -1,0 +1,33 @@
+/* Shared homepage visual system for HR, Admin and Employee portals. Visual-only: no auth, data or workflow changes. */
+:root{--pja-navy:#071b3a;--pja-blue:#1264e8;--pja-orange:#ff7900;--pja-ink:#10213f;--pja-muted:#65748b;--pja-line:#e4eaf2;--pja-bg:#f4f7fb}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(180deg,#f7f9fc 0,#eef3f9 100%)!important;color:var(--pja-ink)!important;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
+body>header.site-header{position:sticky!important;top:0!important;z-index:100!important;display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:nowrap!important;gap:14px!important;min-height:82px!important;padding:8px clamp(12px,2.5vw,38px)!important;background:rgba(255,255,255,.96)!important;backdrop-filter:blur(14px)!important;border-bottom:1px solid var(--pja-line)!important;box-shadow:0 4px 18px rgba(10,30,60,.05)!important}
+.site-header .brand{display:flex!important;align-items:center!important;gap:9px!important;flex:0 0 auto!important;min-width:0!important;text-decoration:none!important;color:var(--pja-navy)!important}
+.site-header .brand-mark{width:58px!important;height:58px!important;object-fit:contain!important;border-radius:50%!important;border:3px solid var(--pja-orange)!important;background:#fff!important;box-shadow:0 4px 12px #0b315b20!important}
+.site-header .brand-copy{display:flex!important;flex-direction:column!important;gap:2px!important}
+.site-header .brand-copy strong{font-size:20px!important;line-height:1.1!important;font-weight:950!important;letter-spacing:.02em!important}
+.site-header .brand-copy strong span{color:var(--pja-blue)!important}
+.site-header .brand-copy small{font-size:8px!important;letter-spacing:1px!important;color:var(--pja-blue)!important;font-weight:850!important}
+.site-header .main-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(10px,1.5vw,22px)!important;flex:1 1 auto!important;min-width:0!important}
+.site-header .main-nav a{color:#173f73!important;text-decoration:none!important;font-size:13px!important;font-weight:750!important;white-space:nowrap!important}
+.site-header .main-nav a:hover{color:var(--pja-blue)!important}
+.site-header .header-actions{display:flex!important;align-items:center!important;gap:8px!important;flex:0 0 auto!important}
+.site-header .header-actions a{display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:9px 13px!important;border-radius:10px!important;text-decoration:none!important;font-size:12px!important;font-weight:850!important}
+.site-header .login-link{background:#edf4ff!important;color:var(--pja-blue)!important}
+.site-header .register-link{background:var(--pja-blue)!important;color:#fff!important}
+.hr-wrap,.ep-wrap,.wrap{max-width:1180px!important;margin:0 auto!important;padding:30px 20px!important}
+.portal-hero,.ep-hero,.hero{position:relative!important;overflow:hidden!important;background:linear-gradient(120deg,#071b3a 0%,#0b3f82 55%,#1264e8 100%)!important;color:#fff!important;border:0!important;border-radius:24px!important;padding:clamp(25px,4vw,42px)!important;margin:0 0 22px!important;box-shadow:0 16px 38px rgba(7,27,58,.16)!important}
+.portal-hero:after,.ep-hero:after{content:"";position:absolute;width:260px;height:260px;right:-80px;top:-115px;border:1px solid #ffffff30;border-radius:50%;box-shadow:0 0 0 28px #ffffff0d,0 0 0 58px #ffffff08;pointer-events:none}
+.portal-hero h1,.ep-hero h1,.hero h1{color:#fff!important;font-size:clamp(28px,4vw,42px)!important;line-height:1.12!important;margin:12px 0!important;font-weight:900!important}
+.portal-hero p,.ep-hero p,.hero p{color:#e5efff!important;max-width:760px!important;font-size:15px!important}
+.panel,.ep-panel,.box,.card,.ep-card,.quick-card,.info-card,.step,.row,.ep-job{border:1px solid var(--pja-line)!important;border-radius:18px!important;background:#fff!important;box-shadow:0 8px 26px rgba(16,38,74,.055)!important}
+.ep-card,.card,.quick-card,.info-card,.step{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important}
+.ep-card:hover,.card:hover,.quick-card:hover,.info-card:hover,.step:hover{transform:translateY(-3px)!important;border-color:#b8d1f8!important;box-shadow:0 14px 30px rgba(18,100,232,.10)!important}
+h1,h2,h3{letter-spacing:-.02em}
+input,select,textarea{min-height:44px!important;border:1px solid #d5deea!important;border-radius:11px!important;background:#fbfdff!important;color:#10213f!important;padding:11px 13px!important;font:inherit!important}
+button,.btn,.button{min-height:42px!important;border-radius:11px!important;background:var(--pja-blue)!important;color:#fff!important;border:0!important;padding:11px 17px!important;font-weight:800!important;cursor:pointer!important}
+button.secondary,.secondary,.btn.secondary{background:#fff!important;color:var(--pja-blue)!important;border:1px solid var(--pja-blue)!important}
+footer{background:#fff!important;border-top:1px solid var(--pja-line)!important;color:#607089!important}
+@media(max-width:900px){body>header.site-header{flex-wrap:wrap!important;gap:8px!important}.site-header .main-nav{order:3!important;width:100%!important;justify-content:flex-start!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding:5px 0!important}.site-header .main-nav a{font-size:12px!important}.site-header .header-actions{margin-left:auto!important}}
+@media(max-width:600px){.site-header .brand-mark{width:46px!important;height:46px!important}.site-header .brand-copy strong{font-size:16px!important}.site-header .brand-copy small{font-size:6px!important;letter-spacing:.6px!important}.site-header .header-actions a{padding:7px 9px!important;font-size:10px!important}.hr-wrap,.ep-wrap,.wrap{width:calc(100% - 24px)!important;margin:16px auto 28px!important;padding:0!important}.portal-hero,.ep-hero,.hero{padding:23px 19px!important;border-radius:18px!important}.portal-hero h1,.ep-hero h1,.hero h1{font-size:29px!important}.panel,.ep-panel,.box,.card{padding:17px!important;border-radius:16px!important}}
