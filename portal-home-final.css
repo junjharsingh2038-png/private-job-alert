@@ -1,0 +1,19 @@
+/* Final portal parity: loaded after every portal stylesheet */
+body>header.site-header{display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:nowrap!important;gap:14px!important;min-height:82px!important;padding:8px clamp(12px,2.5vw,38px)!important;background:rgba(255,255,255,.97)!important;border-bottom:1px solid #e4eaf2!important;box-shadow:0 4px 18px #0a1e3c0d!important}
+body .site-header .brand-mark{width:58px!important;height:58px!important;object-fit:contain!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important}
+body .site-header .brand-copy strong{font-size:clamp(19px,2.2vw,30px)!important;color:#082b55!important}
+body .site-header .brand-copy small{font-size:7px!important;letter-spacing:.35px!important}
+body .site-header .main-nav{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(7px,1.2vw,18px)!important;flex:1 1 auto!important;min-width:0!important;flex-wrap:nowrap!important}
+body .site-header .main-nav a{font-size:clamp(10px,1vw,13px)!important;white-space:nowrap!important}
+body .site-header .header-actions{display:flex!important;gap:8px!important;flex:0 0 auto!important}
+body .hr-wrap,body .ep-wrap,body .wrap{max-width:1240px!important;margin:0 auto!important;padding:24px 18px 36px!important}
+body .ep-hero,body .portal-hero{display:block!important;position:relative!important;overflow:hidden!important;min-height:0!important;margin:0 0 20px!important;padding:28px clamp(22px,4vw,48px)!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:linear-gradient(105deg,#edf6fc 0%,#f8fbfd 48%,#d9e9f2 100%)!important;color:#082b55!important}
+body .ep-hero:before,body .portal-hero:before{content:"";position:absolute;right:-5%;top:-20%;width:48%;height:145%;background:linear-gradient(120deg,transparent,#b9d7e8aa);transform:skewX(-18deg);pointer-events:none}
+body .ep-hero h1,body .portal-hero h1{position:relative;color:#082b55!important;font-size:clamp(30px,4.8vw,54px)!important;line-height:1.06!important;margin:12px 0 8px!important}
+body .ep-hero p,body .portal-hero p{position:relative;color:#36516d!important;font-size:15px!important;margin:0!important}
+body .ep-hero .pill,body .portal-hero>b{position:relative;display:inline-flex!important;background:#fff!important;color:#1264e8!important;border-radius:20px!important;padding:6px 12px!important;font-size:11px!important;font-weight:850!important}
+body .ep-panel,body .panel,body .box,body .card,body .ep-card,body .quick-card{border:1px solid #e5ebf3!important;border-radius:16px!important;background:#fff!important;box-shadow:0 5px 18px #10264a0b!important}
+body .ep-card,body .quick-card,body .card{transition:transform .18s ease,box-shadow .18s ease!important}
+body .ep-card:hover,body .quick-card:hover,body .card:hover{transform:translateY(-2px)!important;box-shadow:0 10px 24px #10264a14!important}
+@media(max-width:900px){body>header.site-header{flex-wrap:wrap!important;gap:5px 12px!important;padding:7px 12px!important}body .site-header .main-nav{order:3!important;width:100%!important;justify-content:flex-start!important;overflow-x:auto!important;gap:14px!important;padding:5px 0!important}body .site-header .header-actions{margin-left:auto!important}}
+@media(max-width:600px){body .hr-wrap,body .ep-wrap,body .wrap{width:calc(100% - 24px)!important;margin:16px auto 28px!important;padding:0!important}body .ep-hero,body .portal-hero{padding:23px 19px!important;border-radius:16px!important}body .ep-hero h1,body .portal-hero h1{font-size:29px!important}}
