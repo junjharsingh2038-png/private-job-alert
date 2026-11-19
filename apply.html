@@ -146,10 +146,8 @@ $('applyForm').addEventListener('submit',async e=>{
     }
     showMsg('Application submitted successfully. You can track it in Applied Jobs.','success');
     e.target.reset();
-    if(ins.data?.id){
-      const n=await SB.functions.invoke('notify-hr',{body:{application_id:ins.data.id,action:'application_received'}});
-      if(n.error)console.warn('HR notification failed:',n.error.message);
-    }
+    // Email and in-app notifications are sent by the database insert trigger.
+    // Do not invoke notify-hr here, otherwise candidates and HR receive duplicate emails.
   }catch(err){showMsg(err.message||'Application could not be submitted.','danger')}
 });
 start();
