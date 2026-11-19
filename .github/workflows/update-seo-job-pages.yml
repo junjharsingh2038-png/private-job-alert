@@ -12,6 +12,7 @@ on:
 permissions:
   contents: write
 
+# This is the single canonical SEO generator. Keep all job-page writes serialized.
 concurrency:
   group: seo-job-pages
   cancel-in-progress: false
@@ -47,7 +48,7 @@ jobs:
           print(f'Supabase API OK: {len(jobs)} active jobs found.')
           PY
 
-      - name: Generate job pages and sitemap
+      - name: Generate job pages and sitemap (canonical Python generator)
         run: python scripts/generate_jobs.py
 
       - name: Commit generated pages
