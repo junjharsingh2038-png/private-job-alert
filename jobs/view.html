@@ -19,7 +19,8 @@
 <div id="modal" class="modal hidden"><div class="modal-content"><button class="modal-close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div>
 <footer>© 2026 Private Job Alert India</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../app.js"></script>\n<script src="../job-share.js?v=social-poster-20261118"></script>
+<script src="../app.js"></script>
+<script src="../job-share.js?v=social-poster-20261118"></script>
 <script>
 (async function(){
  const root=document.getElementById("jobDetail");
@@ -35,7 +36,9 @@
   const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India";
   document.title=j.title+" at "+(j.company||"Employer")+" | Private Job Alert";
   root.innerHTML='<span class="badge">JOB DETAILS</span><h1>'+esc(j.title)+'</h1><h3>'+esc(j.company||j.company_name||"")+'</h3><div class="detail-meta"><span>📍 '+esc(loc)+'</span><span>💼 '+esc(j.job_type||j.type||"Full Time")+'</span><span>🎓 '+esc(j.qualification||"Any")+'</span><span>💰 '+esc(j.salary||"As per company")+'</span>'+(j.experience?'<span>Experience: '+esc(j.experience)+'</span>':'')+'</div><hr><h2>Job Description</h2><div class="detail-description">'+esc(j.description||"Please contact the employer for more details.")+'</div><div class="detail-actions"><button type="button" id="applyDetail">Apply Now</button><button type="button" id="shareJobPoster" class="pja-detail-share">Share Job Poster ↗</button><a class="button secondary" href="./">All Jobs</a></div>';
-  document.getElementById("applyDetail").onclick=()=>window.openApply(j);\n  document.getElementById("shareJobPoster").onclick=()=>window.PJAJobShare?.share(j);\n  if(new URLSearchParams(location.search).get("share")==="1"){setTimeout(()=>window.PJAJobShare?.share(j),350)}
+  document.getElementById("applyDetail").onclick=()=>window.openApply(j);
+  document.getElementById("shareJobPoster").onclick=()=>window.PJAJobShare?.share(j);
+  if(new URLSearchParams(location.search).get("share")==="1"){setTimeout(()=>window.PJAJobShare?.share(j),350)}
  }catch(e){root.innerHTML='<div class="detail-error"><h1>Unable to load job</h1><p>'+String(e.message||e)+'</p><a href="./">Browse jobs</a></div>';}
 })();
 </script>
