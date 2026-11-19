@@ -1,0 +1,24 @@
+/* Portal content parity: match the homepage's light hero and card language while retaining portal functions. */
+body .ep-hero,body .portal-hero{background:linear-gradient(105deg,#edf6fc 0%,#f8fbfd 48%,#d9e9f2 100%)!important;color:#082b55!important;border:1px solid #dbeaf5!important;box-shadow:0 12px 30px rgba(8,43,85,.08)!important;border-radius:22px!important}
+body .ep-hero h1,body .portal-hero h1{color:#082b55!important;font-size:clamp(28px,4vw,42px)!important}
+body .ep-hero p,body .portal-hero p{color:#35516f!important}
+body .ep-hero .pill,body .portal-hero .acq-badge{background:#fff!important;color:#1264e8!important}
+body .ep-panel,body .panel,body .box,body .card{background:#fff!important;border:1px solid #e5ebf3!important;border-radius:18px!important;box-shadow:0 7px 22px rgba(16,38,74,.06)!important}
+body .ep-card,body .quick-card,body .info-card,body .step{background:#fff!important;border:1px solid #e5ebf3!important;border-radius:16px!important;box-shadow:0 5px 18px rgba(16,38,74,.06)!important}
+body .ep-card h3,body .quick-card h3,body .info-card h3,body .step h3{color:#082b55!important}
+body .ep-job{background:#fff!important;border:1px solid #e5ebf3!important;border-radius:16px!important;box-shadow:0 5px 18px rgba(16,38,74,.05)!important}
+body .ep-job h3{color:#1264a3!important}
+body .ep-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+body .job-list{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+@media(max-width:760px){
+ body .ep-wrap,body .hr-wrap,body .wrap{width:calc(100% - 24px)!important;padding:0!important;margin:18px auto 30px!important}
+ body .ep-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ body .ep-card{padding:15px!important;min-width:0!important}
+ body .ep-card h3{font-size:16px!important}
+ body .ep-card p{font-size:13px!important}
+ body .job-list{grid-template-columns:1fr!important}
+ body .search-row{grid-template-columns:1fr 1fr!important}
+ body .search-row input{grid-column:1/-1!important}
+ body .search-row button{grid-column:1/-1!important}
+ body .ep-hero,body .portal-hero{padding:24px 20px!important;border-radius:18px!important}
+}
