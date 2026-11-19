@@ -24,22 +24,36 @@
 <script>
 (async function(){
  const root=document.getElementById("jobDetail");
- const id=new URLSearchParams(location.search).get("id");
- if(!id){root.innerHTML='<div class="detail-error"><h1>Job link is incomplete</h1><p>Please open the job again from the jobs listing.</p><a href="./">Browse jobs</a></div>';return;}
+ const params=new URLSearchParams(location.search);
+ const id=params.get("id");
+ const API="https://rlidcatrwonemshwzafp.supabase.co/rest/v1/jobs";
+ const KEY="sb_publishable_ocJhWyfPg9rVhYROn_Vj0Q_DSSgxeuE";
+ const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+ const error=(title,msg)=>{root.innerHTML='<div class="detail-error"><h1>'+esc(title)+'</h1><p>'+esc(msg)+'</p><a href="./">Browse latest jobs</a></div>';};
+ if(!id){error("Job link is incomplete","This shared link does not contain a job ID. Open the job again from the latest jobs list.");return;}
+ root.innerHTML="<p>Loading job details…</p>";
  try{
-  const response=await fetch(SUPABASE_URL+"/rest/v1/jobs?select=*&id=eq."+encodeURIComponent(id)+"&is_active=eq.true",{headers:{apikey:SUPABASE_ANON_KEY,Authorization:"Bearer "+SUPABASE_ANON_KEY}});
-  if(!response.ok)throw new Error("Could not load this vacancy.");
-  const rows=await response.json(),j=rows[0];
-  if(!j){root.innerHTML='<div class="detail-error"><h1>Job not found</h1><p>This vacancy may have expired or been removed.</p><a href="./">Browse latest jobs</a></div>';return;}
-  window.currentJob=j;
-  const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+  const url=API+"?select=*&id=eq."+encodeURIComponent(id)+"&limit=1";
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),12000);
+  let response;
+  try{response=await fetch(url,{method:"GET",headers:{apikey:KEY,Authorization:"Bearer "+KEY,Accept:"application/json"},cache:"no-store",signal:controller.signal});}
+  finally{clearTimeout(timer);}
+  if(!response.ok){const detail=await response.text().catch(()=>"");throw new Error("Job database returned HTTP "+response.status+(detail?" — "+detail.slice(0,180):""));}
+  const rows=await response.json();
+  const j=Array.isArray(rows)?rows[0]:null;
+  if(!j){error("Job not found","This job ID is not present in the job database. Please copy the share link again from the job card.");return;}
+  window.PJA_CURRENT_JOB=j;
   const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India";
-  document.title=j.title+" at "+(j.company||"Employer")+" | Private Job Alert";
-  root.innerHTML='<span class="badge">JOB DETAILS</span><h1>'+esc(j.title)+'</h1><h3>'+esc(j.company||j.company_name||"")+'</h3><div class="detail-meta"><span>📍 '+esc(loc)+'</span><span>💼 '+esc(j.job_type||j.type||"Full Time")+'</span><span>🎓 '+esc(j.qualification||"Any")+'</span><span>💰 '+esc(j.salary||"As per company")+'</span>'+(j.experience?'<span>Experience: '+esc(j.experience)+'</span>':'')+'</div><hr><h2>Job Description</h2><div class="detail-description">'+esc(j.description||"Please contact the employer for more details.")+'</div><div class="detail-actions"><button type="button" id="applyDetail">Apply Now</button><button type="button" id="shareJobPoster" class="pja-detail-share">Share Job Poster ↗</button><a class="button secondary" href="./">All Jobs</a></div>';
-  document.getElementById("applyDetail").onclick=()=>window.openApply(j);
-  document.getElementById("shareJobPoster").onclick=()=>window.PJAJobShare?.share(j);
-  if(new URLSearchParams(location.search).get("share")==="1"){setTimeout(()=>window.PJAJobShare?.share(j),350)}
- }catch(e){root.innerHTML='<div class="detail-error"><h1>Unable to load job</h1><p>'+String(e.message||e)+'</p><a href="./">Browse jobs</a></div>';}
+  document.title=(j.title||"Job Details")+" at "+(j.company||j.company_name||"Employer")+" | Private Job Alert";
+  root.innerHTML='<span class="badge">JOB DETAILS</span><h1>'+esc(j.title||"Job Vacancy")+'</h1><h3>'+esc(j.company||j.company_name||"")+'</h3><div class="detail-meta"><span>📍 '+esc(loc)+'</span><span>💼 '+esc(j.job_type||j.type||"Full Time")+'</span><span>🎓 '+esc(j.qualification||"Any")+'</span><span>💰 '+esc(j.salary||"As per company")+'</span>'+(j.experience?'<span>Experience: '+esc(j.experience)+'</span>':'')+'</div><hr><h2>Job Description</h2><div class="detail-description">'+esc(j.description||"Please contact the employer for more details.")+'</div><div class="detail-actions"><a class="button" href="../apply.html?job='+encodeURIComponent(String(j.id))+'">Apply Now</a><button type="button" id="shareJobPoster" class="pja-detail-share">Share Job Poster ↗</button><a class="button secondary" href="./">All Jobs</a></div>';
+  const share=document.getElementById("shareJobPoster");
+  if(share)share.onclick=()=>window.PJAJobShare?.share(j);
+  if(params.get("share")==="1")setTimeout(()=>window.PJAJobShare?.share(j),500);
+ }catch(e){
+  const msg=e.name==="AbortError"?"The job server took too long to respond. Please try again in a moment.":(e.message||"Unknown loading error");
+  error("Unable to load job",msg);
+ }
 })();
 </script>
 </body></html>
