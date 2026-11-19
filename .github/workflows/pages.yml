@@ -3,6 +3,10 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
+  workflow_run:
+    workflows: ["Update SEO Job Pages"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
