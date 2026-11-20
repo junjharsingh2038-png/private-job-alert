@@ -36,13 +36,23 @@ async function load(){
 async function save(e){
  if(!window.sb||!window.PJA_SEEKER_USER)return;
  e.preventDefault();e.stopImmediatePropagation();
- const u=window.PJA_SEEKER_USER;
- const row={id:u.id,full_name:$('pName').value.trim(),mobile:$('pMobile').value.trim(),location:$('pLocation').value.trim(),qualification:$('pQualification').value.trim(),experience:$('pExperience').value.trim(),skills:$('pSkills').value.trim(),updated_at:new Date().toISOString()};
+ const u=window.PJA_SEEKER_USER,file=$('resume')?.files?.[0];
+ if(file&&file.size>5*1024*1024){const m=$('profileMsg');if(m){m.textContent='Resume maximum size is 5 MB.';m.className='danger'}return}
+ const old=await sb.from('job_seeker_profiles').select('resume_path').eq('id',u.id).maybeSingle();
+ if(old.error){const m=$('profileMsg');if(m){m.textContent=old.error.message;m.className='danger'}return}
+ let resumePath=old.data?.resume_path||null;
+ if(file){
+  const ext=(file.name.split('.').pop()||'pdf').toLowerCase();
+  const up=await sb.storage.from('resumes').upload(u.id+'/'+Date.now()+'.'+ext,file,{upsert:false});
+  if(up.error){const m=$('profileMsg');if(m){m.textContent=up.error.message;m.className='danger'}return}
+  resumePath=up.data.path;
+ }
+ const row={id:u.id,full_name:$('pName').value.trim(),mobile:$('pMobile').value.trim(),location:$('pLocation').value.trim(),qualification:$('pQualification').value.trim(),experience:$('pExperience').value.trim(),skills:$('pSkills').value.trim(),resume_path:resumePath,updated_at:new Date().toISOString()};
  fields.forEach(([k])=>row[k]=getVal(k));
  if($('profileVisibility'))row.profile_visibility=$('profileVisibility').checked;
  const res=await sb.from('job_seeker_profiles').upsert(row,{onConflict:'id'});
- const m=$('profileMsg');if(m){m.textContent=res.error?'Save failed: '+res.error.message:'Your complete professional profile has been saved.';m.className=res.error?'danger':'success'}
- if(!res.error)load();
+ const m=$('profileMsg');if(m){m.textContent=res.error?'Save failed: '+res.error.message:'Your complete professional profile and resume have been saved.';m.className=res.error?'danger':'success'}
+ if(!res.error){if($('resumeBox'))$('resumeBox').textContent=resumePath?'Resume uploaded and saved.':'No resume uploaded yet.';load()}
 }
 function init(){
  addUI();
