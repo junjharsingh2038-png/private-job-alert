@@ -26,7 +26,7 @@ function ensureModal(){
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 }
 function closeModal(){const m=$('pjaHrProfileModal');if(m)m.classList.remove('is-open');document.body.classList.remove('pja-modal-lock')}
-function openModal(){ensureModal();const sec=$('hrCompanyProfileSection'),body=$('pjaHrModalBody');if(sec&&body&&!body.contains(sec)){sec.classList.add('pja-profile-in-modal');body.appendChild(sec)}$('pjaHrProfileModal').classList.add('is-open');document.body.classList.add('pja-modal-lock');load()}
+function openModal(){ensureModal();const sec=$('hrCompanyProfileSection'),body=$('pjaHrModalBody');if(sec&&body&&!body.contains(sec)){sec.classList.add('pja-profile-in-modal')}if(sec&&body&&!body.contains(sec))body.appendChild(sec)$('pjaHrProfileModal').classList.add('is-open');document.body.classList.add('pja-modal-lock');load()}
 function ensureUI(){
  const grid=document.querySelector('.quick-grid'),main=$('mainContent');if(!grid||!main)return;
  if(!$('hrCompanyProfileCard')){const c=document.createElement('article');c.className='quick-card';c.id='hrCompanyProfileCard';c.innerHTML='<div class="dashboard-stat"><span class="num">04 · PROFILE</span></div><h3>HR & Company Profile</h3><p>Create your own professional HR profile and complete your company hiring profile.</p><span class="card-link">Edit Full Profile →</span>';c.onclick=()=>openModal();grid.appendChild(c)}
