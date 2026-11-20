@@ -19,6 +19,20 @@ request = urllib.request.Request(f'{SUPABASE_URL}/rest/v1/jobs?{params}', header
 with urllib.request.urlopen(request, timeout=30) as response:
     jobs = json.loads(response.read().decode('utf-8'))
 
+# Do not publish expired vacancies as active JobPosting pages.
+today = datetime.now(timezone.utc).date()
+all_jobs = jobs
+jobs = []
+expired_jobs = []
+for job in all_jobs:
+    deadline = str(job.get('lastdate') or '').strip()[:10]
+    try:
+        expired = bool(deadline) and datetime.strptime(deadline, '%Y-%m-%d').date() < today
+    except ValueError:
+        expired = False
+    (expired_jobs if expired else jobs).append(job)
+print(f'Active SEO jobs: {len(jobs)}; expired jobs excluded: {len(expired_jobs)}.')
+
 def slug(value):
     return re.sub(r'[^a-zA-Z0-9]+', '-', str(value or '').strip().lower()).strip('-') or 'job'
 
@@ -116,6 +130,28 @@ for job in jobs:
     name = job_slug(job); url = f'{BASE}/jobs/{name}/'; folder = JOBS_DIR / name; folder.mkdir(parents=True, exist_ok=True); (folder / 'index.html').write_text(page(job, job_links[:6]), encoding='utf-8'); urls.append(url)
 for folder in JOBS_DIR.iterdir():
     if folder.is_dir() and folder.name not in active: shutil.rmtree(folder)
+
+# Build a Rajasthan landing page only from real, currently active Rajasthan vacancies.
+rajasthan_terms = ('rajasthan', 'jaipur', 'jodhpur', 'barmer', 'balotra', 'jaisalmer', 'jalore', 'bikaner', 'ajmer', 'udaipur', 'kota', 'sikar', 'alwar', 'pali', 'bhilwara', 'nagaur', 'churu', 'sri ganganagar')
+rajasthan_jobs = []
+for job, link in zip(jobs, job_links):
+    location_text = ' '.join(str(job.get(k) or '') for k in ('location', 'city', 'state')).lower()
+    if any(term in location_text for term in rajasthan_terms):
+        rajasthan_jobs.append(link)
+if rajasthan_jobs:
+    rajasthan_items = ''.join(
+        f'<article><h2><a href="{escape(url)}">{escape(title)}</a></h2><p><strong>{escape(company)}</strong> · {escape(location)} · {escape(qualification)}</p><p><a href="{escape(url)}">View job details and apply →</a></p></article>'
+        for url, title, company, location, qualification in rajasthan_jobs
+    )
+    rajasthan_html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rajasthan Private Jobs 2026 | Latest Vacancies in Jaipur, Jodhpur & Barmer</title><meta name="description" content="Find current private jobs in Rajasthan. Browse verified active listings by company, city and qualification, including Jaipur, Jodhpur and Barmer where available."><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="{BASE}/categories/rajasthan-private-jobs/"><link rel="stylesheet" href="../../style.css"></head><body><header><a href="../../">Private Job Alert</a><nav><a href="../../">Home</a> <a href="../../jobs/">Latest Jobs</a> <a href="../">Categories</a></nav></header><main><section><h1>Latest Private Jobs in Rajasthan 2026</h1><p>Explore currently listed private-sector vacancies in Rajasthan. Review the employer, job location, qualification and application details on each vacancy page before applying. Listings are included here only when their location information identifies Rajasthan or a Rajasthan city.</p></section><section><h2>Current Rajasthan Vacancies</h2>{rajasthan_items}</section><section><h2>Job Search Tips</h2><p>Check the job location and eligibility carefully. Apply through the vacancy details page and verify the employer and application contact before sharing personal information.</p><p><a href="../../jobs/">Browse all latest private jobs in India →</a></p></section></main><footer>© 2026 Private Job Alert India</footer></body></html>'''
+    folder = ROOT / 'categories' / 'rajasthan-private-jobs'
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / 'index.html').write_text(rajasthan_html, encoding='utf-8')
+    urls.append(f'{BASE}/categories/rajasthan-private-jobs/')
+else:
+    stale_rajasthan = ROOT / 'categories' / 'rajasthan-private-jobs'
+    if stale_rajasthan.exists():
+        shutil.rmtree(stale_rajasthan)
 
 items = ''.join(f'<article><h2><a href="{escape(url)}">{escape(title)}</a></h2><p><strong>{escape(company)}</strong> · 📍 {escape(location)} · 🎓 {escape(qualification)}</p><p><a href="{escape(url)}">View job details & Apply →</a></p></article>' for url,title,company,location,qualification in job_links)
 item_schema = json.dumps({'@context':'https://schema.org','@type':'ItemList','name':'Latest Private Jobs in India','itemListElement':[{'@type':'ListItem','position':i,'url':url,'name':title} for i,(url,title,company,location,qualification) in enumerate(job_links,1)]}, ensure_ascii=False).replace('</', '<\\/')
