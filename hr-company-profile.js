@@ -1,0 +1,20 @@
+(()=>{'use strict';
+const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fields=[
+['company_name','Company / Organization Name','text'],['contact_name','HR / Contact Person','text'],['phone','Contact Mobile','tel'],['email','Official Email','email'],
+['industry','Industry','text'],['company_type','Company Type','text'],['company_size','Company Size / Employees','text'],['founded_year','Year Established','text'],
+['company_website','Company Website','url'],['logo_url','Company Logo URL','url'],['company_description','About Company','textarea'],
+['headquarters','Headquarters','text'],['address','Full Address','textarea'],['city','City','text'],['state','State','text'],['pincode','PIN Code','text'],
+['hiring_for','Departments / Roles Hiring For','textarea'],['linkedin_url','LinkedIn Company Page','url'],['instagram_url','Social / Instagram URL','url']
+];
+function ensureUI(){
+ const grid=document.querySelector('.quick-grid'),main=$('mainContent');if(!grid||!main)return;
+ if(!$('hrCompanyProfileCard')){const c=document.createElement('article');c.className='quick-card';c.id='hrCompanyProfileCard';c.innerHTML='<div class="dashboard-stat"><span class="num">04 · COMPANY</span></div><h3>Company Profile</h3><p>Build your complete company and HR identity, like a professional hiring page.</p><span class="card-link">Edit Company Profile →</span>';c.onclick=()=>{const s=$('hrCompanyProfileSection');if(s){s.scrollIntoView({behavior:'smooth'});load()}};grid.appendChild(c)}
+ if(!$('hrCompanyProfileSection')){const s=document.createElement('section');s.id='hrCompanyProfileSection';s.className='section-box';s.innerHTML='<h2>Company Profile</h2><p class="muted">Complete your company details so candidates can understand your organization and hiring.</p><form id="hrCompanyProfileForm" class="list"><div class="detail-grid" id="hrCompanyFields"></div><label style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="hrCompanyVisibility" checked style="width:auto"> Show company profile to candidates (when public profile access is enabled)</label><button type="submit">Save Company Profile</button><p id="hrCompanyMsg"></p></form>';main.appendChild(s);
+ const dest=$('hrCompanyFields');fields.forEach(([k,l,t])=>{const w=document.createElement('label');w.className='detail-item';w.textContent=l;let el=t==='textarea'?document.createElement('textarea'):document.createElement('input');el.id='hrp_'+k;el.name=k;el.type=t==='textarea'?'text':t;if(t==='textarea')el.rows=4;w.appendChild(el);dest.appendChild(w)});$('hrCompanyProfileForm').addEventListener('submit',save)}
+}
+async function load(){const u=(await sb.auth.getUser()).data?.user;if(!u)return;const r=await sb.from('hr_profiles').select('*').eq('id',u.id).maybeSingle();if(r.error){$('hrCompanyMsg').textContent=r.error.message;return}const p=r.data||{};fields.forEach(([k])=>{const el=$('hrp_'+k);if(el)el.value=p[k]|| (k==='email'?u.email:'')});if($('hrCompanyVisibility'))$('hrCompanyVisibility').checked=p.profile_visibility!==false}
+async function save(e){e.preventDefault();const u=(await sb.auth.getUser()).data?.user;if(!u)return;const row={id:u.id,updated_at:new Date().toISOString(),profile_visibility:$('hrCompanyVisibility').checked};fields.forEach(([k])=>{row[k]=$('hrp_'+k).value.trim()||null});const r=await sb.from('hr_profiles').upsert(row,{onConflict:'id'});$('hrCompanyMsg').textContent=r.error?'Save failed: '+r.error.message:'Company profile saved successfully.';$('hrCompanyMsg').className=r.error?'danger':'success'}
+function init(){ensureUI();const old=window.portal;if(typeof old==='function'&&!window.__pjaHrCompanyProfile){window.__pjaHrCompanyProfile=true;window.portal=async function(){await old();ensureUI();load()}}setTimeout(()=>{if($('hrCompanyProfileSection'))load()},800);const mo=new MutationObserver(()=>{if(document.querySelector('.quick-grid'))ensureUI()});mo.observe(document.body,{childList:true,subtree:true})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
