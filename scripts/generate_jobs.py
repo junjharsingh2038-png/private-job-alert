@@ -153,9 +153,64 @@ else:
     if stale_rajasthan.exists():
         shutil.rmtree(stale_rajasthan)
 
+
+# Generate one SEO landing page for every city with active vacancies.
+CITIES_DIR = ROOT / 'cities'
+CITIES_DIR.mkdir(exist_ok=True)
+city_groups = {}
+generic_locations = {'india', 'rajasthan', 'remote', 'work from home', 'pan india', 'anywhere', 'all india', 'not specified'}
+for job, link in zip(jobs, job_links):
+    city_value = clean_text(job.get('city'), '')
+    if not city_value:
+        location_value = clean_text(job.get('location'), '')
+        city_value = location_value.split(',')[0].strip() if location_value else ''
+    city_value = re.sub(r'\s+', ' ', city_value).strip(' ,.-')
+    if not city_value or city_value.lower() in generic_locations:
+        continue
+    # Do not treat a state-only location as a city.
+    if city_value.lower() in {'rajasthan', 'gujarat', 'delhi', 'maharashtra', 'haryana', 'punjab', 'uttar pradesh', 'madhya pradesh'}:
+        continue
+    city_groups.setdefault(city_value, []).append(link)
+
+active_city_slugs = set()
+city_nav = []
+for city_name, listings in sorted(city_groups.items(), key=lambda item: item[0].lower()):
+    city_slug = slug(city_name) + '-jobs'
+    active_city_slugs.add(city_slug)
+    city_url = f'{BASE}/cities/{city_slug}/'
+    city_nav.append((city_name, city_url))
+    city_items = ''.join(
+        f'<article><h2><a href="{escape(url)}">{escape(title)}</a></h2><p><strong>{escape(company)}</strong> · {escape(location)} · {escape(qualification)}</p><p><a href="{escape(url)}">View job details and apply →</a></p></article>'
+        for url, title, company, location, qualification in listings
+    )
+    city_schema = json.dumps({
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        'name': f'Latest Jobs in {city_name}',
+        'numberOfItems': len(listings),
+        'itemListElement': [
+            {'@type': 'ListItem', 'position': i, 'url': url, 'name': title}
+            for i, (url, title, company, location, qualification) in enumerate(listings, 1)
+        ]
+    }, ensure_ascii=False).replace('</', '<\\/')
+    city_title = escape(city_name, quote=True)
+    city_desc = escape(f'Find current private jobs in {city_name}. Browse active vacancies by company and qualification, and review job details before applying.', quote=True)
+    city_html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latest Private Jobs in {city_title} | Private Job Alert</title><meta name="description" content="{city_desc}"><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="{city_url}"><meta property="og:type" content="website"><meta property="og:title" content="Latest Private Jobs in {city_title}"><meta property="og:description" content="{city_desc}"><meta property="og:url" content="{city_url}"><script type="application/ld+json">{city_schema}</script><link rel="stylesheet" href="../../style.css"></head><body><header><a class="brand" href="../../">💼 PRIVATE JOB ALERT INDIA</a><nav><a href="../../">Home</a><a href="../../jobs/">Latest Jobs</a><a href="../../categories/">Categories</a></nav></header><main><section class="hero"><span>✓ CITY-WISE VACANCIES</span><h1>Latest Private Jobs in {city_title}</h1><p>Browse currently active private-sector vacancies listed for {city_title}. Check each employer, job location, qualification and application details before applying. This page updates automatically when new active jobs are listed for this city.</p></section><section><h2>Current Jobs in {city_title} ({len(listings)})</h2>{city_items}</section><section><p><a href="../../jobs/">Browse all latest private jobs in India →</a></p></section></main><footer>© 2026 Private Job Alert India</footer></body></html>'''
+    folder = CITIES_DIR / city_slug
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / 'index.html').write_text(city_html, encoding='utf-8')
+    urls.append(city_url)
+
+for folder in CITIES_DIR.iterdir():
+    if folder.is_dir() and folder.name not in active_city_slugs:
+        shutil.rmtree(folder)
+
+
 items = ''.join(f'<article><h2><a href="{escape(url)}">{escape(title)}</a></h2><p><strong>{escape(company)}</strong> · 📍 {escape(location)} · 🎓 {escape(qualification)}</p><p><a href="{escape(url)}">View job details & Apply →</a></p></article>' for url,title,company,location,qualification in job_links)
 item_schema = json.dumps({'@context':'https://schema.org','@type':'ItemList','name':'Latest Private Jobs in India','itemListElement':[{'@type':'ListItem','position':i,'url':url,'name':title} for i,(url,title,company,location,qualification) in enumerate(job_links,1)]}, ensure_ascii=False).replace('</', '<\\/')
-jobs_html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latest Private Jobs in India 2026 | Private Job Alert</title><meta name="description" content="Latest private jobs in India 2026. Find current vacancies across states and cities by qualification, company, experience and job type."><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="{BASE}/jobs/"><script type="application/ld+json">{item_schema}</script><link rel="stylesheet" href="../style.css"></head><body><header><a class="brand" href="../">💼 <span>PRIVATE JOB ALERT</span><small>INDIA</small></a><nav><a href="../">Home</a><a href="../categories/">Job Categories</a><a href="../hr.html">For HR</a></nav></header><main><section class="hero"><span>✓ LATEST PRIVATE JOBS</span><h1>Latest Private Jobs in India 2026</h1><p>Browse current private-sector vacancies across India by job title, company, location, qualification, experience and job type.</p></section><section><h2>Current Vacancies Across India</h2>{items or '<p>No active vacancies are currently available. Please check again soon.</p>'}</section><section><h2>Popular Job Searches</h2><p><a href="../categories/10th-pass-private-jobs/">10th Pass Jobs</a> · <a href="../categories/12th-pass-private-jobs/">12th Pass Jobs</a> · <a href="../categories/graduate-private-jobs/">Graduate Jobs</a> · <a href="../categories/fresher-private-jobs/">Fresher Jobs</a> · <a href="../categories/work-from-home-jobs/">Work From Home Jobs</a></p></section><section><h2>Private Jobs Across India</h2><p>Private Job Alert helps job seekers find private-sector vacancies across India, including opportunities for freshers and experienced candidates. Check this page regularly for newly published jobs and use the job details pages to review eligibility, location, salary and application information.</p></section></main><footer>© 2026 Private Job Alert India</footer></body></html>'''
+city_links_html = ''.join(f'<li><a href="{escape(url)}">Jobs in {escape(city_name)}</a></li>' for city_name, url in city_nav)
+city_links_section = f'<section><h2>Jobs by City</h2><ul>{city_links_html}</ul></section>' if city_links_html else ''
+jobs_html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Latest Private Jobs in India 2026 | Private Job Alert</title><meta name="description" content="Latest private jobs in India 2026. Find current vacancies across states and cities by qualification, company, experience and job type."><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="{BASE}/jobs/"><script type="application/ld+json">{item_schema}</script><link rel="stylesheet" href="../style.css"></head><body><header><a class="brand" href="../">💼 <span>PRIVATE JOB ALERT</span><small>INDIA</small></a><nav><a href="../">Home</a><a href="../categories/">Job Categories</a><a href="../hr.html">For HR</a></nav></header><main><section class="hero"><span>✓ LATEST PRIVATE JOBS</span><h1>Latest Private Jobs in India 2026</h1><p>Browse current private-sector vacancies across India by job title, company, location, qualification, experience and job type.</p></section><section><h2>Current Vacancies Across India</h2>{items or '<p>No active vacancies are currently available. Please check again soon.</p>'}</section>{city_links_section}<section><h2>Popular Job Searches</h2><p><a href="../categories/10th-pass-private-jobs/">10th Pass Jobs</a> · <a href="../categories/12th-pass-private-jobs/">12th Pass Jobs</a> · <a href="../categories/graduate-private-jobs/">Graduate Jobs</a> · <a href="../categories/fresher-private-jobs/">Fresher Jobs</a> · <a href="../categories/work-from-home-jobs/">Work From Home Jobs</a></p></section><section><h2>Private Jobs Across India</h2><p>Private Job Alert helps job seekers find private-sector vacancies across India, including opportunities for freshers and experienced candidates. Check this page regularly for newly published jobs and use the job details pages to review eligibility, location, salary and application information.</p></section></main><footer>© 2026 Private Job Alert India</footer></body></html>'''
 (JOBS_DIR / 'index.html').write_text(jobs_html, encoding='utf-8')
 
 lastmod = datetime.now(timezone.utc).date().isoformat()
