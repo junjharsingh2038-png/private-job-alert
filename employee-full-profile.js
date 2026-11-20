@@ -17,7 +17,7 @@ function ensureModal(){
  document.body.appendChild(m);m.querySelector('.pja-profile-close').onclick=closeModal;m.addEventListener('click',e=>{if(e.target===m)closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 }
 function closeModal(){const m=$('pjaEmployeeProfileModal');if(m)m.classList.remove('is-open');document.body.classList.remove('pja-modal-lock')}
-function openModal(){ensureModal();const sec=$('profile'),body=$('pjaEmployeeModalBody');if(sec&&body&&!body.contains(sec)){sec.classList.add('pja-profile-in-modal');body.appendChild(sec)}$('pjaEmployeeProfileModal').classList.add('is-open');document.body.classList.add('pja-modal-lock');load()}
+function openModal(){ensureModal();const sec=$('profile'),body=$('pjaEmployeeModalBody');if(sec&&body&&!body.contains(sec)){sec.classList.add('pja-profile-in-modal')}if(sec){sec.classList.add('open');if(body&&!body.contains(sec))body.appendChild(sec)}$('pjaEmployeeProfileModal').classList.add('is-open');document.body.classList.add('pja-modal-lock');load()}
 function addUI(){
  const sec=$('profile'); if(!sec||$('pHeadline'))return;
  const grid=sec.querySelector('.detail-grid'); if(!grid)return;
