@@ -4,7 +4,7 @@ import shutil
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
-from html import escape
+from html import escape, unescape
 from pathlib import Path
 
 BASE = 'https://junjharsingh2038-png.github.io/private-job-alert'
@@ -51,10 +51,21 @@ def employment_type(value):
     if 'volunteer' in v: return 'VOLUNTEER'
     if 'per diem' in v: return 'PER_DIEM'
     if 'full' in v: return 'FULL_TIME'
-    return 'OTHER'
+    return None
+
+def clean_description(value):
+    # Preserve paragraph and list boundaries from employer-entered HTML or plain text.
+    text = str(value or '')
+    text = re.sub(r'(?i)<br\s*/?>', '\n', text)
+    text = re.sub(r'(?i)</(p|div|li|h[1-6])\s*>', '\n', text)
+    text = re.sub(r'(?i)<li[^>]*>', '• ', text)
+    text = re.sub(r'<[^>]+>', ' ', text)
+    text = unescape(text).replace('\r', '')
+    lines = [re.sub(r'[ \t]+', ' ', line).strip() for line in text.split('\n')]
+    return '\n'.join(line for line in lines if line)
 
 def html_description(text):
-    parts = [p.strip() for p in re.split(r'\n\s*\n|\n', text) if p.strip()]
+    parts = [p.strip() for p in text.split('\n') if p.strip()]
     return ''.join('<p>' + escape(p) + '</p>' for p in parts) or '<p>Job details available from the employer.</p>'
 
 def page(job, related_links):
@@ -64,7 +75,7 @@ def page(job, related_links):
     raw_qualification = clean_text(job.get('qualification'), 'Any qualification')
     raw_salary = clean_text(job.get('salary'), 'As per company')
     raw_type = clean_text(job.get('job_type'), 'Full Time')
-    raw_description = clean_text(job.get('description'), f'Apply for {raw_title} at {raw_company} in {raw_location}.')
+    raw_description = clean_description(job.get('description')) or f'Apply for {raw_title} at {raw_company} in {raw_location}.'
     jid = str(job.get('id'))
     url = f'{BASE}/jobs/{job_slug(job)}/'
     logo_url = str(job.get('company_logo') or '').strip() or company_logo_url(raw_company)
@@ -87,15 +98,15 @@ def page(job, related_links):
     meta_description = escape((f'{raw_title} at {raw_company} in {raw_location}. Qualification: {raw_qualification}. Salary: {raw_salary}. Apply online for this private job in India.')[:158], quote=True)
     safe_url = escape(url, quote=True)
     safe_logo = escape(logo_url, quote=True)
-    job_schema = {'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company, **({'logo': logo_url} if logo_url else {})},'jobLocation': {'@type': 'Place','address': address},'employmentType': employment_type(raw_type),'url': url}
+    job_schema = {'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company, **({'logo': logo_url} if logo_url else {})},'jobLocation': {'@type': 'Place','address': address},**({'employmentType': employment_type(raw_type)} if employment_type(raw_type) else {}),'url': url}
     if valid_through:
         job_schema['validThrough'] = valid_through
     schema = json.dumps(job_schema, ensure_ascii=False).replace('</', '<\\/')
     breadcrumb = json.dumps({'@context': 'https://schema.org','@type': 'BreadcrumbList','itemListElement': [{'@type': 'ListItem','position': 1,'name': 'Home','item': f'{BASE}/'},{'@type': 'ListItem','position': 2,'name': 'Latest Jobs','item': f'{BASE}/jobs/'},{'@type': 'ListItem','position': 3,'name': raw_title,'item': url}]}, ensure_ascii=False).replace('</', '<\\/')
     related_html = ''.join(f'<li><a href="{escape(rurl)}">{escape(rtitle)} – {escape(rcompany)}</a></li>' for rurl,rtitle,rcompany,_,_ in related_links if rurl != url)
     related_section = f'<section><h3>More Private Jobs in India</h3><ul>{related_html}</ul><p><a href="../../jobs/">View all latest private jobs in India →</a></p></section>' if related_html else '<p><a href="../../jobs/">View all latest private jobs in India →</a></p>'
-    html = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__ | __COMPANY__ | Private Jobs India</title><meta name="description" content="__META_DESCRIPTION__"><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="__URL__"><meta property="og:type" content="website"><meta property="og:title" content="__TITLE__ | __COMPANY__ | Private Jobs India"><meta property="og:description" content="__META_DESCRIPTION__"><meta property="og:url" content="__URL__"><meta property="og:image" content="__LOGO__"><meta property="og:image:alt" content="__COMPANY__ logo"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="__TITLE__ | __COMPANY__"><meta name="twitter:description" content="__META_DESCRIPTION__"><meta name="twitter:image" content="__LOGO__"><link rel="icon" href="__LOGO__"><link rel="apple-touch-icon" href="__LOGO__"><link rel="stylesheet" href="../../style.css"><script type="application/ld+json">__SCHEMA__</script><script type="application/ld+json">__BREADCRUMB__</script></head><body><header><div class="brand">💼 PRIVATE JOB ALERT INDIA</div><nav><a href="../../">Home</a><a href="../../#jobs">Latest Jobs</a><a href="../../categories/">Job Categories</a></nav></header><main><article class="job" style="max-width:900px;margin:30px auto"><p class="muted"><a href="../../">Home</a> › <a href="../../#jobs">Latest Jobs</a> › __TITLE__</p><h1>__TITLE__</h1><h2>__COMPANY__</h2><p class="muted">📍 __LOCATION__ &nbsp; 🎓 __QUALIFICATION__ &nbsp; 💰 __SALARY__ &nbsp; 🕒 __JOB_TYPE__</p><hr><h3>Job Description</h3><p>__DESCRIPTION__</p><h3>How to Apply</h3><p>Click Apply Now and submit your candidate details and resume. Your application will be sent to the HR email configured for this vacancy.</p><button class="apply" id="applyButton">Apply Now →</button><a class="apply" style="margin-left:10px;background:#ff6b1a" href="__POSTER_URL__">Share Job Poster ↗</a>__RELATED_SECTION__</article></main><div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../../app.js"></script><script>document.getElementById("applyButton").addEventListener("click", async function () {const r = await sb.from("jobs").select("id,title,company,location,qualification,salary,job_type,description,hr_email,created_at").eq("id", __JOB_ID__).eq("is_active", true).single();if (r.error || !r.data) { alert("This job is no longer available."); return; }openApply(r.data);});</script></body></html>'''
-    return html.replace('__TITLE__', title).replace('__COMPANY__', company).replace('__LOCATION__', location).replace('__QUALIFICATION__', qualification).replace('__SALARY__', salary).replace('__JOB_TYPE__', job_type).replace('__DESCRIPTION__', description).replace('__META_DESCRIPTION__', meta_description).replace('__URL__', safe_url).replace('__LOGO__', safe_logo).replace('__SCHEMA__', schema).replace('__BREADCRUMB__', breadcrumb).replace('__JOB_ID__', json.dumps(jid)).replace('__POSTER_URL__', escape(f'{BASE}/jobs/view.html?id={urllib.parse.quote(jid)}&share=1', quote=True)).replace('__RELATED_SECTION__', related_section)
+    html = '''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>__TITLE__ | __COMPANY__ | Private Jobs India</title><meta name="description" content="__META_DESCRIPTION__"><meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="__URL__"><meta property="og:type" content="website"><meta property="og:title" content="__TITLE__ | __COMPANY__ | Private Jobs India"><meta property="og:description" content="__META_DESCRIPTION__"><meta property="og:url" content="__URL__"><meta property="og:image" content="__LOGO__"><meta property="og:image:alt" content="__COMPANY__ logo"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="__TITLE__ | __COMPANY__"><meta name="twitter:description" content="__META_DESCRIPTION__"><meta name="twitter:image" content="__LOGO__"><link rel="icon" href="__LOGO__"><link rel="apple-touch-icon" href="__LOGO__"><link rel="stylesheet" href="../../style.css"><script type="application/ld+json">__SCHEMA__</script><script type="application/ld+json">__BREADCRUMB__</script></head><body><header><div class="brand">💼 PRIVATE JOB ALERT INDIA</div><nav><a href="../../">Home</a><a href="../../#jobs">Latest Jobs</a><a href="../../categories/">Job Categories</a></nav></header><main><article class="job" style="max-width:900px;margin:30px auto"><p class="muted"><a href="../../">Home</a> › <a href="../../#jobs">Latest Jobs</a> › __TITLE__</p><h1>__TITLE__</h1><h2>__COMPANY__</h2><p class="muted">📍 __LOCATION__ &nbsp; 🎓 __QUALIFICATION__ &nbsp; 💰 __SALARY__ &nbsp; 🕒 __JOB_TYPE__</p><hr><h3>Job Description</h3>__DESCRIPTION__<h3>How to Apply</h3><p>Click Apply Now and submit your candidate details and resume. Your application will be sent to the HR email configured for this vacancy.</p><button class="apply" id="applyButton">Apply Now →</button><a class="apply" style="margin-left:10px;background:#ff6b1a" href="__POSTER_URL__">Share Job Poster ↗</a>__RELATED_SECTION__</article></main><div id="modal" class="modal hidden"><div class="box"><button class="close" onclick="closeModal()">×</button><div id="modalContent"></div></div></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../../app.js"></script><script>document.getElementById("applyButton").addEventListener("click", async function () {const r = await sb.from("jobs").select("id,title,company,location,qualification,salary,job_type,description,hr_email,created_at").eq("id", __JOB_ID__).eq("is_active", true).single();if (r.error || !r.data) { alert("This job is no longer available."); return; }openApply(r.data);});</script></body></html>'''
+    return html.replace('__TITLE__', title).replace('__COMPANY__', company).replace('__LOCATION__', location).replace('__QUALIFICATION__', qualification).replace('__SALARY__', salary).replace('__JOB_TYPE__', job_type).replace('__DESCRIPTION__', schema_description).replace('__META_DESCRIPTION__', meta_description).replace('__URL__', safe_url).replace('__LOGO__', safe_logo).replace('__SCHEMA__', schema).replace('__BREADCRUMB__', breadcrumb).replace('__JOB_ID__', json.dumps(jid)).replace('__POSTER_URL__', escape(f'{BASE}/jobs/view.html?id={urllib.parse.quote(jid)}&share=1', quote=True)).replace('__RELATED_SECTION__', related_section)
 
 urls = [f'{BASE}/', f'{BASE}/categories/', f'{BASE}/categories/private-jobs-india/', f'{BASE}/categories/fresher-private-jobs/', f'{BASE}/categories/graduate-private-jobs/', f'{BASE}/categories/work-from-home-jobs/', f'{BASE}/categories/10th-pass-private-jobs/', f'{BASE}/categories/12th-pass-private-jobs/', f'{BASE}/hr/', f'{BASE}/jobs/']
 active = set(); job_links = []
