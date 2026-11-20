@@ -160,14 +160,14 @@ CITIES_DIR.mkdir(exist_ok=True)
 city_groups = {}
 generic_locations = {'india', 'rajasthan', 'remote', 'work from home', 'pan india', 'anywhere', 'all india', 'not specified'}
 for job, link in zip(jobs, job_links):
+    # Use the structured city field only. Free-text location values can contain
+    # districts, nearby areas, state names or multiple cities and create thin pages.
     city_value = clean_text(job.get('city'), '')
-    if not city_value:
-        location_value = clean_text(job.get('location'), '')
-        city_value = location_value.split(',')[0].strip() if location_value else ''
     city_value = re.sub(r'\s+', ' ', city_value).strip(' ,.-')
     if not city_value or city_value.lower() in generic_locations:
         continue
-    # Do not treat a state-only location as a city.
+    if any(token in city_value.lower() for token in (',', '/', ';', ' near ', ' nearby', 'district', 'all india', 'pan india')):
+        continue
     if city_value.lower() in {'rajasthan', 'gujarat', 'delhi', 'maharashtra', 'haryana', 'punjab', 'uttar pradesh', 'madhya pradesh'}:
         continue
     city_groups.setdefault(city_value, []).append(link)
