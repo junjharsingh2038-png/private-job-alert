@@ -23,39 +23,56 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${GOOGLE_SERVICE_ACCOUNT_JSON:-}" ]; then
-            echo "GOOGLE_SERVICE_ACCOUNT_JSON secret is not configured yet."
-            echo "Complete Google Cloud + Search Console setup, then add the secret in GitHub."
-            exit 0
+            echo "::error::GOOGLE_SERVICE_ACCOUNT_JSON secret is missing or empty."
+            exit 1
           fi
 
           python -m pip install --quiet google-auth requests
           printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > /tmp/google-service-account.json
 
           python - <<'PY'
-          import json, pathlib, re, requests
+          import json, pathlib, sys
           from google.oauth2 import service_account
           from google.auth.transport.requests import AuthorizedSession
 
-          data = json.loads(pathlib.Path('/tmp/google-service-account.json').read_text())
+          key_path = pathlib.Path('/tmp/google-service-account.json')
+          data = json.loads(key_path.read_text())
           creds = service_account.Credentials.from_service_account_info(
               data,
               scopes=['https://www.googleapis.com/auth/indexing'],
           )
           session = AuthorizedSession(creds)
+
           root = pathlib.Path('jobs')
-          urls = []
-          if root.exists():
-              for p in root.glob('*/index.html'):
-                  urls.append('https://junjharsingh2038-png.github.io/private-job-alert/jobs/' + p.parent.name + '/')
-          urls = sorted(set(urls))
+          urls = sorted({
+              'https://junjharsingh2038-png.github.io/private-job-alert/jobs/' + p.parent.name + '/'
+              for p in root.glob('*/index.html')
+          }) if root.exists() else []
+
           print(f'Found {len(urls)} JobPosting URLs.')
+          if not urls:
+              print('::error::No jobs/*/index.html pages found; nothing was submitted.')
+              sys.exit(1)
+
+          failed = 0
           for url in urls:
-              r = session.post(
-                  'https://indexing.googleapis.com/v3/urlNotifications:publish',
-                  json={'url': url, 'type': 'URL_UPDATED'},
-                  timeout=30,
-              )
-              print(r.status_code, url)
-              if r.status_code >= 300:
-                  print(r.text)
+              try:
+                  response = session.post(
+                      'https://indexing.googleapis.com/v3/urlNotifications:publish',
+                      json={'url': url, 'type': 'URL_UPDATED'},
+                      timeout=30,
+                  )
+                  if response.ok:
+                      print(f'ACCEPTED {response.status_code} {url}')
+                  else:
+                      failed += 1
+                      print(f'::error::REJECTED {response.status_code} {url}')
+                      print(response.text[:2000])
+              except Exception as exc:
+                  failed += 1
+                  print(f'::error::REQUEST FAILED {url}: {exc}')
+
+          print(f'Submission summary: {len(urls) - failed} accepted, {failed} failed.')
+          if failed:
+              sys.exit(1)
           PY
