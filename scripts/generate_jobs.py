@@ -113,9 +113,9 @@ jobs_html = f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta
 
 lastmod = datetime.now(timezone.utc).date().isoformat()
 lines = ['<?xml version="1.0" encoding="UTF-8"?>','<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+job_lastmods = {f'{BASE}/jobs/{job_slug(job)}/': str(job.get('created_at') or lastmod)[:10] for job in jobs}
 for url in urls:
     priority = '1.0' if url == BASE + '/' else ('0.9' if any(x in url for x in ['/categories/','/hr/','/jobs/']) else '0.8')
-    job_lastmods = {f'{BASE}/jobs/{job_slug(job)}/': str(job.get('created_at') or lastmod)[:10] for job in jobs}
     accurate_lastmod = job_lastmods.get(url, lastmod)
     lines.append(f'<url><loc>{escape(url)}</loc><lastmod>{accurate_lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>')
 lines.append('</urlset>')
