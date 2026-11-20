@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 JOBS_DIR = ROOT / 'jobs'
 JOBS_DIR.mkdir(exist_ok=True)
 
-params = urllib.parse.urlencode({'select': 'id,title,company,location,qualification,salary,job_type,description,hr_email,created_at','is_active': 'eq.true','order': 'created_at.desc','limit': '1000'})
+params = urllib.parse.urlencode({'select': 'id,title,company,company_name,company_logo,location,city,state,qualification,salary,lastdate,job_type,type,description,hr_email,created_at','is_active': 'eq.true','order': 'created_at.desc','limit': '1000'})
 request = urllib.request.Request(f'{SUPABASE_URL}/rest/v1/jobs?{params}', headers={'apikey': SUPABASE_KEY, 'Authorization': f'Bearer {SUPABASE_KEY}'})
 with urllib.request.urlopen(request, timeout=30) as response:
     jobs = json.loads(response.read().decode('utf-8'))
@@ -67,14 +67,30 @@ def page(job, related_links):
     raw_description = clean_text(job.get('description'), f'Apply for {raw_title} at {raw_company} in {raw_location}.')
     jid = str(job.get('id'))
     url = f'{BASE}/jobs/{job_slug(job)}/'
-    logo_url = company_logo_url(raw_company)
+    logo_url = str(job.get('company_logo') or '').strip() or company_logo_url(raw_company)
     date_posted = str(job.get('created_at') or '')[:10]
+    last_date = str(job.get('lastdate') or '').strip()[:10]
+    city = clean_text(job.get('city'), '')
+    region = clean_text(job.get('state'), '')
+    address = {'@type': 'PostalAddress', 'addressLocality': city or raw_location, 'addressCountry': 'IN'}
+    if region:
+        address['addressRegion'] = region
+    valid_through = ''
+    if last_date:
+        try:
+            parsed_deadline = datetime.strptime(last_date, '%Y-%m-%d')
+            valid_through = parsed_deadline.strftime('%Y-%m-%dT23:59:59+05:30')
+        except ValueError:
+            valid_through = ''
     title = escape(raw_title); company = escape(raw_company); location = escape(raw_location); qualification = escape(raw_qualification); salary = escape(raw_salary); job_type = escape(raw_type); description = escape(raw_description)
     schema_description = html_description(raw_description)
     meta_description = escape((f'{raw_title} at {raw_company} in {raw_location}. Qualification: {raw_qualification}. Salary: {raw_salary}. Apply online for this private job in India.')[:158], quote=True)
     safe_url = escape(url, quote=True)
     safe_logo = escape(logo_url, quote=True)
-    schema = json.dumps({'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company,'logo': logo_url},'jobLocation': {'@type': 'Place','address': {'@type': 'PostalAddress','addressLocality': raw_location,'addressCountry': 'IN'}},'employmentType': employment_type(raw_type),'url': url}, ensure_ascii=False).replace('</', '<\\/')
+    job_schema = {'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company, **({'logo': logo_url} if logo_url else {})},'jobLocation': {'@type': 'Place','address': address},'employmentType': employment_type(raw_type),'url': url}
+    if valid_through:
+        job_schema['validThrough'] = valid_through
+    schema = json.dumps(job_schema, ensure_ascii=False).replace('</', '<\\/')
     breadcrumb = json.dumps({'@context': 'https://schema.org','@type': 'BreadcrumbList','itemListElement': [{'@type': 'ListItem','position': 1,'name': 'Home','item': f'{BASE}/'},{'@type': 'ListItem','position': 2,'name': 'Latest Jobs','item': f'{BASE}/jobs/'},{'@type': 'ListItem','position': 3,'name': raw_title,'item': url}]}, ensure_ascii=False).replace('</', '<\\/')
     related_html = ''.join(f'<li><a href="{escape(rurl)}">{escape(rtitle)} – {escape(rcompany)}</a></li>' for rurl,rtitle,rcompany,_,_ in related_links if rurl != url)
     related_section = f'<section><h3>More Private Jobs in India</h3><ul>{related_html}</ul><p><a href="../../jobs/">View all latest private jobs in India →</a></p></section>' if related_html else '<p><a href="../../jobs/">View all latest private jobs in India →</a></p>'
@@ -99,7 +115,9 @@ lastmod = datetime.now(timezone.utc).date().isoformat()
 lines = ['<?xml version="1.0" encoding="UTF-8"?>','<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
 for url in urls:
     priority = '1.0' if url == BASE + '/' else ('0.9' if any(x in url for x in ['/categories/','/hr/','/jobs/']) else '0.8')
-    lines.append(f'<url><loc>{escape(url)}</loc><lastmod>{lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>')
+    job_lastmods = {f'{BASE}/jobs/{job_slug(job)}/': str(job.get('created_at') or lastmod)[:10] for job in jobs}
+    accurate_lastmod = job_lastmods.get(url, lastmod)
+    lines.append(f'<url><loc>{escape(url)}</loc><lastmod>{accurate_lastmod}</lastmod><changefreq>daily</changefreq><priority>{priority}</priority></url>')
 lines.append('</urlset>')
 (ROOT / 'sitemap.xml').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 print(f'Generated {len(jobs)} job pages, latest-jobs index and {len(urls)} sitemap URLs.')
