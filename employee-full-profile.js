@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fields=[
-['headline','Professional Headline','text','e.g. MIS Executive | Advanced Excel | 5 Years'],
+['date_of_birth','Date of Birth','date',''],['gender','Gender','text',''],['city','City','text','Jaipur'],['state','State','text','Rajasthan'],['pincode','PIN Code','text',''],['headline','Professional Headline','text','e.g. MIS Executive | Advanced Excel | 5 Years'],
 ['current_company','Current / Last Company','text','Company name'],['current_designation','Current / Last Designation','text','Your designation'],
 ['total_experience','Total Experience','text','e.g. 5 Years'],['notice_period','Notice Period','text','Immediate / 30 Days'],
 ['expected_salary','Expected Salary','text','Annual CTC / Monthly salary'],['preferred_locations','Preferred Job Locations','text','Jaipur, Jodhpur, Barmer'],
