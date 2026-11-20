@@ -21,7 +21,7 @@ function addUI(){
 }
 function getVal(k){const el=$('p'+k[0].toUpperCase()+k.slice(1));return el?.value?.trim()||null}
 async function load(){
- if(!window.sb||!window.PJA_SEEKER_USER)return;
+ if(!window.PJA_SEEKER_USER)return;
  const u=window.PJA_SEEKER_USER;
  const r=await sb.from('job_seeker_profiles').select('*').eq('id',u.id).maybeSingle();if(r.error)return;
  const p=r.data||{};
@@ -51,7 +51,7 @@ function init(){
  const f=$('profileForm');if(f)f.addEventListener('submit',save,true);
  document.querySelectorAll('[data-section="profile"]').forEach(b=>b.addEventListener('click',()=>setTimeout(load,250)));
  const watch=new MutationObserver(()=>{if($('profile')&&!$('pHeadline')){addUI();setTimeout(load,150)}});if($('profile'))watch.observe($('profile'),{childList:true,subtree:true});
- setTimeout(()=>{if(window.sb)sb.auth.getUser().then(r=>{if(r.data?.user){window.PJA_SEEKER_USER=r.data.user;load()}})},500);
+ setTimeout(()=>{sb.auth.getUser().then(r=>{if(r.data?.user){window.PJA_SEEKER_USER=r.data.user;load()}})},500);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
