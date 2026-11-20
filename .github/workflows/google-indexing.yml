@@ -6,6 +6,11 @@ on:
     paths:
       - 'jobs/**'
       - 'sitemap.xml'
+  # The SEO generator runs hourly and commits pages with GITHUB_TOKEN.
+  # Scheduled indexing ensures those generated pages are submitted even when
+  # GitHub does not trigger a second workflow from that bot commit.
+  schedule:
+    - cron: '37 * * * *'
 
 permissions:
   contents: read
