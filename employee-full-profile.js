@@ -11,6 +11,13 @@ const fields=[
 ['languages','Languages','text','Hindi, English'],['linkedin_url','LinkedIn Profile URL','url','https://linkedin.com/in/...'],
 ['portfolio_url','Portfolio / Website URL','url','https://...'],['profile_photo_url','Profile Photo URL','url','Public image URL (optional)']
 ];
+function ensureModal(){
+ if($('pjaEmployeeProfileModal'))return;
+ const m=document.createElement('div');m.id='pjaEmployeeProfileModal';m.className='pja-profile-modal';m.innerHTML='<div class="pja-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="pjaEmployeeModalTitle"><div class="pja-profile-head"><div><span class="pja-profile-kicker">PRIVATE JOB ALERT · EMPLOYEE ACCOUNT</span><h2 id="pjaEmployeeModalTitle">Professional Profile & Resume</h2><p>View and update your career information</p></div><button type="button" class="pja-profile-close" aria-label="Close">×</button></div><div class="pja-profile-body" id="pjaEmployeeModalBody"></div></div>';
+ document.body.appendChild(m);m.querySelector('.pja-profile-close').onclick=closeModal;m.addEventListener('click',e=>{if(e.target===m)closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+}
+function closeModal(){const m=$('pjaEmployeeProfileModal');if(m)m.classList.remove('is-open');document.body.classList.remove('pja-modal-lock')}
+function openModal(){ensureModal();const sec=$('profile'),body=$('pjaEmployeeModalBody');if(sec&&body&&!body.contains(sec)){sec.classList.add('pja-profile-in-modal');body.appendChild(sec)}$('pjaEmployeeProfileModal').classList.add('is-open');document.body.classList.add('pja-modal-lock');load()}
 function addUI(){
  const sec=$('profile'); if(!sec||$('pHeadline'))return;
  const grid=sec.querySelector('.detail-grid'); if(!grid)return;
@@ -56,12 +63,14 @@ async function save(e){
 }
 function init(){
  addUI();
- const old=window.showDash;
+ ensureModal();const old=window.showDash;
  if(typeof old==='function'&&!window.__pjaFullProfileDash){window.__pjaFullProfileDash=true;window.showDash=function(){old();window.PJA_SEEKER_USER=window.user||window.PJA_SEEKER_USER;setTimeout(load,350)}}
  const f=$('profileForm');if(f)f.addEventListener('submit',save,true);
- document.querySelectorAll('[data-section="profile"]').forEach(b=>b.addEventListener('click',()=>setTimeout(load,250)));
+ document.querySelectorAll('[data-section="profile"]').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openModal()},true)});
  const watch=new MutationObserver(()=>{if($('profile')&&!$('pHeadline')){addUI();setTimeout(load,150)}});if($('profile'))watch.observe($('profile'),{childList:true,subtree:true});
- setTimeout(()=>{sb.auth.getUser().then(r=>{if(r.data?.user){window.PJA_SEEKER_USER=r.data.user;load()}})},500);
+ setTimeout(()=>{sb.auth.getUser().then(r=>{if(r.data?.user){window.PJA_SEEKER_USER=r.data.user}})},500);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+
+.pja-profile-modal{position:fixed;inset:0;z-index:9999;background:rgba(5,18,42,.66);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:22px;box-sizing:border-box}.pja-profile-modal.is-open{display:flex}.pja-profile-dialog{width:min(100%,1000px);max-height:min(92vh,900px);background:#fff;border-radius:22px;box-shadow:0 28px 90px rgba(0,0,0,.28);display:flex;flex-direction:column;overflow:hidden;animation:pjaProfileIn .2s ease}.pja-profile-head{padding:23px 28px;background:linear-gradient(120deg,#071b3a,#1264e8);color:#fff;display:flex;justify-content:space-between;gap:20px;align-items:center}.pja-profile-head h2{margin:6px 0;font-size:25px}.pja-profile-head p{margin:0;color:#dce9ff}.pja-profile-kicker{font-size:11px;font-weight:900;letter-spacing:.12em;color:#b9d7ff}.pja-profile-close{width:42px;height:42px;flex:0 0 42px;border-radius:50%!important;background:rgba(255,255,255,.16)!important;color:#fff!important;font-size:28px!important;box-shadow:none!important}.pja-profile-body{overflow:auto;padding:24px;background:#f5f8fc}.pja-profile-in-modal{margin:0!important}.pja-profile-in-modal>.ep-form{background:#fff;border:1px solid #e4eaf2;border-radius:16px;padding:22px}.pja-modal-lock{overflow:hidden!important}@keyframes pjaProfileIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}@media(max-width:650px){.pja-profile-modal{padding:0}.pja-profile-dialog{width:100%;height:100%;max-height:100vh;border-radius:0}.pja-profile-head{padding:18px}.pja-profile-body{padding:14px}.pja-profile-in-modal>.ep-form{padding:15px}}
 })();
