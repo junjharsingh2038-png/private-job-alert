@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const hrFields=[
-['hr_full_name','Your Full Name','text'],['hr_designation','Your Designation','text'],['hr_department','Department / Function','text'],['hr_mobile','Personal / Work Mobile','tel'],['hr_experience','Recruitment / HR Experience','text'],['hr_city','Your City','text'],['hr_state','Your State','text'],['hr_languages','Languages','text'],['hr_bio','Professional Summary','textarea'],['hr_linkedin_url','Personal LinkedIn URL','url'],['hr_website_url','Professional Website URL','url'],['hr_profile_photo_url','Profile Photo URL','url']
+['hr_full_name','Your Full Name','text'],['hr_designation','Your Designation','text'],['hr_department','Department / Function','text'],['hr_mobile','Personal / Work Mobile','tel'],['hr_experience','Recruitment / HR Experience','text'],['hr_city','Your City','text'],['hr_state','Your State','text'],['hr_languages','Languages','text'],['hr_bio','Professional Summary','textarea'],['hr_linkedin_url','Personal LinkedIn URL','url'],['hr_website_url','Professional Website URL','url']
 ];
 const companyFields=[
 ['company_name','Company / Organization Name','text'],['contact_name','HR / Contact Person','text'],['phone','Company Contact Mobile','tel'],['email','Official Email','email'],
@@ -53,7 +53,7 @@ async function load(){
 async function save(e){
  e.preventDefault();const u=(await sb.auth.getUser()).data?.user;if(!u)return;
  const row={id:u.id,updated_at:new Date().toISOString(),profile_visibility:$('hrCompanyVisibility').checked};const photo=$('hrPhotoUpload')?.files?.[0];if(photo){if(photo.size>3*1024*1024){$('hrCompanyMsg').textContent='Photo must be 3 MB or smaller.';return}const ext=photo.type==='image/png'?'png':photo.type==='image/webp'?'webp':'jpg';const path=u.id+'/hr-profile-'+Date.now()+'.'+ext;const up=await sb.storage.from('profile-photos').upload(path,photo,{upsert:true,contentType:photo.type});if(up.error){$('hrCompanyMsg').textContent='Photo upload failed: '+up.error.message;return}row.hr_profile_photo_url=sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;}
- allFields.forEach(([k])=>{row[k]=$('hrp_'+k).value.trim()||null});
+ allFields.forEach(([k])=>{if(k!=='hr_profile_photo_url')row[k]=$('hrp_'+k).value.trim()||null});
  const r=await sb.from('hr_profiles').upsert(row,{onConflict:'id'});
  $('hrCompanyMsg').textContent=r.error?'Save failed: '+r.error.message:'Your HR personal profile and company profile have been saved.';
  $('hrCompanyMsg').className=r.error?'danger':'success';if(!r.error)updateProgress();
