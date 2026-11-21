@@ -3,6 +3,7 @@ name: Update SEO Job Pages
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'scripts/generate_jobs.py'
       - '.github/workflows/update-seo-job-pages.yml'
