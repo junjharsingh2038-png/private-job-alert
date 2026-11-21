@@ -9,7 +9,7 @@ const fields=[
 ['education_details','Education Details','textarea','Degree, institute, year, marks'],['employment_details','Employment History','textarea','Company, role, duration, responsibilities'],
 ['certifications','Certifications','textarea','Course / certificate details'],['projects','Projects','textarea','Project name, work and achievement'],
 ['languages','Languages','text','Hindi, English'],['linkedin_url','LinkedIn Profile URL','url','https://linkedin.com/in/...'],
-['portfolio_url','Portfolio / Website URL','url','https://...'],['profile_photo_url','Profile Photo URL','url','Public image URL (optional)']
+['portfolio_url','Portfolio / Website URL','url','https://...']
 ];
 function ensureModal(){
  if($('pjaEmployeeProfileModal'))return;
@@ -55,7 +55,7 @@ async function save(e){
   resumePath=up.data.path;
  }
  const row={id:u.id,full_name:$('pName').value.trim(),mobile:$('pMobile').value.trim(),location:$('pLocation').value.trim(),qualification:$('pQualification').value.trim(),experience:$('pExperience').value.trim(),skills:$('pSkills').value.trim(),resume_path:resumePath,updated_at:new Date().toISOString()};
- fields.forEach(([k])=>row[k]=getVal(k));const photo=$('employeePhotoUpload')?.files?.[0];if(photo){if(photo.size>3*1024*1024){const m=$('profileMsg');if(m)m.textContent='Photo must be 3 MB or smaller.';return}const ext=photo.type==='image/png'?'png':photo.type==='image/webp'?'webp':'jpg';const path=u.id+'/employee-profile-'+Date.now()+'.'+ext;const up=await sb.storage.from('profile-photos').upload(path,photo,{upsert:true,contentType:photo.type});if(up.error){const m=$('profileMsg');if(m)m.textContent='Photo upload failed: '+up.error.message;return}row.profile_photo_url=sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;}
+ fields.forEach(([k])=>{if(k!=='profile_photo_url')row[k]=getVal(k)});const photo=$('employeePhotoUpload')?.files?.[0];if(photo){if(photo.size>3*1024*1024){const m=$('profileMsg');if(m)m.textContent='Photo must be 3 MB or smaller.';return}const ext=photo.type==='image/png'?'png':photo.type==='image/webp'?'webp':'jpg';const path=u.id+'/employee-profile-'+Date.now()+'.'+ext;const up=await sb.storage.from('profile-photos').upload(path,photo,{upsert:true,contentType:photo.type});if(up.error){const m=$('profileMsg');if(m)m.textContent='Photo upload failed: '+up.error.message;return}row.profile_photo_url=sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;}
  if($('profileVisibility'))row.profile_visibility=$('profileVisibility').checked;
  const res=await sb.from('job_seeker_profiles').upsert(row,{onConflict:'id'});
  const m=$('profileMsg');if(m){m.textContent=res.error?'Save failed: '+res.error.message:'Your complete professional profile and resume have been saved.';m.className=res.error?'danger':'success'}
