@@ -32,14 +32,14 @@ function ensureUI(){
  if(!$('hrCompanyProfileCard')){const c=document.createElement('article');c.className='quick-card';c.id='hrCompanyProfileCard';c.innerHTML='<div class="dashboard-stat"><span class="num">04 · PROFILE</span></div><h3>HR & Company Profile</h3><p>Create your own professional HR profile and complete your company hiring profile.</p><span class="card-link">Edit Full Profile →</span>';c.onclick=()=>openModal();grid.appendChild(c)}
  if(!$('hrCompanyProfileSection')){
   const s=document.createElement('section');s.id='hrCompanyProfileSection';s.className='section-box';
-  s.innerHTML='<div class="application-details" style="margin-top:22px"><h2>My Professional HR Profile</h2><p class="muted">Your personal recruiter identity — similar to a professional job-network profile.</p><div id="hrProfileProgress" class="muted" style="font-weight:800;margin:12px 0"></div><form id="hrCompanyProfileForm" class="list"><h3>Personal & Professional Details</h3><div class="detail-grid" id="hrPersonalFields"></div><h3>Company Profile</h3><p class="muted">Company details candidates can use to understand your organization.</p><div class="detail-grid" id="hrCompanyFields"></div><label style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="hrCompanyVisibility" checked style="width:auto"> Show profile to candidates where profile access is enabled</label><button type="submit">Save Complete HR & Company Profile</button><p id="hrCompanyMsg"></p></form></div>';
+  s.innerHTML='<div class="pja-profile-dashboard hr-profile-dashboard"><div class="pja-profile-cover"><span>PRIVATE JOB ALERT · RECRUITER NETWORK</span><div class="pja-profile-identity"><img id="hrPhotoPreview" alt="HR profile photo"><div><h2 id="hrProfileDisplayName">Your HR Profile</h2><p id="hrProfileDisplayRole">HR / Recruiter</p><small id="hrProfileDisplayCompany">Complete your company details</small></div></div><button type="button" id="hrEditProfileTop">Edit Profile</button></div><div class="pja-profile-stats"><div><b id="hrProfilePercent">0%</b><span>Profile Complete</span></div><div><b>HR</b><span>Account Type</span></div><div><b>India</b><span>Hiring Network</span></div></div><div class="pja-photo-upload"><label>Upload / Change Profile Photo <input id="hrPhotoUpload" type="file" accept="image/png,image/jpeg,image/webp"></label><small>JPG, PNG or WEBP · Maximum 3 MB</small></div><div class="application-details" style="margin-top:22px"><h2>My Professional HR Profile</h2><p class="muted">Your personal recruiter identity — similar to a professional job-network profile.</p><div id="hrProfileProgress" class="muted" style="font-weight:800;margin:12px 0"></div><form id="hrCompanyProfileForm" class="list"><h3>Personal & Professional Details</h3><div class="detail-grid" id="hrPersonalFields"></div><h3>Company Profile</h3><p class="muted">Company details candidates can use to understand your organization.</p><div class="detail-grid" id="hrCompanyFields"></div><label style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="hrCompanyVisibility" checked style="width:auto"> Show profile to candidates where profile access is enabled</label><button type="submit">Save Complete HR & Company Profile</button><p id="hrCompanyMsg"></p></form></div>';
   main.appendChild(s);hrFields.forEach(f=>addField($('hrPersonalFields'),f));companyFields.forEach(f=>addField($('hrCompanyFields'),f));
   $('hrCompanyProfileForm').addEventListener('submit',save);
  }
 }
 function updateProgress(){
  const ids=allFields.map(([k])=>'hrp_'+k),filled=ids.filter(id=>$(id)?.value.trim()).length;
- const el=$('hrProfileProgress');if(el)el.textContent='Profile completion: '+Math.round(filled/ids.length*100)+'% · '+filled+'/'+ids.length+' details completed';
+ const el=$('hrProfileProgress');if(el)el.textContent='Profile completion: '+Math.round(filled/ids.length*100)+'% · '+filled+'/'+ids.length+' details completed';if($('hrProfilePercent'))$('hrProfilePercent').textContent=Math.round(filled/ids.length*100)+'%';
 }
 async function load(){
  const u=(await sb.auth.getUser()).data?.user;if(!u)return;
@@ -48,11 +48,11 @@ async function load(){
  const p=r.data||{};
  allFields.forEach(([k])=>{const el=$('hrp_'+k);if(el)el.value=p[k]||((k==='email')?u.email:((k==='hr_full_name')?(u.user_metadata?.hr_name||''):''))});
  if($('hrCompanyVisibility'))$('hrCompanyVisibility').checked=p.profile_visibility!==false;
- updateProgress();
+ updateProgress();if($('hrProfileDisplayName'))$('hrProfileDisplayName').textContent=p.hr_full_name||u.user_metadata?.hr_name||'Your HR Profile';if($('hrProfileDisplayRole'))$('hrProfileDisplayRole').textContent=[p.hr_designation,p.hr_department].filter(Boolean).join(' · ')||'HR / Recruiter';if($('hrProfileDisplayCompany'))$('hrProfileDisplayCompany').textContent=p.company_name||'Complete your company details';if($('hrPhotoPreview'))$('hrPhotoPreview').src=p.hr_profile_photo_url||'';
 }
 async function save(e){
  e.preventDefault();const u=(await sb.auth.getUser()).data?.user;if(!u)return;
- const row={id:u.id,updated_at:new Date().toISOString(),profile_visibility:$('hrCompanyVisibility').checked};
+ const row={id:u.id,updated_at:new Date().toISOString(),profile_visibility:$('hrCompanyVisibility').checked};const photo=$('hrPhotoUpload')?.files?.[0];if(photo){if(photo.size>3*1024*1024){$('hrCompanyMsg').textContent='Photo must be 3 MB or smaller.';return}const ext=photo.type==='image/png'?'png':photo.type==='image/webp'?'webp':'jpg';const path=u.id+'/hr-profile-'+Date.now()+'.'+ext;const up=await sb.storage.from('profile-photos').upload(path,photo,{upsert:true,contentType:photo.type});if(up.error){$('hrCompanyMsg').textContent='Photo upload failed: '+up.error.message;return}row.hr_profile_photo_url=sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;}
  allFields.forEach(([k])=>{row[k]=$('hrp_'+k).value.trim()||null});
  const r=await sb.from('hr_profiles').upsert(row,{onConflict:'id'});
  $('hrCompanyMsg').textContent=r.error?'Save failed: '+r.error.message:'Your HR personal profile and company profile have been saved.';
@@ -61,7 +61,7 @@ async function save(e){
 function init(){
  ensureUI();ensureModal();const old=window.portal;
  if(typeof old==='function'&&!window.__pjaHrCompanyProfile){window.__pjaHrCompanyProfile=true;window.portal=async function(){await old();ensureUI();load()}}
- setTimeout(()=>{ensureUI();ensureModal()},800);
+ setTimeout(()=>{ensureUI();ensureModal();const b=$('hrEditProfileTop');if(b)b.onclick=()=>$('hrCompanyProfileForm')?.scrollIntoView({behavior:'smooth'})},800);document.addEventListener('change',e=>{if(e.target?.id==='hrPhotoUpload'&&e.target.files?.[0])$('hrPhotoPreview').src=URL.createObjectURL(e.target.files[0])});
  const mo=new MutationObserver(()=>{if(document.querySelector('.quick-grid'))ensureUI()});mo.observe(document.body,{childList:true,subtree:true});
  document.addEventListener('input',e=>{if(e.target?.id?.startsWith('hrp_'))updateProgress()});
 }
