@@ -8,7 +8,7 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const msg=(t,err=false)=>{$('status').textContent=t;$('status').className='status'+(err?' error':'')};
 function field(k,label,type='text',value='',placeholder=''){return '<label class="field">'+label+(type==='textarea'?'<textarea name="'+k+'" placeholder="'+esc(placeholder)+'">'+esc(value)+'</textarea>':'<input name="'+k+'" type="'+type+'" value="'+esc(value)+'" placeholder="'+esc(placeholder)+'">')+'</label>'}
 function panel(title,html){$('content').innerHTML='<section class="panel"><h2>'+title+'</h2>'+html+'</section>'}
-function setMenu(){const opts=role==='hr'?hrOpts:empOpts;$('title').textContent=role==='hr'?'HR Dashboard':'Employee Dashboard';$('subtitle').textContent=role==='hr'?'Your recruiter workspace':'Your career workspace';$('section').innerHTML='<option value="">Select section</option>'+opts.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');}
+function setMenu(){const opts=role==='hr'?hrOpts:empOpts;$('sideTitle').textContent=role==='hr'?'HR Dashboard':'Employee Dashboard';$('sideSub').textContent=role==='hr'?'Your recruiter workspace':'Your career workspace';$('section').innerHTML='<option value="">Select section</option>'+opts.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('');}
 $('section').addEventListener('change',()=>{if($('section').value)open($('section').value)});
 $('home').onclick=()=>location.href='index.html';$('logout').onclick=async()=>{await sb.auth.signOut();location.href='index.html'};
 async function open(key){active=key;$('section').value=key;msg('Loading '+(role==='hr'?hrOpts:empOpts).find(x=>x[0]===key)[1]+'…');if(role==='employee')await openEmployee(key);else await openHR(key);}
