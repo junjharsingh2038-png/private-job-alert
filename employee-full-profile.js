@@ -24,7 +24,6 @@ function addUI(){
  const box=document.createElement('div');box.className='full';box.innerHTML='<h3 style="margin:20px 0 8px">Professional Profile Details</h3><div class="detail-grid" id="extendedEmployeeFields"></div><div id="employeeProfileProgress" class="muted" style="margin:14px 0;font-weight:700"></div>';
  grid.appendChild(box);
  const dest=$('extendedEmployeeFields');
- const photo=document.createElement('div');photo.className='full pja-photo-control';photo.innerHTML='<img id="employeeProfilePhotoPreview" alt="Employee profile photo"/><label>Upload / Change Profile Photo<input id="employeeProfilePhotoFile" type="file" accept="image/png,image/jpeg,image/webp"/><small>JPG, PNG or WEBP · Maximum 3 MB</small></label>';dest.prepend(photo);
  fields.forEach(([key,label,type,ph])=>{const wrap=document.createElement('label');wrap.className='full';wrap.textContent=label;const el=type==='textarea'?document.createElement('textarea'):document.createElement('input');el.id='p'+key[0].toUpperCase()+key.slice(1);el.name=key;el.placeholder=ph;if(type!=='textarea')el.type=type;el.rows=type==='textarea'?3:undefined;wrap.appendChild(el);dest.appendChild(wrap)});
 }
 function getVal(k){const el=$('p'+k[0].toUpperCase()+k.slice(1));return el?.value?.trim()||null}
@@ -34,7 +33,7 @@ async function load(){
  const r=await sb.from('job_seeker_profiles').select('*').eq('id',u.id).maybeSingle();if(r.error)return;
  const p=r.data||{};
  fields.forEach(([k])=>{const el=$('p'+k[0].toUpperCase()+k.slice(1));if(el)el.value=p[k]||''});
- if($('profileVisibility'))$('profileVisibility').checked=p.profile_visibility!==false;const photo=$('employeeProfilePhotoPreview');if(photo){photo.src=p.profile_photo_url||'';photo.style.display=p.profile_photo_url?'block':'none';}
+ if($('profileVisibility'))$('profileVisibility').checked=p.profile_visibility!==false;
  const base=['pName','pMobile','pLocation','pQualification','pExperience','pSkills'];
  const all=[...base,...fields.map(([k])=>'p'+k[0].toUpperCase()+k.slice(1))];
  const filled=all.filter(id=>$(id)?.value?.trim()).length;
@@ -57,17 +56,16 @@ async function save(e){
  }
  const row={id:u.id,full_name:$('pName').value.trim(),mobile:$('pMobile').value.trim(),location:$('pLocation').value.trim(),qualification:$('pQualification').value.trim(),experience:$('pExperience').value.trim(),skills:$('pSkills').value.trim(),resume_path:resumePath,updated_at:new Date().toISOString()};
  fields.forEach(([k])=>row[k]=getVal(k));
- const photoFile=$('employeeProfilePhotoFile')?.files?.[0];if(photoFile){if(photoFile.size>3*1024*1024){const m=$('profileMsg');if(m){m.textContent='Profile photo maximum size is 3 MB.';m.className='danger'}return}const ext=photoFile.type==='image/png'?'png':photoFile.type==='image/webp'?'webp':'jpg';const path=u.id+'/employee-profile-'+Date.now()+'.'+ext;const up=await sb.storage.from('profile-photos').upload(path,photoFile,{upsert:true,contentType:photoFile.type});if(up.error){const m=$('profileMsg');if(m){m.textContent='Photo upload failed: '+up.error.message;m.className='danger'}return}row.profile_photo_url=sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;}
  if($('profileVisibility'))row.profile_visibility=$('profileVisibility').checked;
  const res=await sb.from('job_seeker_profiles').upsert(row,{onConflict:'id'});
  const m=$('profileMsg');if(m){m.textContent=res.error?'Save failed: '+res.error.message:'Your complete professional profile and resume have been saved.';m.className=res.error?'danger':'success'}
- if(!res.error){if(row.profile_photo_url){const p=$('employeeProfilePhotoPreview');p.src=row.profile_photo_url;p.style.display='block'}if($('resumeBox'))$('resumeBox').textContent=resumePath?'Resume uploaded and saved.':'No resume uploaded yet.';load()}
+ if(!res.error){if($('resumeBox'))$('resumeBox').textContent=resumePath?'Resume uploaded and saved.':'No resume uploaded yet.';load()}
 }
 function init(){
  addUI();
  ensureModal();const old=window.showDash;
  if(typeof old==='function'&&!window.__pjaFullProfileDash){window.__pjaFullProfileDash=true;window.showDash=function(){old();window.PJA_SEEKER_USER=window.user||window.PJA_SEEKER_USER;setTimeout(load,350)}}
- const f=$('profileForm');if(f)f.addEventListener('submit',save,true);document.addEventListener('change',e=>{if(e.target?.id==='employeeProfilePhotoFile'&&e.target.files?.[0]){const p=$('employeeProfilePhotoPreview');p.src=URL.createObjectURL(e.target.files[0]);p.style.display='block'}});
+ const f=$('profileForm');if(f)f.addEventListener('submit',save,true);
  document.querySelectorAll('[data-section="profile"]').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openModal()},true)});
  const watch=new MutationObserver(()=>{if($('profile')&&!$('pHeadline')){addUI();setTimeout(load,150)}});if($('profile'))watch.observe($('profile'),{childList:true,subtree:true});
  setTimeout(()=>{sb.auth.getUser().then(r=>{if(r.data?.user){window.PJA_SEEKER_USER=r.data.user}})},500);
