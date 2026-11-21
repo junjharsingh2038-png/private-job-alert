@@ -64,7 +64,7 @@ for url in locations:
     if not target.is_file():
         fail(f"sitemap URL has no matching published file: {url}")
 
-job_pages = sorted(p for p in (ROOT / "jobs").glob("*/index.html") if p.parent.name != "index.html")
+job_pages = sorted(p for p in (ROOT / "jobs").glob("*/index.html") if p.parent != ROOT / "jobs")
 if not job_pages:
     fail("No generated individual job pages were found")
 
