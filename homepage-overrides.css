@@ -81,3 +81,6 @@ body .footer-brand p{font-size:7px!important;white-space:nowrap!important}
  body .footer-brand img{width:58px!important;height:58px!important}
  body .footer-brand b{font-size:19px!important}
 }
+
+/* Final professional profile and account navigation polish */
+.site-header .header-actions a.profile-nav{background:#eef5ff!important;color:#0b4e9a!important;border:1px solid #c9dcf4!important;border-radius:11px!important;font-weight:850!important}.pja-photo-control{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px;background:#f4f8fd;border:1px solid #dce7f3;border-radius:14px;margin:12px 0}.pja-photo-control img{width:84px;height:84px;display:none;object-fit:cover;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 12px #10264a22;background:#e6edf5}.pja-photo-control label{display:grid;gap:6px;font-weight:800;color:#173f73}.pja-photo-control input{max-width:260px}.pja-photo-control small{font-size:12px;color:#63728a;font-weight:500}@media(max-width:650px){.pja-photo-control{align-items:flex-start}.pja-photo-control img{width:68px;height:68px}}

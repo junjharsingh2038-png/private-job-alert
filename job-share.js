@@ -8,7 +8,7 @@ function rr(c,x,y,w,h,r,fill){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fi
 function wrap(c,text,x,y,maxWidth,lineHeight,maxLines,font,color){c.font=font;c.fillStyle=color;let line='',lines=[];for(const word of String(text||'').split(/\s+/)){const test=line?line+' '+word:word;if(c.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last&&c.measureText(last+'…').width>maxWidth)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}lines.forEach((t,i)=>c.fillText(t,x,y+i*lineHeight));return y+lines.length*lineHeight}
 async function posterBlob(j){
  const W=1080,H=1350,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;const c=canvas.getContext('2d');
- const company=String(j.company||j.company_name||'Hiring Company'),title=String(j.title||'Job Vacancy'),loc=[j.city,j.state].filter(Boolean).join(', ')||j.location||'India',salary=String(j.salary||'As per company'),qual=String(j.qualification||'Any qualification'),type=String(j.job_type||j.type||'Full Time'),exp=String(j.experience||'Not specified'),desc=String(j.description||'');
+ const company=String(j.company||j.company_name||'Hiring Company'),logoUrl=String(j.company_logo||j.logo_url||''),title=String(j.title||'Job Vacancy'),loc=[j.city,j.state].filter(Boolean).join(', ')||j.location||'India',salary=String(j.salary||'As per company'),qual=String(j.qualification||'Any qualification'),type=String(j.job_type||j.type||'Full Time'),exp=String(j.experience||'Not specified'),desc=String(j.description||'');
  const navy='#062b59',blue='#1055a4',gold='#ffc400',ink='#10294b';
  const rr=(x,y,w,h,r,fill,stroke)=>{c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=2;c.stroke()}};
  const text=(t,x,y,font,color,align='left')=>{c.font=font;c.fillStyle=color;c.textAlign=align;c.fillText(String(t),x,y);c.textAlign='left'};
@@ -19,8 +19,9 @@ async function posterBlob(j){
  c.fillStyle='rgba(255,255,255,.08)';c.beginPath();c.arc(1010,90,260,0,Math.PI*2);c.fill();c.beginPath();c.arc(40,480,180,0,Math.PI*2);c.fill();
  // Brand and announcement ribbon
  rr(58,48,964,94,22,'rgba(255,255,255,.12)','rgba(255,255,255,.25)');
- text('PRIVATE JOB ALERT',88,108,'bold 37px Arial','#fff');
- text('INDIA  •  LATEST PRIVATE JOBS',88,128,'bold 15px Arial','#dceaff');
+ rr(78,61,70,70,16,'#fff');let logoDrawn=false;if(logoUrl){try{const logo=await new Promise((resolve,reject)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>resolve(im);im.onerror=reject;im.src=logoUrl});c.save();c.beginPath();c.roundRect(82,65,62,62,12);c.clip();c.drawImage(logo,82,65,62,62);c.restore();logoDrawn=true}catch(e){}}if(!logoDrawn){const initials=company.split(/\\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'CO';text(initials,113,107,'bold 27px Arial',navy,'center')}
+ text('PRIVATE JOB ALERT',174,100,'bold 37px Arial','#fff');
+ text('INDIA  •  LATEST PRIVATE JOBS',176,128,'bold 15px Arial','#dceaff');
  rr(58,174,964,86,18,gold);
  text('JOB VACANCY  /  WE ARE HIRING',540,231,'bold 37px Arial',navy,'center');
  // Main job heading
