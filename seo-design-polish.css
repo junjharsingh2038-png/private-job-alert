@@ -1,0 +1,33 @@
+/* Private Job Alert - progressive visual and accessibility polish.
+   Additive layer: keeps the existing homepage, HR and employee layouts intact. */
+:root{color-scheme:light;scroll-padding-top:96px}
+html{scroll-behavior:smooth}
+body{font-feature-settings:"kern" 1,"liga" 1;text-rendering:optimizeLegibility}
+a,button,input,select,textarea{ -webkit-tap-highlight-color:transparent }
+:focus-visible{outline:3px solid #ff9b45!important;outline-offset:3px!important}
+.site-header{backdrop-filter:saturate(150%) blur(12px)}
+.hero-modern{isolation:isolate}
+.hero-modern .search-modern input:focus,.hero-modern .search-modern select:focus{outline:2px solid #1264e8!important;outline-offset:1px!important}
+#jobsList .job.nk-job-card{display:flex;flex-direction:column;min-height:100%;border:1px solid #e0e8f2;box-shadow:0 8px 24px rgba(8,43,85,.07);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+#jobsList .job.nk-job-card:hover{transform:translateY(-3px);border-color:#a9c9ef;box-shadow:0 14px 32px rgba(8,43,85,.12)}
+#jobsList .nk-job-main{display:flex;flex-direction:column;flex:1}
+#jobsList .nk-job-bottom{margin-top:auto;padding-top:16px}
+#jobsList .nk-job-title-wrap h3{line-height:1.35}
+#jobsList .nk-meta{display:flex;flex-wrap:wrap;gap:8px 12px}
+.job-filters select,.search-modern input,.search-modern select{min-height:44px}
+.account-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.account-card:hover{transform:translateY(-2px);border-color:#b8d2f2;box-shadow:0 12px 28px rgba(16,38,74,.1)}
+.category-grid a{min-height:72px;display:flex;align-items:center;justify-content:center}
+.about-card,.hr-card,.ep-panel,.panel{overflow-wrap:anywhere}
+img{max-width:100%}
+@media(max-width:700px){
+  html{scroll-padding-top:80px}
+  #jobsList .job.nk-job-card{min-height:0}
+  #jobsList .nk-job-bottom{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+  #jobsList .nk-actions{display:flex;flex-wrap:wrap;gap:8px}
+  #jobsList .nk-actions button{flex:1 1 auto;min-height:42px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
