@@ -41,8 +41,9 @@ async function posterBlob(j){
  text('All India Hiring',895,91,27,'#111','800','center');
  // Main hero: use the actual people photo crop from the approved sample
  const photo=new Image();
- photo.crossOrigin='anonymous';
- photo.src=new URL('../team-poster.jpg?v=employee-photo-20261121-fix2',document.baseURI).href;
+ const shareScript=[...document.scripts].find(s=>s.src.includes('job-share.js'));
+ const photoUrl=new URL('team-poster.jpg?v=employee-photo-scriptpath-20261121',shareScript?shareScript.src:location.href);
+ photo.src=photoUrl.href;
  try{if(photo.decode) await photo.decode();else await new Promise((resolve,reject)=>{photo.onload=resolve;photo.onerror=reject})}catch(e){}
  if(photo.naturalWidth>0){
    c.save();c.beginPath();c.rect(0,132,520,350);c.clip();
