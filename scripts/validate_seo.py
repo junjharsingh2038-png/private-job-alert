@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate generated SEO pages and sitemap without external dependencies."""
 import json
+import re
 import sys
 import xml.etree.ElementTree as ET
 from html.parser import HTMLParser
@@ -53,6 +54,8 @@ if not locations:
     fail("sitemap.xml contains no URLs")
 if len(locations) != len(set(locations)):
     fail("sitemap.xml contains duplicate URLs")
+if any("/hr/" in url for url in locations):
+    fail("Private HR redirect route must not be listed in the public sitemap")
 
 for url in locations:
     if not url.startswith(BASE + "/") and url != BASE + "/":
@@ -67,6 +70,17 @@ for url in locations:
 job_pages = sorted(p for p in (ROOT / "jobs").glob("*/index.html") if p.parent != ROOT / "jobs")
 if not job_pages:
     fail("No generated individual job pages were found")
+
+job_urls = {f"{BASE}/jobs/{page.parent.name}/" for page in job_pages}
+if not job_urls.issubset(set(locations)):
+    fail("One or more generated job pages are missing from sitemap.xml")
+
+city_root = ROOT / "cities"
+if city_root.exists():
+    for city_page in city_root.glob("*/index.html"):
+        city_html = city_page.read_text(encoding="utf-8")
+        if len(re.findall(r"<article\\b", city_html, flags=re.IGNORECASE)) < 3:
+            fail(f"{city_page.relative_to(ROOT)} is a thin city page (minimum 3 active vacancies)")
 
 for page in job_pages:
     html = page.read_text(encoding="utf-8")
