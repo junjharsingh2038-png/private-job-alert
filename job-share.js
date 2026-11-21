@@ -19,8 +19,9 @@ async function posterBlob(j){
  c.fillStyle='rgba(255,255,255,.08)';c.beginPath();c.arc(1010,90,260,0,Math.PI*2);c.fill();c.beginPath();c.arc(40,480,180,0,Math.PI*2);c.fill();
  // Brand and announcement ribbon
  rr(58,48,964,94,22,'rgba(255,255,255,.12)','rgba(255,255,255,.25)');
- text('PRIVATE JOB ALERT',88,108,'bold 37px Arial','#fff');
- text('INDIA  •  LATEST PRIVATE JOBS',88,128,'bold 15px Arial','#dceaff');
+ rr(78,62,66,66,14,'#fff');let logoOK=false;const logoUrl=String(j.company_logo||'');if(logoUrl){try{const logo=await new Promise((resolve,reject)=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>resolve(im);im.onerror=reject;im.src=logoUrl});c.save();c.beginPath();c.roundRect(82,66,58,58,10);c.clip();c.drawImage(logo,82,66,58,58);c.restore();logoOK=true}catch(err){}}if(!logoOK){const initials=company.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'CO';text(initials,111,105,'bold 24px Arial',navy,'center')}
+ text('PRIVATE JOB ALERT',164,101,'bold 37px Arial','#fff');
+ text('INDIA  •  LATEST PRIVATE JOBS',166,128,'bold 15px Arial','#dceaff');
  rr(58,174,964,86,18,gold);
  text('JOB VACANCY  /  WE ARE HIRING',540,231,'bold 37px Arial',navy,'center');
  // Main job heading
