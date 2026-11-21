@@ -50,3 +50,11 @@ The default branch contains 98 tracked files, including:
   
 ## Rollback
 If a merged release causes a regression, revert the merge commit or restore the exact baseline using `backup/pre-seo-design-20261121`. Do not delete the backup branch.
+
+
+## Portal regression follow-up — 2026-11-21
+- Added a regression workflow for all repository JavaScript syntax and local script references from the homepage, HR, Employee and Apply pages.
+- The first audit run exposed two existing syntax defects: raw CSS embedded in `employee-full-profile.js`, and a missing statement separator in `hr-company-profile.js`.
+- Fixed both defects; moved the shared modal styling to `profile-modal.css` and linked it from `hr.html` and `seeker.html`.
+- Latest portal regression run passed all JavaScript syntax checks and portal linked-script checks.
+- Live OTP email delivery, HR/Employee authentication, profile persistence, resume upload and candidate application submission still need manual verification with authorized test accounts.
