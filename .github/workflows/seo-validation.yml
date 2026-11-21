@@ -34,8 +34,5 @@ jobs:
       - name: Check JavaScript syntax
         run: node --check app.js && node --check job-share.js
 
-      - name: Generate SEO pages from live active job records
-        run: python scripts/generate_jobs.py
-
-      - name: Validate generated SEO pages and sitemap
+      - name: Validate current generated SEO pages and sitemap
         run: python scripts/validate_seo.py
