@@ -26,3 +26,27 @@
 .hr-profile-dashboard>h2{padding:20px 24px 0;margin:0;color:#153d69}.hr-profile-dashboard #hrCompanyProfileForm{padding:0 24px 24px}
 .hr-profile-dashboard #hrCompanyProfileForm h3,.employee-profile-dashboard h3{color:#0c4f98}
 @media(max-width:650px){.pja-profile-cover{padding:20px 16px}.pja-profile-cover>button{position:static;margin-top:16px}.pja-profile-identity{gap:12px}.pja-profile-identity img{width:78px;height:78px}.pja-profile-identity h2{font-size:22px}.pja-profile-identity p{font-size:13px}.pja-profile-stats>div{padding:13px 10px}.pja-profile-stats b{font-size:18px}.pja-profile-stats span{font-size:10px}.pja-photo-upload{padding:13px}}
+
+
+/* Sample-reference profile: white/navy/orange professional job-network layout */
+.pja-profile-dialog{width:min(1180px,96vw)!important;max-height:94vh!important;border:1px solid #d7e3f0!important;border-radius:18px!important}
+.pja-profile-head{background:#fff!important;color:#102b50!important;border-bottom:1px solid #e4ebf4!important;padding:18px 26px!important}
+.pja-profile-kicker{color:#f07800!important}.pja-profile-head h2{color:#092f63!important;font-size:25px!important}.pja-profile-head p{color:#62748b!important}
+.pja-profile-close{background:#edf4fb!important;color:#123f7a!important}
+.pja-profile-body{background:#f2f7fc!important;padding:20px!important}
+.pja-profile-dashboard{border:1px solid #d8e5f3!important;border-radius:16px!important;box-shadow:0 8px 25px #0b376015!important}
+.pja-profile-cover{min-height:205px!important;padding:25px 30px!important;background:linear-gradient(112deg,#073b79 0%,#0c61bb 68%,#ff8a17 100%)!important}
+.pja-profile-cover>span{letter-spacing:.1em!important}
+.pja-profile-identity{gap:22px!important;margin-top:17px!important}
+.pja-profile-identity img{width:118px!important;height:118px!important;border:5px solid #fff!important}
+.pja-profile-identity h2{font-size:32px!important}
+.pja-profile-cover>button{right:28px!important;top:24px!important;background:#ff7900!important;color:#fff!important;border-radius:9px!important}
+.pja-profile-stats{background:#fff!important}
+.pja-profile-stats>div{padding:19px 24px!important}
+.pja-profile-stats b{color:#0754a3!important}
+.pja-photo-upload{background:#f8fbff!important}
+.employee-profile-dashboard .detail-grid,.hr-profile-dashboard .detail-grid{gap:14px!important}
+.employee-profile-dashboard #extendedEmployeeFields label,.hr-profile-dashboard .detail-item{background:#fff!important;border:1px solid #dce7f3!important;border-radius:10px!important;padding:12px!important;color:#1c3b60!important}
+.employee-profile-dashboard input,.employee-profile-dashboard textarea,.hr-profile-dashboard input,.hr-profile-dashboard textarea{border:1px solid #d4e0ee!important;border-radius:8px!important;padding:11px!important;background:#fbfdff!important}
+.employee-profile-dashboard h3,.hr-profile-dashboard h3{color:#084b91!important;border-bottom:2px solid #ff9a24!important;padding-bottom:9px!important}
+@media(max-width:650px){.pja-profile-body{padding:10px!important}.pja-profile-cover{padding:18px 15px!important}.pja-profile-identity img{width:82px!important;height:82px!important}.pja-profile-identity h2{font-size:22px!important}.pja-profile-cover>button{position:static!important;margin-top:14px!important}}
