@@ -2,11 +2,7 @@ name: Google Job Indexing
 
 on:
   workflow_dispatch:
-  # Submit only after the latest GitHub Pages deployment has completed.
-  workflow_run:
-    workflows: ["Deploy GitHub Pages"]
-    types: [completed]
-    branches: [main]
+  # Daily automatic submission avoids repeatedly spending API quota on every deployment.
   # Run once daily; Google Indexing API has strict daily quotas.
   schedule:
     - cron: '37 3 * * *'
@@ -16,7 +12,7 @@ permissions:
 
 jobs:
   indexing:
-    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,8 +33,6 @@ jobs:
 
           python - <<'PY'
           import json, pathlib, sys, re, xml.etree.ElementTree as ET
-          from datetime import date
-          from urllib.parse import urlparse
           from google.oauth2 import service_account
           from google.auth.transport.requests import AuthorizedSession
           import requests
