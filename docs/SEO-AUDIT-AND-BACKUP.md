@@ -3,13 +3,13 @@
 Audit date: 2026-11-21  
 Repository: `junjharsingh2038-png/private-job-alert`  
 Default branch: `main`  
-Baseline commit: `873eaee962f236239651c5a94b15a8ba21556cfe`
+Baseline commit: `4f9354061d9bf75a8876dd5233dfc7ecdc913c72`
 
 ## Backup and change isolation
-- Created `backup/pre-seo-design-20261121` from the exact baseline commit.
-- Created `feature/india-seo-design` from the same baseline for isolated changes.
-- The `main` branch is not modified by this implementation.
-- Proposed changes should be reviewed through a Pull Request before merging.
+- Created `backup/seo-baseline-2026-11-21` from the exact `main` head above.
+- Created `seo/all-india-improvements` from the same baseline for isolated changes.
+- `main` is not modified by the proposed SEO changes.
+- Changes are reviewed through a Pull Request before merging.
 
 ## Repository inventory
 The default branch contains 98 tracked files, including:
@@ -30,16 +30,19 @@ The default branch contains 98 tracked files, including:
 6. Homepage styles contain many historical overrides. This change adds a small final polish layer instead of deleting or rewriting legacy styles.
 7. The current public HR, Employee, Supabase and Apply workflows are outside the scope of this patch and are intentionally untouched.
 
-## Changes in this implementation branch
-- Align homepage job-card and share URLs with the generated static job-page slug.
-- Improve generated meta description truncation.
-- Mark explicitly remote vacancies with the appropriate remote JobPosting properties; keep physical location data for other jobs.
-- Add homepage Open Graph, Twitter, icon, theme-color and preconnect metadata.
-- Add a small homepage-only CSS enhancement layer without replacing the existing CSS stack.
-- Mark the legacy query-string job viewer as noindex while keeping it available for old shared links.
-- Add a small additive CSS layer for responsive card consistency, keyboard focus, mobile controls and reduced-motion accessibility.
-- Restrict SEO generation and Google indexing push triggers to `main`, preventing feature-branch pushes from triggering workflows that operate on production.
-  
+## Existing SEO features confirmed on `main`
+- Static job pages with JobPosting and BreadcrumbList JSON-LD.
+- Homepage metadata, canonical URL, Open Graph and Twitter metadata.
+- Remote-job schema handling, expired-vacancy exclusion, and generated city pages.
+- Automated sitemap and hourly static-page generation.
+
+## Changes proposed on this implementation branch
+- Exclude the private HR redirect route from the public sitemap.
+- Publish city landing pages only when at least three active vacancies exist.
+- Add validator checks for sitemap privacy, complete job-page sitemap coverage, and city-page minimum content.
+- Mark the HR login and employer portal as `noindex,follow`; the employee portal already uses `noindex,follow`.
+- Reduce Google Indexing API submissions to a daily batch capped at 150 job URLs, rather than submitting the entire set hourly.
+
 ## Validation required before merge
 - Python syntax-check `scripts/generate_jobs.py`.
 - Check generated HTML and parse each JSON-LD block as JSON.
