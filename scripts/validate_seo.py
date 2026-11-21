@@ -79,7 +79,7 @@ city_root = ROOT / "cities"
 if city_root.exists():
     for city_page in city_root.glob("*/index.html"):
         city_html = city_page.read_text(encoding="utf-8")
-        if len(re.findall(r"<article\\b", city_html, flags=re.IGNORECASE)) < 3:
+        if len(re.findall(r"<article\b", city_html, flags=re.IGNORECASE)) < 3:
             fail(f"{city_page.relative_to(ROOT)} is a thin city page (minimum 3 active vacancies)")
 
 for page in job_pages:
