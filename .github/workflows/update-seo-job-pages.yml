@@ -53,6 +53,11 @@ jobs:
       - name: Generate job pages and sitemap (canonical Python generator)
         run: python scripts/generate_jobs.py
 
+      - name: Validate generated SEO pages and sitemap
+        run: |
+          python -m py_compile scripts/generate_jobs.py scripts/validate_seo.py
+          python scripts/validate_seo.py
+
       - name: Commit generated pages safely
         shell: bash
         run: |
