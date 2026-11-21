@@ -8,3 +8,21 @@
 .pja-profile-photo small{font-size:12px;color:#64748b;font-weight:500}
 .profile-shortcut{background:#fff4e8!important;color:#9a4300!important;border:1px solid #ffd4ad!important;border-radius:9px!important;font-weight:800!important;padding:9px 12px!important}
 @media(max-width:760px){.pja-profile-photo img{width:66px;height:66px}.profile-shortcut{font-size:11px!important;padding:7px 8px!important}}
+
+/* Approved sample: blue-white-orange Naukri-style profile dashboard */
+.pja-profile-dashboard{display:block!important;background:#fff;border:1px solid #dce6f2;border-radius:22px;overflow:hidden;margin:0 0 22px;box-shadow:0 12px 35px rgba(12,43,82,.09)}
+.pja-profile-cover{position:relative;min-height:210px;padding:26px 30px 24px;background:linear-gradient(115deg,#082c59 0%,#1264c8 72%,#ff8a27 100%);color:#fff}
+.pja-profile-cover>span{font-size:11px;font-weight:900;letter-spacing:.14em;color:#dbeaff}
+.pja-profile-identity{display:flex;align-items:center;gap:20px;margin-top:18px}
+.pja-profile-identity img{width:112px;height:112px;object-fit:cover;border-radius:50%;border:5px solid #fff;background:#e7edf5;box-shadow:0 5px 20px #061b3a55}
+.pja-profile-identity h2{font-size:clamp(24px,3vw,34px);line-height:1.1;margin:0 0 7px;color:#fff}
+.pja-profile-identity p{margin:0 0 5px;color:#eef5ff;font-size:16px;font-weight:700}.pja-profile-identity small{color:#dceaff}
+.pja-profile-cover>button{position:absolute;right:28px;top:26px;background:#fff!important;color:#0c4c91!important;border:0!important;border-radius:10px!important;padding:11px 18px!important;font-weight:800!important}
+.pja-profile-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-bottom:1px solid #e5edf5}
+.pja-profile-stats>div{padding:18px 22px;border-right:1px solid #e5edf5;display:grid;gap:4px}.pja-profile-stats>div:last-child{border:0}
+.pja-profile-stats b{font-size:22px;color:#0b4f9b}.pja-profile-stats span{font-size:12px;color:#65758a;font-weight:700}
+.pja-photo-upload{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 22px;background:#f5f8fc;border-bottom:1px solid #e5edf5}
+.pja-photo-upload label{font-weight:800;color:#164a83;display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pja-photo-upload input{max-width:260px}.pja-photo-upload small{color:#68788c}
+.hr-profile-dashboard>h2{padding:20px 24px 0;margin:0;color:#153d69}.hr-profile-dashboard #hrCompanyProfileForm{padding:0 24px 24px}
+.hr-profile-dashboard #hrCompanyProfileForm h3,.employee-profile-dashboard h3{color:#0c4f98}
+@media(max-width:650px){.pja-profile-cover{padding:20px 16px}.pja-profile-cover>button{position:static;margin-top:16px}.pja-profile-identity{gap:12px}.pja-profile-identity img{width:78px;height:78px}.pja-profile-identity h2{font-size:22px}.pja-profile-identity p{font-size:13px}.pja-profile-stats>div{padding:13px 10px}.pja-profile-stats b{font-size:18px}.pja-profile-stats span{font-size:10px}.pja-photo-upload{padding:13px}}
