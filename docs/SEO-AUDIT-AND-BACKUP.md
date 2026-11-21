@@ -23,10 +23,10 @@ The default branch contains 98 tracked files, including:
 
 ## Findings
 1. SEO generation already creates static job pages, JobPosting JSON-LD, BreadcrumbList, city landing pages and a sitemap. These capabilities must be retained.
-2. Homepage job cards and job-share links used `jobs/view.html?id=...`, while the canonical static pages use `jobs/<slug>/`. This creates two competing job URL patterns and weakens internal linking to the canonical SEO pages.
+2. Homepage job cards and job-share links used `jobs/view.html?id=...`, while the canonical static pages use `jobs/<slug>/`. This created two competing job URL patterns and weakened internal linking to canonical SEO pages. Existing generated pages already contain JobPosting and BreadcrumbList JSON-LD; those were retained.
 3. The job-page generator's meta description was cut at a fixed character count, sometimes truncating the final word.
-4. The JobPosting generator assigned a physical `jobLocation` even to explicitly remote/work-from-home vacancies.
-5. The hourly SEO workflow's push trigger did not specify a branch, while its commit step explicitly pushed generated pages to `main`. A change to the generator on a non-main branch could therefore have caused an unintended main-branch update.
+4. The JobPosting generator assigned a physical `jobLocation` even to explicitly remote/work-from-home vacancies. Existing JobPosting and BreadcrumbList schema was confirmed in generated job pages.
+5. The hourly SEO workflow's push trigger did not specify a branch, while its commit step explicitly pushed generated pages to `main`. The workflow could also be manually dispatched from another branch. Both production workflows are now restricted to `main` at the trigger and job level.
 6. Homepage styles contain many historical overrides. This change adds a small final polish layer instead of deleting or rewriting legacy styles.
 7. The current public HR, Employee, Supabase and Apply workflows are outside the scope of this patch and are intentionally untouched.
 
@@ -35,6 +35,8 @@ The default branch contains 98 tracked files, including:
 - Improve generated meta description truncation.
 - Mark explicitly remote vacancies with the appropriate remote JobPosting properties; keep physical location data for other jobs.
 - Add homepage Open Graph, Twitter, icon, theme-color and preconnect metadata.
+- Add a small homepage-only CSS enhancement layer without replacing the existing CSS stack.
+- Mark the legacy query-string job viewer as noindex while keeping it available for old shared links.
 - Add a small additive CSS layer for responsive card consistency, keyboard focus, mobile controls and reduced-motion accessibility.
 - Restrict SEO generation and Google indexing push triggers to `main`, preventing feature-branch pushes from triggering workflows that operate on production.
   
