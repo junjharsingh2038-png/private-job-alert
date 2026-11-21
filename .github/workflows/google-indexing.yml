@@ -2,11 +2,11 @@ name: Google Job Indexing
 
 on:
   workflow_dispatch:
-  push:
+  # Submit only after the latest GitHub Pages deployment has completed.
+  workflow_run:
+    workflows: ["Deploy GitHub Pages"]
+    types: [completed]
     branches: [main]
-    paths:
-      - 'jobs/**'
-      - 'sitemap.xml'
   # Run once daily; Google Indexing API has strict daily quotas.
   schedule:
     - cron: '37 3 * * *'
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   indexing:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,9 +36,12 @@ jobs:
           printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > /tmp/google-service-account.json
 
           python - <<'PY'
-          import json, pathlib, sys, xml.etree.ElementTree as ET
+          import json, pathlib, sys, re, xml.etree.ElementTree as ET
+          from datetime import date
+          from urllib.parse import urlparse
           from google.oauth2 import service_account
           from google.auth.transport.requests import AuthorizedSession
+          import requests
 
           key_path = pathlib.Path('/tmp/google-service-account.json')
           data = json.loads(key_path.read_text())
@@ -59,12 +62,14 @@ jobs:
           for item in root.findall('sm:url', ns):
               loc = item.findtext('sm:loc', default='', namespaces=ns)
               lastmod = item.findtext('sm:lastmod', default='', namespaces=ns)
-              if loc.startswith(base + '/jobs/') and loc.endswith('/'):
+              # Only individual vacancy pages qualify for JobPosting notifications.
+              # Exclude /jobs/ listing page and all non-job URLs.
+              if re.fullmatch(re.escape(base) + r'/jobs/[a-z0-9-]+/', loc):
                   entries.append((lastmod, loc))
           entries.sort(reverse=True)
           urls = [url for _, url in entries[:150]]
 
-          print(f'Found {len(urls)} JobPosting URLs.')
+          print(f'Found {len(entries)} individual JobPosting URLs; checking newest {len(urls)} after deployment.')
           if not urls:
               print('::error::No jobs/*/index.html pages found; nothing was submitted.')
               sys.exit(1)
@@ -72,6 +77,15 @@ jobs:
           failed = 0
           for url in urls:
               try:
+                  page = requests.get(url, timeout=30, headers={'User-Agent': 'PrivateJobAlert-SEO-Validator/1.0'})
+                  if page.status_code != 200:
+                      failed += 1
+                      print(f'::error::PAGE NOT LIVE {page.status_code} {url}')
+                      continue
+                  if '"@type": "JobPosting"' not in page.text and '"@type":"JobPosting"' not in page.text:
+                      failed += 1
+                      print(f'::error::MISSING JOBPOSTING SCHEMA {url}')
+                      continue
                   response = session.post(
                       'https://indexing.googleapis.com/v3/urlNotifications:publish',
                       json={'url': url, 'type': 'URL_UPDATED'},
