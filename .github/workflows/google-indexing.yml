@@ -3,6 +3,7 @@ name: Google Job Indexing
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'jobs/**'
       - 'sitemap.xml'
@@ -17,6 +18,7 @@ permissions:
 
 jobs:
   indexing:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

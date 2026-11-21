@@ -1,0 +1,38 @@
+name: SEO Pull Request Validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'jobs/**'
+      - 'cities/**'
+      - 'categories/**'
+      - 'sitemap.xml'
+      - '.github/workflows/seo-validation.yml'
+      - '.github/workflows/update-seo-job-pages.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Compile SEO scripts
+        run: python -m py_compile scripts/generate_jobs.py scripts/validate_seo.py
+
+      - name: Check JavaScript syntax
+        run: node --check app.js && node --check job-share.js
+
+      - name: Validate current generated SEO pages and sitemap
+        run: python scripts/validate_seo.py

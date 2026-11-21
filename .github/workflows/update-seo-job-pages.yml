@@ -3,6 +3,7 @@ name: Update SEO Job Pages
 on:
   workflow_dispatch:
   push:
+    branches: [main]
     paths:
       - 'scripts/generate_jobs.py'
       - '.github/workflows/update-seo-job-pages.yml'
@@ -19,6 +20,7 @@ concurrency:
 
 jobs:
   update:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -50,6 +52,11 @@ jobs:
 
       - name: Generate job pages and sitemap (canonical Python generator)
         run: python scripts/generate_jobs.py
+
+      - name: Validate generated SEO pages and sitemap
+        run: |
+          python -m py_compile scripts/generate_jobs.py scripts/validate_seo.py
+          python scripts/validate_seo.py
 
       - name: Commit generated pages safely
         shell: bash

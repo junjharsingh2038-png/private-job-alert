@@ -93,7 +93,7 @@ def page(job, related_links):
     jid = str(job.get('id'))
     url = f'{BASE}/jobs/{job_slug(job)}/'
     logo_url = str(job.get('company_logo') or '').strip() or company_logo_url(raw_company)
-    date_posted = str(job.get('created_at') or '')[:10]
+    date_posted = str(job.get('created_at') or datetime.now(timezone.utc).date().isoformat())[:10]
     last_date = str(job.get('lastdate') or '').strip()[:10]
     city = clean_text(job.get('city'), '')
     region = clean_text(job.get('state'), '')
@@ -109,10 +109,17 @@ def page(job, related_links):
             valid_through = ''
     title = escape(raw_title); company = escape(raw_company); location = escape(raw_location); qualification = escape(raw_qualification); salary = escape(raw_salary); job_type = escape(raw_type); description = escape(raw_description)
     schema_description = html_description(raw_description)
-    meta_description = escape((f'{raw_title} at {raw_company} in {raw_location}. Qualification: {raw_qualification}. Salary: {raw_salary}. Apply online for this private job in India.')[:158], quote=True)
+    meta_text = f'{raw_title} at {raw_company} in {raw_location}. Qualification: {raw_qualification}. Salary: {raw_salary}. Apply online for this private job in India.'
+    if len(meta_text) > 155:
+        meta_text = meta_text[:152].rsplit(' ', 1)[0].rstrip(' ,.;:-') + '...'
+    meta_description = escape(meta_text, quote=True)
     safe_url = escape(url, quote=True)
     safe_logo = escape(logo_url, quote=True)
-    job_schema = {'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company, **({'logo': logo_url} if logo_url else {})},'jobLocation': {'@type': 'Place','address': address},**({'employmentType': employment_type(raw_type)} if employment_type(raw_type) else {}),'url': url}
+    location_context = ' '.join(str(job.get(k) or '') for k in ('job_type', 'type', 'location', 'city', 'state')).lower()
+    description_context = clean_description(job.get('description')).lower()
+    remote_terms = ('work from home', 'work-from-home', 'remote job', 'remote position', 'work remotely', 'telecommute', 'wfh')
+    is_remote = any(term in location_context or term in description_context for term in remote_terms)
+    job_schema = {'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company, **({'logo': logo_url} if logo_url else {})},**({'jobLocationType': 'TELECOMMUTE','applicantLocationRequirements': {'@type': 'Country','name': 'India'}} if is_remote else {'jobLocation': {'@type': 'Place','address': address}}),**({'employmentType': employment_type(raw_type)} if employment_type(raw_type) else {}),'directApply': True,'url': url}
     if valid_through:
         job_schema['validThrough'] = valid_through
     schema = json.dumps(job_schema, ensure_ascii=False).replace('</', '<\\/')
