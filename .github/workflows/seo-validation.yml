@@ -31,5 +31,8 @@ jobs:
       - name: Compile SEO scripts
         run: python -m py_compile scripts/generate_jobs.py scripts/validate_seo.py
 
+      - name: Check JavaScript syntax
+        run: node --check app.js && node --check job-share.js
+
       - name: Validate current generated SEO pages and sitemap
         run: python scripts/validate_seo.py
