@@ -93,7 +93,7 @@ def page(job, related_links):
     jid = str(job.get('id'))
     url = f'{BASE}/jobs/{job_slug(job)}/'
     logo_url = str(job.get('company_logo') or '').strip() or company_logo_url(raw_company)
-    date_posted = str(job.get('created_at') or '')[:10]
+    date_posted = str(job.get('created_at') or datetime.now(timezone.utc).date().isoformat())[:10]
     last_date = str(job.get('lastdate') or '').strip()[:10]
     city = clean_text(job.get('city'), '')
     region = clean_text(job.get('state'), '')
