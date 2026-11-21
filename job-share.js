@@ -7,44 +7,73 @@ async function copy(url){try{await navigator.clipboard.writeText(url);return tru
 function rr(c,x,y,w,h,r,fill){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill()}}
 function wrap(c,text,x,y,maxWidth,lineHeight,maxLines,font,color){c.font=font;c.fillStyle=color;let line='',lines=[];for(const word of String(text||'').split(/\s+/)){const test=line?line+' '+word:word;if(c.measureText(test).width>maxWidth&&line){lines.push(line);line=word}else line=test}if(line)lines.push(line);if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];while(last&&c.measureText(last+'…').width>maxWidth)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}lines.forEach((t,i)=>c.fillText(t,x,y+i*lineHeight));return y+lines.length*lineHeight}
 async function posterBlob(j){
- const W=1080,H=1350,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;const c=canvas.getContext('2d');
- const company=String(j.company||j.company_name||'Hiring Company'),title=String(j.title||'Job Vacancy'),loc=[j.city,j.state].filter(Boolean).join(', ')||j.location||'All India',salary=String(j.salary||'As per company'),qual=String(j.qualification||'Not specified'),type=String(j.job_type||j.type||'Full Time'),exp=String(j.experience||'Not specified'),desc=String(j.description||'');
+ const W=1080,H=1350,canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;
+ const c=canvas.getContext('2d');
+ const company=String(j.company||j.company_name||'Hiring Company');
+ const title=String(j.title||'Job Vacancy');
+ const loc=[j.city,j.state].filter(Boolean).join(', ')||j.location||'All India';
+ const salary=String(j.salary||'As per company');
+ const qual=String(j.qualification||'Not specified');
+ const type=String(j.job_type||j.type||'Full Time');
+ const exp=String(j.experience||'Not specified');
+ const desc=String(j.description||'Explore this opportunity and apply through Private Job Alert.');
+ const vacancies=String(j.vacancies||'Multiple');
  const navy='#082e65',blue='#0758b8',orange='#ff7900',ink='#0b2852';
  const rounded=(x,y,w,h,r,fill,stroke)=>{c.beginPath();c.roundRect(x,y,w,h,r);c.fillStyle=fill;c.fill();if(stroke){c.strokeStyle=stroke;c.lineWidth=2;c.stroke()}};
  const text=(v,x,y,size,color,weight='700',align='left')=>{c.font=weight+' '+size+'px Arial,sans-serif';c.fillStyle=color;c.textAlign=align;c.fillText(String(v),x,y);c.textAlign='left'};
- const fit=(v,x,y,max,size,color,weight='700',maxLines=2)=>{c.font=weight+' '+size+'px Arial,sans-serif';let line='',rows=[];for(const word of String(v||'').split(/\s+/)){const t=line?line+' '+word:word;if(c.measureText(t).width>max&&line){rows.push(line);line=word}else line=t}if(line)rows.push(line);rows=rows.slice(0,maxLines);rows.forEach((t,i)=>text(t,x,y+i*(size+13),size,color,weight));return y+rows.length*(size+13)};
- const gradient=c.createLinearGradient(0,0,W,H);gradient.addColorStop(0,'#e7f3ff');gradient.addColorStop(.5,'#fff');gradient.addColorStop(1,'#d8ebfb');c.fillStyle=gradient;c.fillRect(0,0,W,H);
- // branded curved blue frame with orange accent
- c.fillStyle=navy;c.beginPath();c.moveTo(0,0);c.lineTo(300,0);c.bezierCurveTo(145,190,165,400,310,600);c.lineTo(0,600);c.closePath();c.fill();
- c.fillStyle=blue;c.beginPath();c.moveTo(W,0);c.lineTo(900,0);c.bezierCurveTo(1010,180,1000,400,875,600);c.lineTo(W,600);c.closePath();c.fill();
- c.strokeStyle=orange;c.lineWidth=26;c.beginPath();c.arc(1015,300,150,Math.PI*.55,Math.PI*1.48);c.stroke();
- // top portal brand
- rounded(38,34,1004,112,22,'#fff','#d4e4f4');rounded(62,55,72,72,17,navy);text('PJA',98,101,25,'#fff','800','center');
+ const wrap=(value,x,y,maxWidth,size,color,weight='700',maxLines=2,align='left',lineGap=1.24)=>{
+   let font=size,lines=[];
+   const makeLines=()=>{c.font=weight+' '+font+'px Arial,sans-serif';let line='';const out=[];for(const word of String(value||'').split(/\s+/)){const test=line?line+' '+word:word;if(c.measureText(test).width>maxWidth&&line){out.push(line);line=word}else line=test}if(line)out.push(line);return out};
+   lines=makeLines();while(lines.length>maxLines&&font>15){font-=2;lines=makeLines()}
+   if(lines.length>maxLines){lines=lines.slice(0,maxLines);let last=lines[maxLines-1];c.font=weight+' '+font+'px Arial,sans-serif';while(last.length&&c.measureText(last+'…').width>maxWidth)last=last.slice(0,-1);lines[maxLines-1]=last+'…'}
+   c.font=weight+' '+font+'px Arial,sans-serif';c.fillStyle=color;c.textAlign=align;
+   lines.forEach((line,i)=>c.fillText(line,x,y+i*font*lineGap));c.textAlign='left';
+   return y+lines.length*font*lineGap;
+ };
+ const bg=c.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#eaf4ff');bg.addColorStop(.5,'#fff');bg.addColorStop(1,'#e2f0fc');c.fillStyle=bg;c.fillRect(0,0,W,H);
+ // Brand header
+ rounded(38,34,1004,112,22,'#fff','#d4e4f4');rounded(62,55,72,72,17,navy);
+ text('PJA',98,101,25,'#fff','800','center');
  text('PRIVATE JOB ALERT',158,91,38,navy,'800');text('ALL INDIA PRIVATE JOBS',161,122,17,'#667a91','700');
  text('INDIA’S TRUSTED PRIVATE JOB PORTAL',1007,103,18,navy,'700','right');
- // company brand in top-left of hero
- rounded(62,177,340,112,18,'#fff','#dce8f4');
- if(/genus/i.test(company)){text('G',92,253,78,blue,'800');text('e',145,253,78,orange,'800');text('nus',188,253,78,blue,'800');text('POWER INFRASTRUCTURES',95,278,15,navy,'700')}
- else{fit(company,88,230,285,30,navy,'800',2)}
- // hiring banner and role title
+ // Decorative side shapes, kept behind content
+ c.fillStyle=navy;c.beginPath();c.moveTo(0,170);c.lineTo(210,170);c.bezierCurveTo(120,330,145,490,235,600);c.lineTo(0,600);c.closePath();c.fill();
+ c.fillStyle=blue;c.beginPath();c.moveTo(W,170);c.lineTo(940,170);c.bezierCurveTo(1015,330,1000,475,900,600);c.lineTo(W,600);c.closePath();c.fill();
+ c.strokeStyle=orange;c.lineWidth=18;c.beginPath();c.arc(1005,330,130,Math.PI*.55,Math.PI*1.48);c.stroke();
+ // Company panel
+ rounded(60,178,345,112,18,'#fff','#d8e6f4');
+ if(/genus/i.test(company)){text('G',92,253,70,blue,'800');text('e',142,253,70,orange,'800');text('nus',180,253,70,blue,'800');text('POWER INFRASTRUCTURES',95,278,14,navy,'700')}
+ else{wrap(company,82,224,300,28,navy,'800',2,'left',1.15)}
+ // Hiring and job title: centered, wrapped and never allowed to overflow
  rounded(490,180,480,82,18,navy);text('WE ARE HIRING',730,237,42,'#fff','800','center');
- text(title,730,355,62,orange,'800','center');fit(company,730,414,520,31,navy,'800',2);
- // real technician image from an electrical maintenance reference; safe fallback illustration if remote image is blocked
+ wrap(title,730,335,500,54,orange,'800',2,'center',1.12);
+ wrap(company,730,420,500,27,navy,'700',2,'center',1.15);
+ // Technician / job image panel; use employer-supplied image only, otherwise clean vector illustration
  rounded(55,315,370,525,24,'#d9edfb');
- const photoUrl=String(j.poster_photo_url||j.technician_photo||'https://shubhamelectricalworks.com/assets/images/services/substation.png');
- let loaded=false;
- try{const im=await new Promise((resolve,reject)=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=reject;img.src=photoUrl});c.save();c.beginPath();c.roundRect(70,330,340,495,18);c.clip();const scale=Math.max(340/im.width,495/im.height),iw=im.width*scale,ih=im.height*scale;c.drawImage(im,70+(340-iw)/2,330+(495-ih)/2,iw,ih);c.restore();loaded=true}catch(e){}
- if(!loaded){const g=c.createLinearGradient(70,330,410,825);g.addColorStop(0,'#d6efff');g.addColorStop(1,'#86bce8');rounded(70,330,340,495,18,g);c.fillStyle=navy;c.beginPath();c.arc(240,475,83,0,Math.PI*2);c.fill();c.fillStyle='#f1c69f';c.beginPath();c.arc(240,480,58,0,Math.PI*2);c.fill();c.fillStyle=orange;c.beginPath();c.arc(240,418,75,Math.PI,Math.PI*2);c.fill();rounded(130,560,220,230,55,navy);rounded(120,390,240,30,14,'#ffdf28');text('FIELD TECHNICIAN',240,800,19,navy,'800','center')}
- // facts panel in sample-like four-column strip
- const facts=[['⌖','Location',loc],['♟','Vacancies',String(j.vacancies||'Multiple')],['◆','Qualification',qual],['₹','Salary',salary]];
- facts.forEach((f,i)=>{const x=450+i*145; if(i) {c.strokeStyle='#a9bfd8';c.lineWidth=2;c.setLineDash([7,7]);c.beginPath();c.moveTo(x-8,520);c.lineTo(x-8,675);c.stroke();c.setLineDash([])}text(f[0],x+60,558,38,i===1?orange:blue,'800','center');text(f[1],x+60,595,17,ink,'600','center');fit(f[2],x+60,630,130,17,ink,'800',2)});
+ let loaded=false;const photoUrl=String(j.poster_photo_url||j.technician_photo||'').trim();
+ if(photoUrl){try{const im=await new Promise((resolve,reject)=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=reject;img.src=photoUrl});c.save();c.beginPath();c.roundRect(70,330,340,495,18);c.clip();const scale=Math.max(340/im.width,495/im.height),iw=im.width*scale,ih=im.height*scale;c.drawImage(im,70+(340-iw)/2,330+(495-ih)/2,iw,ih);c.restore();loaded=true}catch(e){}}
+ if(!loaded){
+   const pg=c.createLinearGradient(70,330,410,825);pg.addColorStop(0,'#d9efff');pg.addColorStop(1,'#8fc3e9');rounded(70,330,340,495,18,pg);
+   // Safety helmet and professional technician illustration
+   c.fillStyle=navy;c.beginPath();c.arc(240,485,91,0,Math.PI*2);c.fill();
+   c.fillStyle='#f0c39e';c.beginPath();c.arc(240,493,64,0,Math.PI*2);c.fill();
+   c.fillStyle=orange;c.beginPath();c.arc(240,445,75,Math.PI,Math.PI*2);c.lineTo(315,453);c.lineTo(165,453);c.closePath();c.fill();
+   rounded(165,430,150,19,9,'#ffdc28');
+   rounded(130,585,220,195,48,navy);
+   rounded(205,585,70,110,18,blue);
+   text('FIELD TECHNICIAN',240,810,19,navy,'800','center');
+ }
+ // Four information columns
+ const facts=[['⌖','LOCATION',loc],['♟','VACANCIES',vacancies],['◆','QUALIFICATION',qual],['₹','SALARY',salary]];
+ const fx=450,fw=560,col=140;
+ facts.forEach((f,i)=>{const x=fx+i*col;if(i){c.strokeStyle='#a9bfd8';c.lineWidth=2;c.setLineDash([7,7]);c.beginPath();c.moveTo(x,520);c.lineTo(x,675);c.stroke();c.setLineDash([])}text(f[0],x+col/2,558,34,i===1?orange:blue,'800','center');text(f[1],x+col/2,595,15,ink,'700','center');wrap(f[2],x+col/2,632,col-14,17,ink,'800',2,'center',1.2)});
  c.setLineDash([9,7]);c.strokeStyle='#7899bd';c.beginPath();c.moveTo(455,710);c.lineTo(1010,710);c.stroke();c.setLineDash([]);
  rounded(570,745,365,74,16,orange);text('APPLY NOW  →',752,794,32,'#fff','800','center');
- // footer panel
+ // Details panel with fixed columns and bounded text
  rounded(38,885,1004,340,24,navy);text('JOB DETAILS',78,948,28,'#ffb35c','800');
- text('Experience',80,1005,18,'#d8e9ff','600');fit(exp,80,1045,255,22,'#fff','800',2);
- text('Job Type',390,1005,18,'#d8e9ff','600');fit(type,390,1045,255,22,'#fff','800',2);
- text('About the Role',700,1005,18,'#d8e9ff','600');fit(desc||'Explore this opportunity and apply through Private Job Alert.',700,1045,290,19,'#fff','600',4);
+ text('EXPERIENCE',80,1005,17,'#d8e9ff','700');wrap(exp,80,1045,250,22,'#fff','800',2,'left',1.2);
+ text('JOB TYPE',390,1005,17,'#d8e9ff','700');wrap(type,390,1045,250,22,'#fff','800',2,'left',1.2);
+ text('ABOUT THE ROLE',700,1005,17,'#d8e9ff','700');wrap(desc,700,1045,290,18,'#fff','600',5,'left',1.45);
  text('PRIVATE JOB ALERT  •  VERIFY DETAILS WITH THE EMPLOYER',540,1290,17,'#52677f','700','center');
  return await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Poster image export failed')),'image/png'));
 }
