@@ -7,11 +7,9 @@ on:
     paths:
       - 'jobs/**'
       - 'sitemap.xml'
-  # The SEO generator runs hourly and commits pages with GITHUB_TOKEN.
-  # Scheduled indexing ensures those generated pages are submitted even when
-  # GitHub does not trigger a second workflow from that bot commit.
+  # Run once daily; Google Indexing API has strict daily quotas.
   schedule:
-    - cron: '37 * * * *'
+    - cron: '37 3 * * *'
 
 permissions:
   contents: read
@@ -38,7 +36,7 @@ jobs:
           printf '%s' "$GOOGLE_SERVICE_ACCOUNT_JSON" > /tmp/google-service-account.json
 
           python - <<'PY'
-          import json, pathlib, sys
+          import json, pathlib, sys, xml.etree.ElementTree as ET
           from google.oauth2 import service_account
           from google.auth.transport.requests import AuthorizedSession
 
@@ -50,11 +48,21 @@ jobs:
           )
           session = AuthorizedSession(creds)
 
-          root = pathlib.Path('jobs')
-          urls = sorted({
-              'https://junjharsingh2038-png.github.io/private-job-alert/jobs/' + p.parent.name + '/'
-              for p in root.glob('*/index.html')
-          }) if root.exists() else []
+          base = 'https://junjharsingh2038-png.github.io/private-job-alert'
+          sitemap = pathlib.Path('sitemap.xml')
+          if not sitemap.is_file():
+              print('::error::sitemap.xml is missing.')
+              sys.exit(1)
+          ns = {'sm': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
+          root = ET.parse(sitemap).getroot()
+          entries = []
+          for item in root.findall('sm:url', ns):
+              loc = item.findtext('sm:loc', default='', namespaces=ns)
+              lastmod = item.findtext('sm:lastmod', default='', namespaces=ns)
+              if loc.startswith(base + '/jobs/') and loc.endswith('/'):
+                  entries.append((lastmod, loc))
+          entries.sort(reverse=True)
+          urls = [url for _, url in entries[:150]]
 
           print(f'Found {len(urls)} JobPosting URLs.')
           if not urls:
