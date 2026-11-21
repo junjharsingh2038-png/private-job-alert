@@ -21,7 +21,7 @@ function openModal(){ensureModal();const sec=$('profile'),body=$('pjaEmployeeMod
 function addUI(){
  const sec=$('profile'); if(!sec||$('pHeadline'))return;
  const grid=sec.querySelector('.detail-grid'); if(!grid)return;
- const box=document.createElement('div');box.className='full';box.innerHTML='<h3 style="margin:20px 0 8px">Professional Profile Details</h3><div class="detail-grid" id="extendedEmployeeFields"></div><div id="employeeProfileProgress" class="muted" style="margin:14px 0;font-weight:700"></div>';
+ const hero=document.createElement('div');hero.className='full pja-profile-dashboard employee-profile-dashboard';hero.innerHTML='<div class="pja-profile-cover"><span>PRIVATE JOB ALERT · CAREER PROFILE</span><div class="pja-profile-identity"><img id="employeePhotoPreview" alt="Employee profile photo"><div><h2 id="employeeDisplayName">Your Name</h2><p id="employeeDisplayHeadline">Add your professional headline</p><small id="employeeDisplayLocation">Your location</small></div></div><button type="button" id="employeeEditDetails">Edit Profile</button></div><div class="pja-profile-stats"><div><b id="employeePercent">0%</b><span>Profile Complete</span></div><div><b id="employeeSkillCount">0</b><span>Profile Fields</span></div><div><b>Resume</b><span>Career Documents</span></div></div><div class="pja-photo-upload"><label>Upload / Change Profile Photo <input id="employeePhotoUpload" type="file" accept="image/png,image/jpeg,image/webp"></label><small>JPG, PNG or WEBP · Maximum 3 MB</small></div></div>';grid.prepend(hero);const box=document.createElement('div');box.className='full';box.innerHTML='<h3 style="margin:20px 0 8px">Professional Profile Details</h3><div class="detail-grid" id="extendedEmployeeFields"></div><div id="employeeProfileProgress" class="muted" style="margin:14px 0;font-weight:700"></div>';
  grid.appendChild(box);
  const dest=$('extendedEmployeeFields');
  fields.forEach(([key,label,type,ph])=>{const wrap=document.createElement('label');wrap.className='full';wrap.textContent=label;const el=type==='textarea'?document.createElement('textarea'):document.createElement('input');el.id='p'+key[0].toUpperCase()+key.slice(1);el.name=key;el.placeholder=ph;if(type!=='textarea')el.type=type;el.rows=type==='textarea'?3:undefined;wrap.appendChild(el);dest.appendChild(wrap)});
@@ -33,12 +33,12 @@ async function load(){
  const r=await sb.from('job_seeker_profiles').select('*').eq('id',u.id).maybeSingle();if(r.error)return;
  const p=r.data||{};
  fields.forEach(([k])=>{const el=$('p'+k[0].toUpperCase()+k.slice(1));if(el)el.value=p[k]||''});
- if($('profileVisibility'))$('profileVisibility').checked=p.profile_visibility!==false;
+ if($('profileVisibility'))$('profileVisibility').checked=p.profile_visibility!==false;if($('employeePhotoPreview'))$('employeePhotoPreview').src=p.profile_photo_url||'';if($('employeeDisplayName'))$('employeeDisplayName').textContent=p.full_name||$('pName')?.value||'Your Name';if($('employeeDisplayHeadline'))$('employeeDisplayHeadline').textContent=p.headline||'Add your professional headline';if($('employeeDisplayLocation'))$('employeeDisplayLocation').textContent=[p.city,p.state].filter(Boolean).join(', ')||p.location||'Add your location';
  const base=['pName','pMobile','pLocation','pQualification','pExperience','pSkills'];
  const all=[...base,...fields.map(([k])=>'p'+k[0].toUpperCase()+k.slice(1))];
  const filled=all.filter(id=>$(id)?.value?.trim()).length;
  const percent=Math.round(filled/all.length*100);
- if($('employeeProfileProgress'))$('employeeProfileProgress').textContent='Profile completion: '+percent+'% · '+filled+'/'+all.length+' fields filled';
+ if($('employeeProfileProgress'))$('employeeProfileProgress').textContent='Profile completion: '+percent+'% · '+filled+'/'+all.length+' fields filled';if($('employeePercent'))$('employeePercent').textContent=percent+'%';if($('employeeSkillCount'))$('employeeSkillCount').textContent=fields.length;
 }
 async function save(e){
  if(!window.sb||!window.PJA_SEEKER_USER)return;
@@ -55,7 +55,7 @@ async function save(e){
   resumePath=up.data.path;
  }
  const row={id:u.id,full_name:$('pName').value.trim(),mobile:$('pMobile').value.trim(),location:$('pLocation').value.trim(),qualification:$('pQualification').value.trim(),experience:$('pExperience').value.trim(),skills:$('pSkills').value.trim(),resume_path:resumePath,updated_at:new Date().toISOString()};
- fields.forEach(([k])=>row[k]=getVal(k));
+ fields.forEach(([k])=>row[k]=getVal(k));const photo=$('employeePhotoUpload')?.files?.[0];if(photo){if(photo.size>3*1024*1024){const m=$('profileMsg');if(m)m.textContent='Photo must be 3 MB or smaller.';return}const ext=photo.type==='image/png'?'png':photo.type==='image/webp'?'webp':'jpg';const path=u.id+'/employee-profile-'+Date.now()+'.'+ext;const up=await sb.storage.from('profile-photos').upload(path,photo,{upsert:true,contentType:photo.type});if(up.error){const m=$('profileMsg');if(m)m.textContent='Photo upload failed: '+up.error.message;return}row.profile_photo_url=sb.storage.from('profile-photos').getPublicUrl(path).data.publicUrl;}
  if($('profileVisibility'))row.profile_visibility=$('profileVisibility').checked;
  const res=await sb.from('job_seeker_profiles').upsert(row,{onConflict:'id'});
  const m=$('profileMsg');if(m){m.textContent=res.error?'Save failed: '+res.error.message:'Your complete professional profile and resume have been saved.';m.className=res.error?'danger':'success'}
@@ -65,7 +65,7 @@ function init(){
  addUI();
  ensureModal();const old=window.showDash;
  if(typeof old==='function'&&!window.__pjaFullProfileDash){window.__pjaFullProfileDash=true;window.showDash=function(){old();window.PJA_SEEKER_USER=window.user||window.PJA_SEEKER_USER;setTimeout(load,350)}}
- const f=$('profileForm');if(f)f.addEventListener('submit',save,true);
+ const f=$('profileForm');if(f)f.addEventListener('submit',save,true);document.addEventListener('change',e=>{if(e.target?.id==='employeePhotoUpload'&&e.target.files?.[0])$('employeePhotoPreview').src=URL.createObjectURL(e.target.files[0])});document.addEventListener('click',e=>{if(e.target?.id==='employeeEditDetails')$('profileForm')?.scrollIntoView({behavior:'smooth'})});
  document.querySelectorAll('[data-section="profile"]').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openModal()},true)});
  const watch=new MutationObserver(()=>{if($('profile')&&!$('pHeadline')){addUI();setTimeout(load,150)}});if($('profile'))watch.observe($('profile'),{childList:true,subtree:true});
  setTimeout(()=>{sb.auth.getUser().then(r=>{if(r.data?.user){window.PJA_SEEKER_USER=r.data.user}})},500);
