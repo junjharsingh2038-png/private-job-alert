@@ -115,8 +115,10 @@ def page(job, related_links):
     meta_description = escape(meta_text, quote=True)
     safe_url = escape(url, quote=True)
     safe_logo = escape(logo_url, quote=True)
-    location_context = ' '.join(str(job.get(k) or '') for k in ('job_type', 'type', 'location', 'city', 'state', 'description')).lower()
-    is_remote = any(term in location_context for term in ('work from home', 'work-from-home', 'remote', 'wfh', 'telecommute'))
+    location_context = ' '.join(str(job.get(k) or '') for k in ('job_type', 'type', 'location', 'city', 'state')).lower()
+    description_context = clean_description(job.get('description')).lower()
+    remote_terms = ('work from home', 'work-from-home', 'remote job', 'remote position', 'work remotely', 'telecommute', 'wfh')
+    is_remote = any(term in location_context or term in description_context for term in remote_terms)
     job_schema = {'@context': 'https://schema.org','@type': 'JobPosting','title': raw_title,'description': schema_description,'identifier': {'@type': 'PropertyValue','name': raw_company,'value': jid},'datePosted': date_posted,'hiringOrganization': {'@type': 'Organization','name': raw_company, **({'logo': logo_url} if logo_url else {})},**({'jobLocationType': 'TELECOMMUTE','applicantLocationRequirements': {'@type': 'Country','name': 'India'}} if is_remote else {'jobLocation': {'@type': 'Place','address': address}}),**({'employmentType': employment_type(raw_type)} if employment_type(raw_type) else {}),'directApply': True,'url': url}
     if valid_through:
         job_schema['validThrough'] = valid_through
