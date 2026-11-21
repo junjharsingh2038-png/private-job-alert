@@ -7,8 +7,9 @@ on:
     paths:
       - 'scripts/generate_jobs.py'
       - '.github/workflows/update-seo-job-pages.yml'
+  # Poll active Supabase jobs every 15 minutes; no per-job manual action.
   schedule:
-    - cron: '17 * * * *'
+    - cron: '*/15 * * * *'
 
 permissions:
   contents: write
