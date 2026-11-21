@@ -42,7 +42,7 @@ async function posterBlob(j){
  // Main hero: use the actual people photo crop from the approved sample
  const photo=new Image();
  photo.crossOrigin='anonymous';
- photo.src=new URL('team-poster.jpg?v=employee-photo-20261121',document.baseURI).href;
+ photo.src=new URL('../team-poster.jpg?v=employee-photo-20261121-fix2',document.baseURI).href;
  try{if(photo.decode) await photo.decode();else await new Promise((resolve,reject)=>{photo.onload=resolve;photo.onerror=reject})}catch(e){}
  if(photo.naturalWidth>0){
    c.save();c.beginPath();c.rect(0,132,520,350);c.clip();
