@@ -17,12 +17,13 @@
 #portalFrame{display:block;width:100%;height:calc(100vh - 165px);min-height:600px;border:1px solid #dce5f0;border-radius:13px;background:#fff}
 @media(max-width:650px){.shell{padding:7px}.head{padding:9px}.brand img{width:34px;height:34px}.brand h1{font-size:16px}.brand p{font-size:10px}.head button{padding:8px 9px;font-size:12px}.nav{gap:5px}.nav button{padding:8px 9px;font-size:12px}#portalFrame{height:calc(100vh - 195px);min-height:560px}}
 </style>
-</head>
+<link rel="stylesheet" href="style.css?v=home-master-20261118"><link rel="stylesheet" href="homepage-overrides.css?v=home-master-20261118"></head>
 <body>
 <main class="shell">
-<header class="head">
-<div class="brand"><img src="pja-logo.svg" alt="Private Job Alert"><div><h1 id="dashTitle">My Dashboard</h1><p id="dashSub">Your account workspace</p></div></div>
-<div class="head-right"><button class="home" id="homeBtn" type="button">Home</button><button class="logout" id="dashLogout" type="button">Logout</button></div>
+<header class="site-header">
+<a class="brand" href="index.html"><img class="brand-mark" src="pja-logo.svg" alt="Private Job Alert logo"><span class="brand-copy"><strong>Private<span>Job</span>Alert</strong><small>LATEST JOBS <i>•</i> RIGHT OPPORTUNITIES <i>•</i> BRIGHT FUTURE</small></span></a>
+<nav class="main-nav"><a href="index.html">⌂ <span>Home</span></a><a href="seeker.html">▣ <span>Job Seekers</span></a><a href="hr.html">♟ <span>HR Portal</span></a><a href="jobs/">▤ <span>Latest Jobs</span></a><a href="index.html#about">● <span>About Us</span></a><a href="index.html#contact">☎ <span>Contact</span></a></nav>
+<div class="header-actions"><a class="login-link" href="seeker.html">♙ Login</a><a class="register-link" href="seeker.html">♟ Register</a></div>
 </header>
 <nav class="nav" id="dashNav" aria-label="Account sections"></nav>
 <div id="dashStatus" class="status" role="status">Loading your account…</div>
