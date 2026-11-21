@@ -1,0 +1,44 @@
+name: HR Employee Regression Checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'hr.html'
+      - 'seeker.html'
+      - 'apply.html'
+      - 'index.html'
+      - '*.js'
+      - 'scripts/**'
+      - '.github/workflows/portal-regression.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'hr.html'
+      - 'seeker.html'
+      - 'apply.html'
+      - 'index.html'
+      - '*.js'
+      - 'scripts/**'
+      - '.github/workflows/portal-regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  portal-static-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check all JavaScript files
+        run: |
+          find . -type f -name '*.js' -not -path './.git/*' -print0 | xargs -0 -r -n1 node --check
+      - name: Check HR, employee and apply page scripts
+        run: python scripts/validate_portals.py
