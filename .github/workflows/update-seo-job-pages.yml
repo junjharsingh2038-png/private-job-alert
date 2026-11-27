@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/generate_jobs.py'
+      - 'scripts/validate_seo.py'
+      - 'analytics.js'
       - '.github/workflows/update-seo-job-pages.yml'
   # Poll active Supabase jobs every 15 minutes; no per-job manual action.
   schedule:
@@ -71,7 +73,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             python scripts/generate_jobs.py
-            git add -A jobs/ cities/ categories/rajasthan-private-jobs/ sitemap.xml
+            git add -A jobs/ cities/ categories/ states/ sitemap.xml
             if git diff --cached --quiet; then
               echo 'SEO pages and sitemap are already up to date.'
               exit 0
