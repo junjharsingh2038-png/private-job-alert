@@ -73,7 +73,8 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             python scripts/generate_jobs.py
-            git add -A jobs/ cities/ categories/ states/ sitemap.xml
+            git add -A jobs/ cities/ categories/ sitemap.xml
+          if [ -d states ]; then git add -A states/; fi
             if git diff --cached --quiet; then
               echo 'SEO pages and sitemap are already up to date.'
               exit 0
