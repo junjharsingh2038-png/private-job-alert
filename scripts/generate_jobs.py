@@ -84,7 +84,7 @@ def salary_schema(value):
             break
     if not unit or ('₹' not in raw and 'inr' not in low and 'rs.' not in low and 'rs ' not in low):
         return None
-    amounts = re.findall(r'(?<![A-Za-z])(?:₹\\s*)?(\\d[\\d,]*(?:\\.\\d+)?)', raw)
+    amounts = re.findall(r'(?<![A-Za-z])(?:₹\s*)?(\d[\d,]*(?:\.\d+)?)', raw)
     values = []
     for item in amounts:
         try:
