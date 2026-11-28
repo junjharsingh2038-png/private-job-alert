@@ -45,6 +45,15 @@
   const rows=await response.json();
   const j=Array.isArray(rows)?rows[0]:null;
   if(!j){error("Job not found","This job ID is not present in the job database. Please copy the share link again from the job card.");return;}
+  // Legacy query-string URLs are not canonical job pages. Send normal visitors
+  // and crawlers to the matching static, indexable job URL.
+  // Keep the share=1 flow on this page so existing poster-sharing links continue to work.
+  if(params.get("share")!=="1"){
+   const makeSlug=value=>String(value??"").trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")||"job";
+   const canonicalJobPath="./"+makeSlug(j.title)+"-"+makeSlug(j.company)+"-"+String(j.id).slice(0,8)+"/";
+   location.replace(canonicalJobPath);
+   return;
+  }
   window.PJA_CURRENT_JOB=j;
   const loc=[j.city,j.state].filter(Boolean).join(", ")||j.location||"India";
   document.title=(j.title||"Job Details")+" at "+(j.company||j.company_name||"Employer")+" | Private Job Alert";
