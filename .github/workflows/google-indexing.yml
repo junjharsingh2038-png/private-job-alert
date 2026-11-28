@@ -2,6 +2,11 @@ name: Google Job Indexing
 
 on:
   workflow_dispatch:
+  # Run once when this automation configuration is installed or changed.
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/google-indexing.yml'
   # Daily safety run (09:07 IST).
   schedule:
     - cron: '37 3 * * *'
