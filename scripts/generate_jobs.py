@@ -113,6 +113,45 @@ def clean_description(value):
     lines = [re.sub(r'[ \t]+', ' ', line).strip() for line in text.split('\n')]
     return '\n'.join(line for line in lines if line)
 
+def seo_exclusion_reason(job):
+    """Keep incomplete listings and candidate CVs out of public JobPosting SEO pages."""
+    description = clean_description(job.get('description'))
+    lowered = description.lower()
+    candidate_signals = (
+        'looking for a job opportunity',
+        'looking for job opportunity',
+        'currently looking for a job',
+        'seeking a job opportunity',
+        'open to work',
+        '#opentowork',
+        'preferred role',
+        'notice period',
+        'current organisation',
+        'current organization',
+        'currently working at',
+    )
+    if any(signal in lowered for signal in candidate_signals):
+        return 'candidate profile or job-seeker CV, not a vacancy'
+    words = re.findall(r"[A-Za-z0-9]+", description)
+    if len(words) < 30:
+        return f'incomplete vacancy description ({len(words)} words; minimum 30 for SEO publication)'
+    if not clean_text(job.get('title')) or not clean_text(job.get('company')):
+        return 'missing job title or employer'
+    return None
+
+seo_excluded = []
+seo_eligible = []
+for job in jobs:
+    reason = seo_exclusion_reason(job)
+    if reason:
+        seo_excluded.append((job, reason))
+    else:
+        seo_eligible.append(job)
+jobs = seo_eligible
+print(f'SEO eligibility: {len(jobs)} publishable vacancies; {len(seo_excluded)} excluded from Google JobPosting pages.')
+for excluded_job, reason in seo_excluded:
+    print(f"SEO EXCLUDED: {clean_text(excluded_job.get('title'), 'Untitled')} at {clean_text(excluded_job.get('company'), 'Unknown employer')}: {reason}")
+
 def html_description(text):
     parts = [p.strip() for p in text.split('\n') if p.strip()]
     return ''.join('<p>' + escape(p) + '</p>' for p in parts) or '<p>Job details available from the employer.</p>'
