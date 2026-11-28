@@ -2,17 +2,25 @@ name: Google Job Indexing
 
 on:
   workflow_dispatch:
-  # Daily automatic submission avoids repeatedly spending API quota on every deployment.
-  # Run once daily; Google Indexing API has strict daily quotas.
+  # Daily safety run (09:07 IST).
   schedule:
     - cron: '37 3 * * *'
+  # Also submit immediately after the updated site is successfully deployed.
+  workflow_run:
+    workflows: ["Deploy GitHub Pages"]
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: read
 
+concurrency:
+  group: google-job-indexing-main
+  cancel-in-progress: false
+
 jobs:
   indexing:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
